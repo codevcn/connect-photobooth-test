@@ -69,6 +69,7 @@ export type TPrintedImage = {
   url: string
   width: number
   height: number
+  isOriginalImage?: boolean
 }
 
 export type TElementType = 'text' | 'sticker' | 'printed-image' | 'template-frame'
@@ -125,7 +126,7 @@ export type TBrands = 'photoism'
 export type TUserInputImage = {
   url: string
   blob: Blob
-  isOriginalImageUrl?: boolean
+  isOriginalImage?: boolean
 }
 
 export type TEditedImage = TPrintedImage
@@ -299,13 +300,13 @@ export type TPrintTemplate = {
 
 export type TBaseRectType = 'horizontal' | 'vertical' | 'square'
 
-export type TFrameRectType = TBaseRectType
+export type TframePerfectRectType = TBaseRectType
 
 export type TTemplateFrame = {
   id: string
   index: number
   placedImage?: TPlacedImage
-  frameRectType: TFrameRectType
+  framePerfectRectType: TframePerfectRectType
   height: number
   width: number
 }
@@ -335,7 +336,7 @@ export type TLoadFontStatus = 'idle' | 'loading' | 'loaded' | 'error'
 
 export type TFrameToAddPrintedImage = {
   frameId: string
-  rectType: TFrameRectType
+  rectType: TframePerfectRectType
 }
 
 export type TLoadedTextFontContextValue = {
@@ -349,3 +350,17 @@ export type TSizeInfo = {
 }
 
 export type TPrintAreaShapeType = 'square' | 'portrait' | 'landscape'
+
+export type TPlacementDirection = {
+  left: number
+  top: number
+  right: number
+  bottom: number
+}
+
+export type TBoxBoundingInfo = {
+  x: number
+  y: number
+  width: number
+  height: number
+}

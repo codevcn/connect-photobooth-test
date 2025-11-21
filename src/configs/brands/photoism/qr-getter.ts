@@ -244,7 +244,7 @@ class QRGetter {
     }
 
     // Ghép các chunks thành Blob
-    onProgress(75, [{ blob: new Blob(chunks), url: imageUrl, isOriginalImageUrl: true }], null)
+    onProgress(75, [{ blob: new Blob(chunks), url: imageUrl, isOriginalImage: true }], null)
   }
 
   private async extractImageDataAtLocal(

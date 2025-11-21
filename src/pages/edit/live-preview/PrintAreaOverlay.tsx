@@ -37,7 +37,7 @@ export const PrintAreaOverlayPreview = ({
 }
 
 type TPrintAreaOverlayProps = {
-  printAreaRef: React.RefObject<HTMLDivElement>
+  printAreaRef: React.RefObject<HTMLDivElement | null>
   isOutOfBounds: boolean
   printTemplate: TPrintTemplate
 } & Partial<{

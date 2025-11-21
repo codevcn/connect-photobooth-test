@@ -20,8 +20,10 @@ const ScanQRPage = () => {
           height: img.naturalHeight,
           width: img.naturalWidth,
           id: generateUniqueId(),
+          isOriginalImage: imageData.isOriginalImage,
         })
         if (imagesToAdd.length === imageDataList.length) {
+          imagesToAdd.sort((a, b) => b.width * b.height - a.width * a.height) // ảnh có kích thước lớn nhất phải ở đầu tiên trong danh sách
           setPrintedImages(imagesToAdd)
           navigate('/edit')
         }

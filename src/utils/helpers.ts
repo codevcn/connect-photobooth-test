@@ -4,6 +4,7 @@ import {
   TImageSizeInfo,
   TImgMimeType,
   TPrintAreaShapeType,
+  TSizeInfo,
   TSurfaceType,
   TTemplateType,
 } from './types/global'
@@ -222,43 +223,37 @@ export const isHomePage = (): boolean => {
   return window.location.pathname === '/'
 }
 
-export const diffPrintedImageOnRectType = (
-  rectType: TBaseRectType,
-  printedImageSize: TImageSizeInfo
+export const diffPrintedImageFromRectType = (
+  frameSize: TSizeInfo,
+  printedImageSize: TSizeInfo
 ): number => {
   const imgRatio = printedImageSize.width / printedImageSize.height
   const upSquareDiff = 1 + getInitialContants<number>('MAX_DIFF_RATIO_VALUE')
   const downSquareDiff = 1 - getInitialContants<number>('MAX_DIFF_RATIO_VALUE')
-  switch (rectType) {
-    case 'horizontal':
-      if (imgRatio > upSquareDiff) return 0
-      return imgRatio - 1
-    case 'vertical':
-      if (imgRatio < downSquareDiff) return 0
-      return 1 - imgRatio
-    case 'square':
-      if (imgRatio >= downSquareDiff && imgRatio <= upSquareDiff) return 0
-      return Math.abs(1 - imgRatio)
-    default:
-      return -1
+  const { width, height } = frameSize
+  if (width < height) {
+    if (imgRatio < downSquareDiff) return 0
+    return 1 - imgRatio
+  } else if (width > height) {
+    if (imgRatio > upSquareDiff) return 0
+    return imgRatio - 1
   }
+  if (imgRatio >= downSquareDiff && imgRatio <= upSquareDiff) return 0
+  return Math.abs(1 - imgRatio)
 }
 
 export const matchPrintedImageToRectType = (
-  rectType: TBaseRectType,
-  printedImageSize: TImageSizeInfo
+  frameSize: TSizeInfo,
+  printedImageSize: TSizeInfo
 ): boolean => {
   const imgRatio = printedImageSize.width / printedImageSize.height
-  switch (rectType) {
-    case 'horizontal':
-      return imgRatio >= 1
-    case 'vertical':
-      return imgRatio <= 1
-    case 'square':
-      return imgRatio === 1
-    default:
-      return false
+  const { width, height } = frameSize
+  if (width < height) {
+    return imgRatio < 1
+  } else if (width > height) {
+    return imgRatio > 1
   }
+  return imgRatio === 1
 }
 
 export const detectShapeType = (width: number, height: number): TPrintAreaShapeType => {

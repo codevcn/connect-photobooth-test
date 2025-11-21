@@ -1,4 +1,4 @@
-import { TFrameRectType, TTemplateFrame, TTemplateType } from '@/utils/types/global'
+import { TframePerfectRectType, TTemplateFrame, TTemplateType } from '@/utils/types/global'
 import { PlacedImage } from './PlacedImage'
 import type React from 'react'
 import { cn } from '@/configs/ui/tailwind-utils'
@@ -20,7 +20,7 @@ type TemplateFrameProps = {
   onClickFrame: (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     frameId: string,
-    templateRectType: TFrameRectType
+    templateRectType: TframePerfectRectType
   ) => void
 }>
 
@@ -32,8 +32,6 @@ export const TemplateFrame = ({
   classNames,
   onClickFrame,
 }: TemplateFrameProps) => {
-  console.log('>>> templateFrame id:', templateFrame.id)
-  console.log('>>> template placed:', templateFrame.placedImage)
   return (
     <div
       style={{
@@ -46,7 +44,7 @@ export const TemplateFrame = ({
       )}
       onClick={
         onClickFrame
-          ? (e) => onClickFrame(e, templateFrame.id, templateFrame.frameRectType)
+          ? (e) => onClickFrame(e, templateFrame.id, templateFrame.framePerfectRectType)
           : undefined
       }
     >

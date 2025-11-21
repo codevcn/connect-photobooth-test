@@ -1,36 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { TPrintAreaInfo } from '@/utils/types/global'
+import {
+  TBoxBoundingInfo,
+  TPlacementDirection,
+  TPrintAreaInfo,
+  TSizeInfo,
+} from '@/utils/types/global'
 
-type TPrintAreaBounds = {
-  x: number
-  y: number
-  width: number
-  height: number
-}
-
-type TUsePrintAreaReturn = {
-  printAreaRef: React.RefObject<HTMLDivElement>
-  overlayRef: React.RefObject<HTMLDivElement>
-  containerElementRef: React.MutableRefObject<HTMLElement | null>
-  isOutOfBounds: boolean
-  printAreaBounds: TPrintAreaBounds | null
-  checkElementBounds: (
-    elementRect: DOMRect | { left: number; top: number; right: number; bottom: number }
-  ) => boolean
-  initializePrintArea: (
-    productPrintArea: TPrintAreaInfo['area'],
-    containerElement: HTMLElement
-  ) => TPrintAreaBounds | null
-  checkIfAnyElementOutOfBounds: () => boolean
-}
-
-export const usePrintArea = (): TUsePrintAreaReturn => {
-  const printAreaRef = useRef<HTMLDivElement>(null)
-  const overlayRef = useRef<HTMLDivElement>(null)
-  const [isOutOfBounds, setIsOutOfBounds] = useState(false)
-  const [printAreaBounds, setPrintAreaBounds] = useState<TPrintAreaBounds | null>(null)
-  const containerSizeRef = useRef<{ width: number; height: number } | null>(null)
-  const containerElementRef = useRef<HTMLElement | null>(null)
+export const usePrintAreaPreview = (
+  setPrintAreaBounds: React.Dispatch<React.SetStateAction<TBoxBoundingInfo | null>>
+) => {
+  const printAreaRef = useRef<HTMLDivElement | null>(null)
+  const containerSizeRef = useRef<TSizeInfo | null>(null)
+  const printAreaContainerRef = useRef<HTMLDivElement | null>(null)
 
   const calculatePrintAreaFromContainer = useCallback(
     (productPrintArea: TPrintAreaInfo['area'], containerElement: HTMLElement) => {
@@ -127,10 +108,39 @@ export const usePrintArea = (): TUsePrintAreaReturn => {
     []
   )
 
+  return { printAreaRef, printAreaContainerRef, containerSizeRef, calculatePrintAreaFromContainer }
+}
+
+type TPrintAreaBounds = {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+type TUsePrintAreaReturn = {
+  printAreaRef: React.RefObject<HTMLDivElement | null>
+  warningOverlayRef: React.RefObject<HTMLDivElement | null>
+  printAreaContainerRef: React.RefObject<HTMLDivElement | null>
+  isOutOfBounds: boolean
+  printAreaBounds: TPrintAreaBounds | null
+  checkElementBounds: (elementRect: DOMRect | TPlacementDirection) => boolean
+  calculatePrintAreaFromContainer: (
+    productPrintArea: TPrintAreaInfo['area'],
+    containerElement: HTMLDivElement
+  ) => TPrintAreaBounds | null
+  checkIfAnyElementOutOfBounds: () => boolean
+}
+
+export const usePrintArea = (printAreaInfo: TPrintAreaInfo): TUsePrintAreaReturn => {
+  const warningOverlayRef = useRef<HTMLDivElement | null>(null)
+  const [isOutOfBounds, setIsOutOfBounds] = useState(false)
+  const [printAreaBounds, setPrintAreaBounds] = useState<TPrintAreaBounds | null>(null)
+  const { printAreaRef, printAreaContainerRef, calculatePrintAreaFromContainer } =
+    usePrintAreaPreview(setPrintAreaBounds)
+
   const checkElementBounds = useCallback(
-    (
-      elementRect: DOMRect | { left: number; top: number; right: number; bottom: number }
-    ): boolean => {
+    (elementRect: DOMRect | TPlacementDirection): boolean => {
       if (!printAreaBounds) return true
 
       // Kiểm tra xem element có nằm hoàn toàn trong vùng in không
@@ -147,9 +157,9 @@ export const usePrintArea = (): TUsePrintAreaReturn => {
 
   const updateOverlayVisibility = useCallback((outOfBounds: boolean) => {
     setIsOutOfBounds(outOfBounds)
-    if (overlayRef.current) {
-      overlayRef.current.style.opacity = outOfBounds ? '1' : '0'
-      overlayRef.current.style.pointerEvents = outOfBounds ? 'auto' : 'none'
+    if (warningOverlayRef.current) {
+      warningOverlayRef.current.style.opacity = outOfBounds ? '1' : '0'
+      warningOverlayRef.current.style.pointerEvents = outOfBounds ? 'auto' : 'none'
     }
   }, [])
 
@@ -158,7 +168,7 @@ export const usePrintArea = (): TUsePrintAreaReturn => {
     if (!printAreaBounds) return false
 
     const editableElements = document.querySelectorAll('.NAME-root-element')
-    const editContainer = containerElementRef.current
+    const editContainer = printAreaContainerRef.current
 
     if (!editContainer) return false
 
@@ -198,7 +208,7 @@ export const usePrintArea = (): TUsePrintAreaReturn => {
       }
 
       let hasOutOfBounds = false
-      const editContainer = containerElementRef.current
+      const editContainer = printAreaContainerRef.current
       if (editContainer) {
         for (const element of editableElements) {
           const rect = element.getBoundingClientRect()
@@ -241,14 +251,69 @@ export const usePrintArea = (): TUsePrintAreaReturn => {
     }
   }, [printAreaBounds, checkElementBounds, updateOverlayVisibility])
 
+  // Cập nhật vùng in khi sản phẩm thay đổi
+  useEffect(() => {
+    if (printAreaContainerRef.current) {
+      const imageElement = printAreaContainerRef.current.querySelector(
+        '.NAME-product-image'
+      ) as HTMLImageElement
+
+      if (!imageElement) return
+
+      const updatePrintAreaWhenImageLoaded = () => {
+        if (printAreaContainerRef.current) {
+          calculatePrintAreaFromContainer(printAreaInfo.area, printAreaContainerRef.current)
+        }
+      }
+
+      // Nếu ảnh đã load xong
+      if (imageElement.complete && imageElement.naturalWidth > 0) {
+        // Delay nhỏ để đảm bảo DOM đã render xong
+        const timeoutId = setTimeout(updatePrintAreaWhenImageLoaded, 50)
+        return () => clearTimeout(timeoutId)
+      } else {
+        // Nếu ảnh chưa load, đợi event load
+        imageElement.addEventListener('load', updatePrintAreaWhenImageLoaded)
+        return () => imageElement.removeEventListener('load', updatePrintAreaWhenImageLoaded)
+      }
+    }
+  }, [calculatePrintAreaFromContainer, printAreaInfo])
+
+  // Theo dõi resize của container
+  useEffect(() => {
+    if (!printAreaContainerRef.current) return
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect
+        if (width > 0 && height > 0) {
+          const imageElement = printAreaContainerRef.current?.querySelector(
+            '.NAME-product-image'
+          ) as HTMLImageElement
+
+          if (imageElement && imageElement.complete && imageElement.naturalWidth > 0) {
+            setTimeout(() => {
+              if (printAreaContainerRef.current) {
+                calculatePrintAreaFromContainer(printAreaInfo.area, printAreaContainerRef.current)
+              }
+            }, 100)
+          }
+        }
+      }
+    })
+
+    resizeObserver.observe(printAreaContainerRef.current)
+    return () => resizeObserver.disconnect()
+  }, [calculatePrintAreaFromContainer, printAreaInfo.area])
+
   return {
     printAreaRef,
-    overlayRef,
-    containerElementRef,
+    warningOverlayRef,
+    printAreaContainerRef,
     isOutOfBounds,
     printAreaBounds,
     checkElementBounds,
-    initializePrintArea: calculatePrintAreaFromContainer,
+    calculatePrintAreaFromContainer,
     checkIfAnyElementOutOfBounds,
   }
 }

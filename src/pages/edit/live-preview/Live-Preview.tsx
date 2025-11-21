@@ -22,12 +22,12 @@ export const LivePreview = ({
   editedVariantId,
   editedPrintSurfaceId,
 }: TLivePreviewProps) => {
-  const {
-    printAreaRef,
-    containerElementRef: printAreaContainerRef,
-    initializePrintArea,
-  } = usePrintArea()
-  console.log('>>> picked product:', pickedProduct)
+  const printAreaInfo = useMemo(() => {
+    return pickedProduct.printAreaList.find((printArea) => printArea.id === editedPrintSurfaceId)!
+  }, [pickedProduct, editedPrintSurfaceId])
+
+  const { printAreaRef, printAreaContainerRef } = usePrintArea(printAreaInfo)
+
   const displayedImage = useMemo<TDisplayedImage>(() => {
     const variantSurface = pickedProduct.variantSurfaces.find(
       (variantSurface) =>
@@ -41,65 +41,6 @@ export const LivePreview = ({
       altText: pickedProduct.name,
     }
   }, [pickedProduct, editedVariantId, editedPrintSurfaceId])
-
-  const printAreaInfo = useMemo(() => {
-    return pickedProduct.printAreaList.find((printArea) => printArea.id === editedPrintSurfaceId)!
-  }, [pickedProduct, editedPrintSurfaceId])
-
-  // Cập nhật vùng in khi sản phẩm thay đổi
-  useEffect(() => {
-    if (printAreaContainerRef.current) {
-      const imageElement = printAreaContainerRef.current.querySelector(
-        '.NAME-product-image'
-      ) as HTMLImageElement
-
-      if (!imageElement) return
-
-      const updatePrintAreaWhenImageLoaded = () => {
-        if (printAreaContainerRef.current) {
-          initializePrintArea(printAreaInfo.area, printAreaContainerRef.current)
-        }
-      }
-
-      // Nếu ảnh đã load xong
-      if (imageElement.complete && imageElement.naturalWidth > 0) {
-        // Delay nhỏ để đảm bảo DOM đã render xong
-        const timeoutId = setTimeout(updatePrintAreaWhenImageLoaded, 50)
-        return () => clearTimeout(timeoutId)
-      } else {
-        // Nếu ảnh chưa load, đợi event load
-        imageElement.addEventListener('load', updatePrintAreaWhenImageLoaded)
-        return () => imageElement.removeEventListener('load', updatePrintAreaWhenImageLoaded)
-      }
-    }
-  }, [initializePrintArea, printAreaInfo])
-
-  // Theo dõi resize của container
-  useEffect(() => {
-    if (!printAreaContainerRef.current) return
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const { width, height } = entry.contentRect
-        if (width > 0 && height > 0) {
-          const imageElement = printAreaContainerRef.current?.querySelector(
-            '.NAME-product-image'
-          ) as HTMLImageElement
-
-          if (imageElement && imageElement.complete && imageElement.naturalWidth > 0) {
-            setTimeout(() => {
-              if (printAreaContainerRef.current) {
-                initializePrintArea(printAreaInfo.area, printAreaContainerRef.current)
-              }
-            }, 100)
-          }
-        }
-      }
-    })
-
-    resizeObserver.observe(printAreaContainerRef.current)
-    return () => resizeObserver.disconnect()
-  }, [initializePrintArea, printAreaInfo.area])
 
   return (
     <div

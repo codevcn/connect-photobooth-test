@@ -35,7 +35,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
                 onScanSuccess(
                   images.map((img) => ({
                     ...img,
-                    url: img.isOriginalImageUrl ? img.url : URL.createObjectURL(img.blob),
+                    url: img.isOriginalImage ? img.url : URL.createObjectURL(img.blob),
                   }))
                 )
               }
@@ -108,7 +108,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
             onScanSuccess(
               images.map((img) => ({
                 ...img,
-                url: img.isOriginalImageUrl ? img.url : URL.createObjectURL(img.blob),
+                url: img.isOriginalImage ? img.url : URL.createObjectURL(img.blob),
               }))
             )
           }

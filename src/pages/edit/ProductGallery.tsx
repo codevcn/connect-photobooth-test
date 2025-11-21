@@ -1,20 +1,42 @@
 import {
   TBaseProduct,
+  TPlacedImage,
   TPrintAreaInfo,
-  TPrintAreaShapeType,
   TPrintedImage,
   TPrintTemplate,
   TSizeInfo,
+  TTemplateFrame,
 } from '@/utils/types/global'
 import { PrintAreaOverlay } from './live-preview/PrintAreaOverlay'
 import { usePrintArea } from '@/hooks/use-print-area'
 import { hardCodedPrintTemplates } from '@/configs/data/print-template'
-import { diffPrintedImageOnRectType, matchPrintedImageToRectType } from '@/utils/helpers'
+import { matchPrintedImageToRectType } from '@/utils/helpers'
 import { getInitialContants } from '@/utils/contants'
 import { usePrintedImageStore } from '@/stores/printed-image/printed-image.store'
-import { useEffect } from 'react'
 
-const assignFallbackTemplateToPrintArea = (): TPrintTemplate => {
+const initFramePlacedImageByPrintedImage = (
+  frameIndexProperty: TTemplateFrame['index'],
+  printedImage: TPrintedImage
+): TPlacedImage => {
+  return {
+    id: printedImage.id,
+    imgURL: printedImage.url,
+    placementState: {
+      frameIndex: frameIndexProperty,
+      objectFit: getInitialContants('PLACED_IMG_OBJECT_FIT'),
+      squareRotation: getInitialContants('PLACED_IMG_SQUARE_ROTATION'),
+      zoom: getInitialContants('PLACED_IMG_ZOOM'),
+    },
+  }
+}
+
+const assignFallbackTemplateToPrintArea = (printAreaInfo: TSizeInfo): TPrintTemplate => {
+  const { width, height } = printAreaInfo
+  if (width < height) {
+    return hardCodedPrintTemplates('2-horizon')
+  } else if (width > height) {
+    return hardCodedPrintTemplates('2-vertical')
+  }
   return hardCodedPrintTemplates('1-square')
 }
 
@@ -23,68 +45,100 @@ const handleFallbackTemplate = (
   printedImage: TPrintedImage
 ): TPrintTemplate => {
   for (const frame of templates.frames) {
-    frame.placedImage = {
-      id: printedImage.id,
-      imgURL: printedImage.url,
-      placementState: {
-        frameIndex: frame.index,
-        objectFit: getInitialContants('PLACED_IMG_OBJECT_FIT'),
-        squareRotation: getInitialContants('PLACED_IMG_SQUARE_ROTATION'),
-        zoom: getInitialContants('PLACED_IMG_ZOOM'),
-      },
-    }
+    frame.placedImage = initFramePlacedImageByPrintedImage(frame.index, printedImage)
   }
   return templates
 }
 
-const assignTemplatesToPrintArea = (printAreaSize: TSizeInfo): TPrintTemplate[] => {
-  const { width, height } = printAreaSize
+const assignTemplatesToPrintArea = (
+  printAreaWidth: TSizeInfo['width'],
+  printAreaHeight: TSizeInfo['height']
+): TPrintTemplate[] => {
   const template2Vertical = hardCodedPrintTemplates('2-vertical') // ưu tiên: ảnh vuông, ảnh dọc
   for (const frame of template2Vertical.frames) {
-    frame.width = width / 2
-    frame.height = height
+    frame.width = printAreaWidth / 2
+    frame.height = printAreaHeight
   }
   const template2Horizon = hardCodedPrintTemplates('2-horizon') // ưu tiên: ảnh vuông
   for (const frame of template2Horizon.frames) {
-    frame.width = width
-    frame.height = height / 2
+    frame.width = printAreaWidth
+    frame.height = printAreaHeight / 2
   }
   const template1Square = hardCodedPrintTemplates('1-square') // ưu tiên: ảnh dọc, ảnh vuông
   for (const frame of template1Square.frames) {
-    frame.width = width
-    frame.height = height
+    frame.width = printAreaWidth
+    frame.height = printAreaHeight
   }
   return [template2Vertical, template2Horizon, template1Square]
 }
 
-const getTheBestTemplateForPrintedImages = (
-  printAreaSize: TSizeInfo,
+const handleSquareLikePrintedImage = (
+  printAreaWidth: TSizeInfo['width'],
+  printAreaHeight: TSizeInfo['height'],
+  printedImage: TPrintedImage,
+  isFourSquareImages: boolean = false
+): TPrintTemplate | null => {
+  if (
+    printedImage.width / printedImage.height > 0.75 &&
+    printedImage.width / printedImage.height < 1.25
+  ) {
+    const template = isFourSquareImages
+      ? hardCodedPrintTemplates('4-square')
+      : hardCodedPrintTemplates('1-square')
+    for (const frame of template.frames) {
+      frame.width = printAreaWidth
+      frame.height = printAreaHeight
+      frame.placedImage = initFramePlacedImageByPrintedImage(frame.index, printedImage)
+    }
+    return template
+  }
+  return null
+}
+
+const handleCroppedFourSquarePrintedImages = (
+  printAreaWidth: TSizeInfo['width'],
+  printAreaHeight: TSizeInfo['height'],
   printedImages: TPrintedImage[]
-): TPrintTemplate => {
-  const templates = assignTemplatesToPrintArea(printAreaSize)
+): TPrintTemplate | null => {
+  let squareLikeImagesCount = 0
+  for (const img of printedImages) {
+    if (!img.isOriginalImage && img.width === img.height) {
+      squareLikeImagesCount += 1
+    }
+  }
+  if (squareLikeImagesCount === 4) {
+    return handleSquareLikePrintedImage(printAreaWidth, printAreaHeight, printedImages[0], true)
+  }
+  return null
+}
+
+const handleOtherShapePrintedImages = (
+  printAreaWidth: TSizeInfo['width'],
+  printAreaHeight: TSizeInfo['height'],
+  printedImages: TPrintedImage[]
+): TPrintTemplate | null => {
+  const templates = assignTemplatesToPrintArea(printAreaWidth, printAreaHeight)
   let foundTemplate: TPrintTemplate | null = null
+  // ảnh có kích thước lớn nhất phải ở đầu tiên trong danh sách
   for (const image of printedImages) {
     // ảnh bự nhất đặt ở đầu
     let frameDimensionPoint: number = 0
     for (const template of templates) {
       let point = 0
       for (const frame of template.frames) {
-        const match = matchPrintedImageToRectType(frame.frameRectType, {
-          height: image.height,
-          width: image.width,
-        })
-        if (match) {
-          frame.placedImage = {
-            id: image.id,
-            imgURL: image.url,
-            placementState: {
-              frameIndex: frame.index,
-              objectFit: getInitialContants('PLACED_IMG_OBJECT_FIT'),
-              squareRotation: getInitialContants('PLACED_IMG_SQUARE_ROTATION'),
-              zoom: getInitialContants('PLACED_IMG_ZOOM'),
-            },
+        const match = matchPrintedImageToRectType(
+          {
+            width: frame.width,
+            height: frame.height,
+          },
+          {
+            height: image.height,
+            width: image.width,
           }
-          point += frame.frameRectType === 'horizontal' ? frame.width : frame.height
+        )
+        if (match) {
+          frame.placedImage = initFramePlacedImageByPrintedImage(frame.index, image)
+          point += frame.width > frame.height ? frame.width : frame.height
         }
       }
       if (point > frameDimensionPoint) {
@@ -96,8 +150,44 @@ const getTheBestTemplateForPrintedImages = (
       return foundTemplate
     }
   }
+  return null
+}
+
+const initTheBestTemplateForPrintedImages = (
+  printAreaSize: TSizeInfo,
+  printedImages: TPrintedImage[]
+): TPrintTemplate => {
+  const { width: printAreaWidth, height: printAreaHeight } = printAreaSize
+  const bigestSizeImage = printedImages[0]
+  // xử lý trường hợp 4 ảnh vuông đã bị crop
+  const croppedFourSquareTemplate = handleCroppedFourSquarePrintedImages(
+    printAreaWidth,
+    printAreaHeight,
+    printedImages
+  )
+  if (croppedFourSquareTemplate) {
+    return croppedFourSquareTemplate
+  }
+  // xử lý trường hợp ảnh của user là ảnh gần giống hình vuông
+  const squareLikeFirstImageTemplate = handleSquareLikePrintedImage(
+    printAreaWidth,
+    printAreaHeight,
+    bigestSizeImage
+  )
+  if (squareLikeFirstImageTemplate) {
+    return squareLikeFirstImageTemplate
+  }
+  // xử lý các trường hợp còn lại
+  const otherShapeTemplate = handleOtherShapePrintedImages(
+    printAreaWidth,
+    printAreaHeight,
+    printedImages
+  )
+  if (otherShapeTemplate) {
+    return otherShapeTemplate
+  }
   // trả về template đầu tiên nếu không tìm thấy cái nào phù hợp
-  return handleFallbackTemplate(assignFallbackTemplateToPrintArea(), printedImages[0])
+  return handleFallbackTemplate(assignFallbackTemplateToPrintArea(printAreaSize), printedImages[0])
 }
 
 type TProductProps = {
@@ -109,66 +199,7 @@ type TProductProps = {
 
 const Product = ({ product, printAreaInfo, printedImages, onPickProduct }: TProductProps) => {
   const printArea = printAreaInfo.area
-  const {
-    printAreaRef,
-    containerElementRef: printAreaContainerRef,
-    initializePrintArea,
-  } = usePrintArea()
-
-  // Cập nhật vùng in khi sản phẩm thay đổi
-  useEffect(() => {
-    if (printAreaContainerRef.current) {
-      const imageElement = printAreaContainerRef.current.querySelector(
-        '.NAME-product-image'
-      ) as HTMLImageElement
-
-      if (!imageElement) return
-
-      const updatePrintAreaWhenImageLoaded = () => {
-        if (printAreaContainerRef.current) {
-          initializePrintArea(printAreaInfo.area, printAreaContainerRef.current)
-        }
-      }
-
-      // Nếu ảnh đã load xong
-      if (imageElement.complete && imageElement.naturalWidth > 0) {
-        // Delay nhỏ để đảm bảo DOM đã render xong
-        const timeoutId = setTimeout(updatePrintAreaWhenImageLoaded, 50)
-        return () => clearTimeout(timeoutId)
-      } else {
-        // Nếu ảnh chưa load, đợi event load
-        imageElement.addEventListener('load', updatePrintAreaWhenImageLoaded)
-        return () => imageElement.removeEventListener('load', updatePrintAreaWhenImageLoaded)
-      }
-    }
-  }, [initializePrintArea, printAreaInfo])
-
-  // Theo dõi resize của container
-  useEffect(() => {
-    if (!printAreaContainerRef.current) return
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const { width, height } = entry.contentRect
-        if (width > 0 && height > 0) {
-          const imageElement = printAreaContainerRef.current?.querySelector(
-            '.NAME-product-image'
-          ) as HTMLImageElement
-
-          if (imageElement && imageElement.complete && imageElement.naturalWidth > 0) {
-            setTimeout(() => {
-              if (printAreaContainerRef.current) {
-                initializePrintArea(printAreaInfo.area, printAreaContainerRef.current)
-              }
-            }, 100)
-          }
-        }
-      }
-    })
-
-    resizeObserver.observe(printAreaContainerRef.current)
-    return () => resizeObserver.disconnect()
-  }, [initializePrintArea, printAreaInfo.area])
+  const { printAreaRef, printAreaContainerRef } = usePrintArea(printAreaInfo)
 
   return (
     <div
@@ -184,7 +215,7 @@ const Product = ({ product, printAreaInfo, printedImages, onPickProduct }: TProd
         className="NAME-product-image min-h-full max-h-full w-full h-full object-contain rounded-xl"
       />
       <PrintAreaOverlay
-        printTemplate={getTheBestTemplateForPrintedImages(
+        printTemplate={initTheBestTemplateForPrintedImages(
           {
             height: printArea.printH,
             width: printArea.printW,

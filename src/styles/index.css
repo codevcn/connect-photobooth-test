@@ -50,3 +50,7 @@
 @utility mobile-touch {
   @apply transition duration-200 active:scale-95;
 }
+
+@utility border-border {
+  @apply border border-gray-200 border-solid shadow;
+}

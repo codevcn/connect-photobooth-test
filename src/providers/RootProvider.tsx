@@ -1,6 +1,5 @@
 import { GlobalContext, LoadedTextFontContext } from '@/contexts/global-context'
-import { EInternalEvents } from '@/utils/enums'
-import { eventEmitter } from '@/utils/events'
+import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { generateUniqueId } from '@/utils/helpers'
 import { TElementType, TPreSentMockupImageLink } from '@/utils/types/global'
 import { useEffect, useState } from 'react'

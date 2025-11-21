@@ -1,8 +1,7 @@
 import { usePrintArea } from '@/hooks/use-print-area'
-import { TBaseProduct } from '@/utils/types/global'
-import { useEffect, useMemo } from 'react'
+import { TBaseProduct, TProductWithTemplate } from '@/utils/types/global'
+import { useEffect, useMemo, useRef } from 'react'
 import { PrintAreaOverlay } from './PrintAreaOverlay'
-import { hardCodedPrintTemplates } from '@/configs/data/print-template'
 
 type TDisplayedImage = {
   surfaceId: TBaseProduct['printAreaList'][number]['id']
@@ -12,7 +11,7 @@ type TDisplayedImage = {
 }
 
 type TLivePreviewProps = {
-  pickedProduct: TBaseProduct
+  pickedProduct: TProductWithTemplate
   editedVariantId: TBaseProduct['variants'][number]['id']
   editedPrintSurfaceId: TBaseProduct['printAreaList'][number]['id']
 }
@@ -25,8 +24,6 @@ export const LivePreview = ({
   const printAreaInfo = useMemo(() => {
     return pickedProduct.printAreaList.find((printArea) => printArea.id === editedPrintSurfaceId)!
   }, [pickedProduct, editedPrintSurfaceId])
-
-  const { printAreaRef, printAreaContainerRef } = usePrintArea(printAreaInfo)
 
   const displayedImage = useMemo<TDisplayedImage>(() => {
     const variantSurface = pickedProduct.variantSurfaces.find(
@@ -42,22 +39,77 @@ export const LivePreview = ({
     }
   }, [pickedProduct, editedVariantId, editedPrintSurfaceId])
 
+  const imgURLRef = useRef<string>(displayedImage.imageURL)
+
+  const { printAreaRef, printAreaContainerRef } = usePrintArea(printAreaInfo)
+
+  const displayProductChangingModal = () => {
+    if (imgURLRef.current === displayedImage.imageURL) return
+    const modal = printAreaContainerRef.current?.querySelector<HTMLElement>(
+      '.NAME-product-changing-modal'
+    )
+    const maxTimeWait = 6000
+    if (modal) {
+      modal.style.display = 'flex'
+      setTimeout(() => {
+        modal.style.display = 'none'
+      }, maxTimeWait)
+    }
+  }
+
+  const removeProductChangingModal = () => {
+    if (imgURLRef.current === displayedImage.imageURL) return
+    imgURLRef.current = displayedImage.imageURL
+    const modal = printAreaContainerRef.current?.querySelector<HTMLElement>(
+      '.NAME-product-changing-modal'
+    )
+    if (modal) {
+      modal.style.display = 'none'
+    }
+  }
+
+  useEffect(() => {
+    displayProductChangingModal()
+  }, [displayedImage])
+
   return (
-    <div
-      ref={printAreaContainerRef}
-      className="NAME-main-img min-h-full max-h-full w-full h-full overflow-hidden bg-gray-100 border border-gray-400/30 relative"
-    >
-      <img
-        src={displayedImage.imageURL}
-        alt={displayedImage.altText}
-        crossOrigin="anonymous"
-        className="NAME-product-image min-h-full max-h-full w-full h-full object-contain relative z-4"
-      />
-      <PrintAreaOverlay
-        printTemplate={hardCodedPrintTemplates('1-square')}
-        printAreaRef={printAreaRef}
-        isOutOfBounds={false}
-      />
+    <div className="min-h-full max-h-full w-full h-full relative">
+      <div className="NAME-product-changing-modal hidden absolute inset-0 z-99 bg-black/30 justify-center items-center">
+        <div className="p-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-loader-icon lucide-loader w-16 h-16 text-white animate-spin"
+          >
+            <path d="M12 2v4" />
+            <path d="m16.2 7.8 2.9-2.9" />
+            <path d="M18 12h4" />
+            <path d="m16.2 16.2 2.9 2.9" />
+            <path d="M12 18v4" />
+            <path d="m4.9 19.1 2.9-2.9" />
+            <path d="M2 12h4" />
+            <path d="m4.9 4.9 2.9 2.9" />
+          </svg>
+        </div>
+      </div>
+      <div
+        ref={printAreaContainerRef}
+        className="min-h-full max-h-full w-full h-full overflow-hidden bg-gray-100 border border-gray-400/30 relative"
+      >
+        <img
+          src={displayedImage.imageURL}
+          alt={displayedImage.altText}
+          crossOrigin="anonymous"
+          className="NAME-product-image min-h-full max-h-full w-full h-full object-contain relative z-4"
+          onLoad={removeProductChangingModal}
+        />
+        <PrintAreaOverlay printAreaRef={printAreaRef} isOutOfBounds={false} />
+      </div>
     </div>
   )
 }

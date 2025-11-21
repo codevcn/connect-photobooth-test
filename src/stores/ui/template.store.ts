@@ -1,56 +1,56 @@
-import { TPrintTemplate, TTemplateFrame, TPrintedImage } from '@/utils/types/global'
+import { TPrintTemplate, TTemplateFrame, TPrintedImage, TBaseProduct } from '@/utils/types/global'
 import { getInitialContants } from '@/utils/contants'
 import { create } from 'zustand'
 
 type TTemplateStore = {
-  availableTemplates: TPrintTemplate[]
-  pickedTemplate: TPrintTemplate | null
+  allTemplates: TPrintTemplate[]
+  currentTemplate: TPrintTemplate | null
   showTemplatePicker: boolean
   pickedFrame: TTemplateFrame | undefined
-  
+
   // Actions
   initializeTemplates: (templates: TPrintTemplate[]) => void
-  setPickedTemplate: (template: TPrintTemplate) => void
-  setShowTemplatePicker: (show: boolean) => void
-  setPickedFrame: (frame: TTemplateFrame | undefined) => void
+  pickTemplate: (template: TPrintTemplate) => void
+  hideShowTemplatePicker: (show: boolean) => void
+  pickFrame: (frame: TTemplateFrame | undefined) => void
   addImageToFrame: (printedImage: TPrintedImage, frameId?: string) => void
   updateFrameImageURL: (newURL: string, frameId: string, idOfURLImage?: string) => void
   removeFrameImage: (frameId: string) => void
 }
 
 export const useTemplateStore = create<TTemplateStore>((set, get) => ({
-  availableTemplates: [],
-  pickedTemplate: null,
+  allTemplates: [],
+  currentTemplate: null,
   showTemplatePicker: false,
   pickedFrame: undefined,
 
   initializeTemplates: (templates) => {
     set({
-      availableTemplates: templates,
-      pickedTemplate: templates[0] || null,
+      allTemplates: templates,
+      currentTemplate: templates[0] || null,
     })
   },
 
-  setPickedTemplate: (template) => {
-    const { pickedTemplate } = get()
-    if (pickedTemplate && pickedTemplate.id === template.id) return
-    set({ pickedTemplate: template })
+  pickTemplate: (template) => {
+    const { currentTemplate } = get()
+    if (currentTemplate && currentTemplate.id === template.id) return
+    set({ currentTemplate: template })
   },
 
-  setShowTemplatePicker: (show) => {
+  hideShowTemplatePicker: (show) => {
     set({ showTemplatePicker: show })
   },
 
-  setPickedFrame: (frame) => {
+  pickFrame: (frame) => {
     set({ pickedFrame: frame })
   },
 
   addImageToFrame: (printedImage, frameId) => {
-    const { availableTemplates, pickedTemplate } = get()
-    if (!pickedTemplate) return
+    const { allTemplates, currentTemplate } = get()
+    if (!currentTemplate) return
 
-    const templates = [...availableTemplates]
-    const pickedTemplateId = pickedTemplate.id
+    const templates = [...allTemplates]
+    const currentTemplateId = currentTemplate.id
 
     if (frameId) {
       // Thêm vào frame cụ thể
@@ -66,6 +66,7 @@ export const useTemplateStore = create<TTemplateStore>((set, get) => ({
                 zoom: getInitialContants<number>('PLACED_IMG_ZOOM'),
                 objectFit: getInitialContants<'contain'>('PLACED_IMG_OBJECT_FIT'),
                 squareRotation: getInitialContants<number>('PLACED_IMG_SQUARE_ROTATION'),
+                direction: getInitialContants<'center'>('PLACED_IMG_DIRECTION'),
               },
             }
           }
@@ -75,7 +76,7 @@ export const useTemplateStore = create<TTemplateStore>((set, get) => ({
     } else {
       // Thêm vào frame trống đầu tiên của template được chọn
       for (const template of templates) {
-        if (template.id === pickedTemplateId) {
+        if (template.id === currentTemplateId) {
           const foundFrameIndex = template.frames.findIndex((f) => !f.placedImage)
           if (foundFrameIndex >= 0) {
             template.frames[foundFrameIndex].placedImage = {
@@ -86,6 +87,7 @@ export const useTemplateStore = create<TTemplateStore>((set, get) => ({
                 zoom: getInitialContants<number>('PLACED_IMG_ZOOM'),
                 objectFit: getInitialContants<'contain'>('PLACED_IMG_OBJECT_FIT'),
                 squareRotation: getInitialContants<number>('PLACED_IMG_SQUARE_ROTATION'),
+                direction: getInitialContants<'center'>('PLACED_IMG_DIRECTION'),
               },
             }
             break
@@ -94,12 +96,12 @@ export const useTemplateStore = create<TTemplateStore>((set, get) => ({
       }
     }
 
-    set({ availableTemplates: templates })
+    set({ allTemplates: templates })
   },
 
   updateFrameImageURL: (newURL, frameId, idOfURLImage) => {
-    const { availableTemplates } = get()
-    const templates = [...availableTemplates]
+    const { allTemplates } = get()
+    const templates = [...allTemplates]
 
     for (const template of templates) {
       const foundFrame = template.frames.find((f) => f.id === frameId)
@@ -114,12 +116,12 @@ export const useTemplateStore = create<TTemplateStore>((set, get) => ({
       }
     }
 
-    set({ availableTemplates: templates })
+    set({ allTemplates: templates })
   },
 
   removeFrameImage: (frameId) => {
-    const { availableTemplates } = get()
-    const templates = [...availableTemplates]
+    const { allTemplates } = get()
+    const templates = [...allTemplates]
 
     for (const template of templates) {
       const foundFrame = template.frames.find((f) => f.id === frameId)
@@ -129,6 +131,6 @@ export const useTemplateStore = create<TTemplateStore>((set, get) => ({
       }
     }
 
-    set({ availableTemplates: templates })
+    set({ allTemplates: templates })
   },
 }))

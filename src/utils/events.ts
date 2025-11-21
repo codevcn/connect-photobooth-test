@@ -1,5 +1,17 @@
-import { EInternalEvents } from './enums'
-import { TElementType, TframePerfectRectType } from './types/global'
+import { TElementType, TframePerfectRectType, TSizeInfo } from './types/global'
+
+export enum EInternalEvents {
+  CLICK_ON_PAGE = 'CLICK_ON_PAGE',
+  SUBMIT_PRINTED_IMAGE_ELE_PROPS = 'SUBMIT_PRINTED_IMAGE_ELE_PROPS',
+  SUBMIT_STICKER_ELE_PROPS = 'SUBMIT_STICKER_ELE_PROPS',
+  SUBMIT_TEXT_ELE_PROPS = 'SUBMIT_TEXT_ELE_PROPS',
+  // SUBMIT_PRODUCT_IMAGE_ELE_PROPS = 'SUBMIT_PRODUCT_IMAGE_ELE_PROPS',
+  PICK_ELEMENT = 'PICK_ELEMENT',
+  SYNC_ELEMENT_PROPS = 'SYNC_ELEMENT_PROPS',
+  OPEN_CROP_ELEMENT_MODAL = 'OPEN_CROP_ELEMENT_MODAL',
+  REPLACE_ELEMENT_IMAGE_URL = 'REPLACE_ELEMENT_IMAGE_URL',
+  HIDE_SHOW_PRINTED_IMAGES_MODAL = 'HIDE_SHOW_PRINTED_IMAGES_MODAL',
+}
 
 interface IInternalEvents {
   [EInternalEvents.CLICK_ON_PAGE]: (target: HTMLElement | null) => void
@@ -37,7 +49,7 @@ interface IInternalEvents {
   [EInternalEvents.HIDE_SHOW_PRINTED_IMAGES_MODAL]: (
     show: boolean,
     frameIdToAddPrintedImage: string,
-    framePerfectRectType: TframePerfectRectType
+    frameSize: TSizeInfo
   ) => void
 }
 

@@ -322,6 +322,7 @@ export type TPlacementState = {
   zoom: number
   objectFit: 'contain' | 'cover'
   squareRotation: number
+  direction: 'top' | 'bottom' | 'left' | 'right' | 'center'
 }
 
 export type TFontName = string
@@ -363,4 +364,8 @@ export type TBoxBoundingInfo = {
   y: number
   width: number
   height: number
+}
+
+export type TProductWithTemplate = TBaseProduct & {
+  template: TPrintTemplate
 }

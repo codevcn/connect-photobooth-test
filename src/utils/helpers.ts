@@ -1,7 +1,5 @@
 import { getInitialContants } from './contants'
 import {
-  TBaseRectType,
-  TImageSizeInfo,
   TImgMimeType,
   TPrintAreaShapeType,
   TSizeInfo,
@@ -242,7 +240,7 @@ export const diffPrintedImageFromRectType = (
   return Math.abs(1 - imgRatio)
 }
 
-export const matchPrintedImageToRectType = (
+export const matchPrintedImageToShapeSize = (
   frameSize: TSizeInfo,
   printedImageSize: TSizeInfo
 ): boolean => {
@@ -350,6 +348,14 @@ export const styleToFramesDisplayerByTemplateType = (
         height: '100%',
         width: '100%',
       }
+    case '4-vertical':
+      return {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gridTemplateRows: '1fr',
+        height: '100%',
+        width: '100%',
+      }
 
     default:
       return {
@@ -386,4 +392,90 @@ export const styleFrameByTemplateType = (
     default:
       return {}
   }
+}
+
+export const stylePlacedImageByTemplateType = (
+  templateType: TTemplateType,
+  frameIndex: number,
+  defaultStyle: React.CSSProperties = {}
+): React.CSSProperties => {
+  if (templateType === '2-horizon') {
+    if (frameIndex === 1) {
+      return {
+        objectPosition: 'bottom',
+      }
+    } else {
+      return {
+        objectPosition: 'top',
+      }
+    }
+  } else if (templateType === '2-vertical') {
+    if (frameIndex === 1) {
+      return { objectPosition: 'right' }
+    } else {
+      return { objectPosition: 'left' }
+    }
+  } else if (templateType === '3-left') {
+    if (frameIndex === 1) {
+      return { objectPosition: 'right bottom' }
+    } else if (frameIndex === 2) {
+      return { objectPosition: 'left center' }
+    } else {
+      return { objectPosition: 'right top' }
+    }
+  } else if (templateType === '3-right') {
+    if (frameIndex === 1) {
+      return { objectPosition: 'right center' }
+    } else if (frameIndex === 2) {
+      return { objectPosition: 'left bottom' }
+    } else {
+      return { objectPosition: 'left top' }
+    }
+  } else if (templateType === '3-top') {
+    if (frameIndex === 1) {
+      return { objectPosition: 'right bottom' }
+    } else if (frameIndex === 2) {
+      return { objectPosition: 'left bottom' }
+    } else {
+      return { objectPosition: 'top center' }
+    }
+  } else if (templateType === '3-bottom') {
+    if (frameIndex === 1) {
+      return { objectPosition: 'bottom center' }
+    } else if (frameIndex === 2) {
+      return { objectPosition: 'right top' }
+    } else {
+      return { objectPosition: 'left top' }
+    }
+  } else if (templateType === '4-horizon') {
+    return { objectPosition: 'center' }
+  } else if (templateType === '4-vertical') {
+    return { objectPosition: 'center' }
+  } else if (templateType === '4-square') {
+    if (frameIndex === 1) {
+      return { objectPosition: 'right bottom' }
+    } else if (frameIndex === 2) {
+      return { objectPosition: 'left bottom' }
+    } else if (frameIndex === 3) {
+      return { objectPosition: 'right top' }
+    } else {
+      return { objectPosition: 'left top' }
+    }
+  }
+  return defaultStyle
+}
+
+export function friendlyCurrency(code: string): string {
+  const map: Record<string, string> = {
+    VND: 'đ',
+    USD: 'dollars',
+    EUR: 'euros',
+    JPY: 'yen',
+    GBP: 'pounds',
+    KRW: 'won',
+    CNY: 'yuan',
+  }
+
+  const upper = code.toUpperCase()
+  return map[upper] ?? code // fallback: nếu không có thì trả về nguyên code
 }

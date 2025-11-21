@@ -1,6 +1,7 @@
-import { TPrintTemplate } from '@/utils/types/global'
+import { TPrintTemplate, TSizeInfo } from '@/utils/types/global'
 import { FramesDisplayer } from '../customize/template/FrameDisplayer'
 import { cn } from '@/configs/ui/tailwind-utils'
+import { useTemplateStore } from '@/stores/ui/template.store'
 
 type TPrintAreaOverlayPreviewProps = {
   printAreaRef: React.RefObject<HTMLDivElement | null>
@@ -39,7 +40,6 @@ export const PrintAreaOverlayPreview = ({
 type TPrintAreaOverlayProps = {
   printAreaRef: React.RefObject<HTMLDivElement | null>
   isOutOfBounds: boolean
-  printTemplate: TPrintTemplate
 } & Partial<{
   printAreaOptions: {
     className: string
@@ -54,7 +54,7 @@ type TPrintAreaOverlayProps = {
   onClickFrame: (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     frameId: string,
-    templateRectType: string
+    frameSize: TSizeInfo
   ) => void
   frameDisplayerOptions: {
     classNames: {
@@ -66,11 +66,12 @@ type TPrintAreaOverlayProps = {
 export const PrintAreaOverlay = ({
   printAreaRef,
   isOutOfBounds,
-  printTemplate,
   printAreaOptions,
   displayWarningOverlay,
   onClickFrame,
 }: TPrintAreaOverlayProps) => {
+  const pickedTemplate = useTemplateStore((s) => s.currentTemplate)
+
   return (
     <div
       ref={printAreaRef}
@@ -91,7 +92,7 @@ export const PrintAreaOverlay = ({
           : 'transparent',
       }}
     >
-      <FramesDisplayer template={printTemplate} onClickFrame={onClickFrame} />
+      {pickedTemplate && <FramesDisplayer template={pickedTemplate} onClickFrame={onClickFrame} />}
     </div>
   )
 }

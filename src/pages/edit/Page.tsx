@@ -1,11 +1,9 @@
-import { TBaseProduct, TClientProductVariant, TPrintedImage } from '@/utils/types/global'
+import { TBaseProduct, TPrintedImage } from '@/utils/types/global'
 import { ProductGallery } from './ProductGallery'
 import { ProductDetails } from './product/ProductDetails'
-import { Customize } from './customize/Customize'
+import { Customization } from './customize/Customization'
 import { LivePreview } from './live-preview/Live-Preview'
-import { useEffect, useState } from 'react'
-import { hardCodedPrintTemplates } from '@/configs/data/print-template'
-import { useTemplateStore } from '@/stores/ui/template.store'
+import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 
 type TEditPageProps = {
   products: TBaseProduct[]
@@ -13,27 +11,10 @@ type TEditPageProps = {
 }
 
 export default function EditPage({ products, printedImages }: TEditPageProps) {
-  const { initializeTemplates, addImageToFrame } = useTemplateStore()
-  const [pickedProduct, setPickedProduct] = useState<TBaseProduct>(products[8])
-  const [pickedVariant, setPickedVariant] = useState<TClientProductVariant>(
-    pickedProduct.variants[0]
-  )
-  const [pickedSurface, setPickedSurface] = useState<TBaseProduct['printAreaList']>(
-    pickedProduct.printAreaList
-  )
-
-  const handlePickProduct = (prod: TBaseProduct) => {
-    setPickedProduct(prod)
-    setPickedVariant(prod.variants[0])
-    setPickedSurface(prod.printAreaList)
-  }
-
-  useEffect(() => {
-    initializeTemplates(hardCodedPrintTemplates())
-    if (printedImages.length > 0) {
-      addImageToFrame(printedImages[0])
-    }
-  }, [])
+  const pickedProduct = useProductUIDataStore((s) => s.pickedProduct)
+  const pickedSurface = useProductUIDataStore((s) => s.pickedSurface)
+  const pickedVariant = useProductUIDataStore((s) => s.pickedVariant)
+  const handlePickProduct = useProductUIDataStore((s) => s.handlePickProduct)
 
   return (
     <div className="font-sans grid grid-cols-[1fr_6fr] h-screen gap-4">
@@ -43,14 +24,24 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
         onPickProduct={handlePickProduct}
       />
       <div className="NAME-main-parent grid grid-cols-[3fr_2fr] gap-4 h-screen">
-        <LivePreview
-          pickedProduct={pickedProduct}
-          editedVariantId={pickedVariant.id}
-          editedPrintSurfaceId={pickedSurface[0].id}
-        />
+        {pickedProduct && pickedVariant && pickedSurface ? (
+          <LivePreview
+            pickedProduct={pickedProduct}
+            editedVariantId={pickedVariant.id}
+            editedPrintSurfaceId={pickedSurface.id}
+          />
+        ) : (
+          <div></div>
+        )}
         <div className="flex flex-col space-y-2 p-4 pl-2 min-h-full max-h-full overflow-y-auto gallery-scroll border border-gray-400/30">
-          <ProductDetails pickedProduct={pickedProduct} pickedVariant={pickedVariant} />
-          <Customize />
+          {pickedProduct && pickedVariant ? (
+            <>
+              <ProductDetails pickedProduct={pickedProduct} pickedVariant={pickedVariant} />
+              <Customization printedImages={printedImages} />
+            </>
+          ) : (
+            <div></div>
+          )}
         </div>
       </div>
     </div>

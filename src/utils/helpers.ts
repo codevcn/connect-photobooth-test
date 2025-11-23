@@ -1,5 +1,5 @@
 import { getInitialContants } from './contants'
-import { TImgMimeType, TPrintAreaShapeType, TSurfaceType } from './types/global'
+import { TImgMimeType, TPrintAreaShapeType, TSurfaceType, TTextFont } from './types/global'
 
 export const getNaturalSizeOfImage = (
   imgURL: string,
@@ -234,4 +234,150 @@ export function friendlyCurrency(code: string): string {
 
   const upper = code.toUpperCase()
   return map[upper] ?? code // fallback: nếu không có thì trả về nguyên code
+}
+
+export const generateIdForFont = (fontFamily: string, fontWeight: string): string => {
+  return `injected-font-${fontFamily.replace(/\s+/g, '-').toLowerCase()}-${fontWeight}`
+}
+
+export const injectFontToDocumentHead = (
+  idForInject: string,
+  fontFamily: TTextFont['fontFamily'],
+  fontWeight: TTextFont['fontWeight'] = '400',
+  fontUrl: TTextFont['loadFontURL'],
+  fontFormat: TTextFont['fontFormat'],
+  fontStyle: TTextFont['fontStyle'] = 'normal',
+  fontDisplay: TTextFont['fontDisplay'] = 'swap'
+) => {
+  if (document.getElementById(idForInject)) return // Đã inject rồi thì không inject nữa
+  const style = document.createElement('style')
+  style.id = idForInject
+  style.textContent = `
+    @font-face {
+      font-family: "${fontFamily}";
+      font-weight: ${fontWeight};
+      font-style: ${fontStyle};
+      src: url("${fontUrl}") format("${fontFormat}");
+      font-display: ${fontDisplay};
+    }
+  `
+  document.head.appendChild(style)
+}
+
+/**
+ * Chuyển đổi màu RGB sang Hexa
+ * @param r - Red (0-255)
+ * @param g - Green (0-255)
+ * @param b - Blue (0-255)
+ * @returns Mã màu hexa (ví dụ: "#FF5733")
+ */
+export function rgbToHex(r: number, g: number, b: number): string {
+  // Đảm bảo giá trị trong khoảng 0-255
+  r = Math.max(0, Math.min(255, Math.round(r)))
+  g = Math.max(0, Math.min(255, Math.round(g)))
+  b = Math.max(0, Math.min(255, Math.round(b)))
+
+  const toHex = (n: number): string => {
+    const hex = n.toString(16)
+    return hex.length === 1 ? '0' + hex : hex
+  }
+
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase()
+}
+
+/**
+ * Chuyển đổi màu RGB sang Hexa
+ * @param rgb - Chuỗi RGB (ví dụ: "rgb(255, 87, 51)" hoặc "rgba(255, 87, 51, 0.5)")
+ * @returns Mã màu hexa (ví dụ: "#FF5733") hoặc null nếu không hợp lệ
+ */
+export function rgbStringToHex(rgb: string): string | null {
+  // Loại bỏ khoảng trắng thừa
+  rgb = rgb.trim()
+
+  // Parse chuỗi rgb/rgba
+  const rgbPattern = /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*[\d.]+\s*)?\)$/
+  const match = rgb.match(rgbPattern)
+
+  if (!match) {
+    return null
+  }
+
+  let r = parseInt(match[1])
+  let g = parseInt(match[2])
+  let b = parseInt(match[3])
+
+  // Kiểm tra và đảm bảo giá trị trong khoảng 0-255
+  if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
+    return null
+  }
+
+  const toHex = (n: number): string => {
+    const hex = n.toString(16)
+    return hex.length === 1 ? '0' + hex : hex
+  }
+
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase()
+}
+
+/**
+ * Chuyển đổi màu Hexa sang RGB
+ * @param hex - Mã màu hexa (ví dụ: "#FF5733" hoặc "FF5733")
+ * @returns Object chứa r, g, b hoặc null nếu không hợp lệ
+ */
+export function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  // Loại bỏ dấu # nếu có
+  hex = hex.replace(/^#/, '')
+
+  // Kiểm tra định dạng hợp lệ
+  if (!/^[0-9A-Fa-f]{6}$/.test(hex) && !/^[0-9A-Fa-f]{3}$/.test(hex)) {
+    return null
+  }
+
+  // Xử lý format 3 ký tự (ví dụ: "F53" -> "FF5533")
+  if (hex.length === 3) {
+    hex = hex
+      .split('')
+      .map((char) => char + char)
+      .join('')
+  }
+
+  const r = parseInt(hex.substring(0, 2), 16)
+  const g = parseInt(hex.substring(2, 4), 16)
+  const b = parseInt(hex.substring(4, 6), 16)
+
+  return { r, g, b }
+}
+
+/**
+ * Kiểm tra xem string có phải là mã màu hexa hay rgb
+ * @param color - Chuỗi màu cần kiểm tra
+ * @returns 'hex' | 'rgb' | 'unknown'
+ */
+export function detectColorFormat(color: string): 'hex' | 'rgb' | 'unknown' {
+  // Loại bỏ khoảng trắng thừa
+  color = color.trim()
+
+  // Kiểm tra hexa
+  const hexPattern = /^#?[0-9A-Fa-f]{3}$|^#?[0-9A-Fa-f]{6}$/
+  if (hexPattern.test(color)) {
+    return 'hex'
+  }
+
+  // Kiểm tra rgb/rgba
+  const rgbPattern = /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*[\d.]+\s*)?\)$/
+  const match = color.match(rgbPattern)
+
+  if (match) {
+    const [, r, g, b] = match
+    const rNum = parseInt(r)
+    const gNum = parseInt(g)
+    const bNum = parseInt(b)
+
+    // Kiểm tra giá trị trong khoảng 0-255
+    if (rNum >= 0 && rNum <= 255 && gNum >= 0 && gNum <= 255 && bNum >= 0 && bNum <= 255) {
+      return 'rgb'
+    }
+  }
+
+  return 'unknown'
 }

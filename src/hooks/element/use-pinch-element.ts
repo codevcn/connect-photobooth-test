@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
 
-interface PinchZoomOptions {
+type PinchZoomOptions = {
   minScale?: number
   maxScale?: number
   scaleSensitivity?: number
@@ -14,12 +14,12 @@ interface PinchZoomOptions {
   setCurrentPosition: React.Dispatch<React.SetStateAction<Position>>
 }
 
-interface Position {
+type Position = {
   x: number
   y: number
 }
 
-interface TouchData {
+type TouchData = {
   initialDistance: number
   initialScale: number
   initialAngle: number
@@ -28,8 +28,8 @@ interface TouchData {
   lastTouchPos: Position
 }
 
-interface UsePinchZoomReturn {
-  ref: React.MutableRefObject<HTMLDivElement | null>
+type UsePinchZoomReturn = {
+  ref: React.RefObject<HTMLDivElement | null>
   reset: () => void
 }
 

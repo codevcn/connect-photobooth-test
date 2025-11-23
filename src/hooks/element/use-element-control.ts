@@ -2,13 +2,10 @@ import { useRotateElement } from '@/hooks/element/use-rotate-element'
 import { usePinchElement } from '@/hooks/element/use-pinch-element'
 import { useZoomElement } from '@/hooks/element/use-zoom-element'
 import { useDragElement } from '@/hooks/element/use-drag-element'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getInitialContants } from '@/utils/contants'
 import { TElementVisualBaseState } from '@/utils/types/global'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
-
-const fixedMaxZoom: number = 2
-const fixedMinZoom: number = 0.3
 
 type TInitialParams = Partial<
   TElementVisualBaseState & {
@@ -19,20 +16,20 @@ type TInitialParams = Partial<
 
 type TElementControlReturn = {
   forPinch: {
-    ref: React.MutableRefObject<HTMLElement | null>
+    ref: React.RefObject<HTMLElement | null>
   }
   forRotate: {
-    ref: React.MutableRefObject<HTMLElement | null>
+    ref: React.RefObject<HTMLElement | null>
     isRotating: boolean
-    rotateButtonRef: React.MutableRefObject<HTMLButtonElement | null>
+    rotateButtonRef: React.RefObject<HTMLButtonElement | null>
   }
   forZoom: {
-    ref: React.MutableRefObject<HTMLElement | null>
+    ref: React.RefObject<HTMLElement | null>
     isZooming: boolean
-    zoomButtonRef: React.MutableRefObject<HTMLButtonElement | null>
+    zoomButtonRef: React.RefObject<HTMLButtonElement | null>
   }
   forDrag: {
-    ref: React.MutableRefObject<HTMLElement | null>
+    ref: React.RefObject<HTMLElement | null>
   }
   state: TElementVisualBaseState
   handleSetElementState: (
@@ -59,7 +56,7 @@ export const useElementControl = (
     scale: initialZoom = getInitialContants<number>('ELEMENT_ZOOM'),
     zindex: initialZindex = getInitialContants<number>('ELEMENT_ZINDEX'),
   } = initialParams || {}
-  const { elementLayers, updateElementLayerIndex } = useElementLayerStore()
+  const elementLayers = useElementLayerStore((s) => s.elementLayers)
   const [position, setPosition] = useState<TElementVisualBaseState['position']>({
     x: initialPosX !== undefined ? initialPosX : getInitialContants<number>('ELEMENT_X'),
     y: initialPosY !== undefined ? initialPosY : getInitialContants<number>('ELEMENT_Y'),
@@ -68,8 +65,8 @@ export const useElementControl = (
   const [angle, setAngle] = useState<TElementVisualBaseState['angle']>(initialAngle)
   const [zindex, setZindex] = useState<TElementVisualBaseState['zindex']>(initialZindex)
   const { ref: refForPinch } = usePinchElement({
-    maxScale: maxZoom || fixedMaxZoom,
-    minScale: minZoom || fixedMinZoom,
+    maxScale: maxZoom,
+    minScale: minZoom,
     currentScale: scale,
     setCurrentScale: setScale,
     currentRotation: angle,
@@ -90,8 +87,8 @@ export const useElementControl = (
     containerRef: refForZoom,
     isZooming,
   } = useZoomElement({
-    maxZoom: maxZoom || fixedMaxZoom,
-    minZoom: minZoom || fixedMinZoom,
+    maxZoom: maxZoom,
+    minZoom: minZoom,
     currentZoom: scale,
     setCurrentZoom: setScale,
   })
@@ -101,6 +98,37 @@ export const useElementControl = (
     setCurrentPosition: setPosition,
   })
 
+  const validateInputValueAndSet = (
+    value: string | number,
+    type: 'posX' | 'posY' | 'scale' | 'angle' | 'zindex'
+  ) => {
+    let parsedValue: number | string = value
+    switch (type) {
+      case 'posX':
+        setPosition((prev) => ({ ...prev, x: value as number }))
+        break
+      case 'posY':
+        setPosition((prev) => ({ ...prev, y: value as number }))
+        break
+      case 'scale':
+        if (minZoom) {
+          if ((value as number) < minZoom) {
+            parsedValue = minZoom
+          }
+        }
+        if (maxZoom) {
+          if ((value as number) > maxZoom) {
+            parsedValue = maxZoom
+          }
+        }
+        setScale(parsedValue as number)
+        break
+      case 'angle':
+        setAngle(parsedValue as number)
+        break
+    }
+  }
+
   const handleSetElementState = (
     posX?: number,
     posY?: number,
@@ -109,28 +137,27 @@ export const useElementControl = (
     zindex?: number
   ) => {
     if (posX || posX === 0) {
-      setPosition((prev) => ({ ...prev, x: posX }))
+      validateInputValueAndSet(posX, 'posX')
     }
     if (posY || posY === 0) {
-      setPosition((prev) => ({ ...prev, y: posY }))
+      validateInputValueAndSet(posY, 'posY')
     }
     if (scale) {
-      setScale(scale)
+      validateInputValueAndSet(scale, 'scale')
     }
     if (angle || angle === 0) {
-      setAngle(angle)
+      validateInputValueAndSet(angle, 'angle')
     }
     if (zindex) {
-      updateElementLayerIndex(elementId, zindex)
+      useElementLayerStore.getState().updateElementLayerIndex(elementId, zindex)
     }
   }
 
   const onElementLayersChange = () => {
-    // setZindex(
-    //   (elementLayers.findIndex((layer) => layer.elementId === elementId) + 1) *
-    //     getInitialContants<number>('ELEMENT_ZINDEX_STEP') +
-    //     1
-    // )
+    const elementLayerIndex = elementLayers.findIndex((layer) => layer.elementId === elementId)
+    if (elementLayerIndex < 0) return
+    // element layer zindex starts from 11
+    setZindex((elementLayerIndex + 1) * getInitialContants<number>('ELEMENT_ZINDEX_STEP') + 1)
   }
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 import { useEditedElementStore } from '@/stores/element/element.store'
 import { getInitialContants } from '@/utils/contants'
 import { useState, useEffect } from 'react'
+import { StickerElementMenu } from './Menu'
 
 type TStickerGroup = {
   name: string
@@ -238,13 +239,12 @@ const initStickerGroupItems = (): TStickerGroupsConfig[] => [
   { name: 'ZapyCongSo', displayName: 'Zapy Cồng Sô', count: 20 },
 ]
 
-const StickerPicker = () => {
+const PickerModalWrapper = () => {
   const [showStickerPicker, setShowStickerPicker] = useState(false)
 
   return (
     <>
-      <div className="mt-6 w-fit">
-        <h3 className="mb-1 font-bold text-gray-800">Thêm nhãn dán</h3>
+      <div className="w-fit">
         <button
           onClick={() => setShowStickerPicker(true)}
           className="flex flex-col items-center gap-2 cursor-pointer mobile-touch p-3 bg-white rounded-md active:bg-light-orange-cl touch-target transition"
@@ -275,4 +275,37 @@ const StickerPicker = () => {
   )
 }
 
-export default StickerPicker
+const StickerMenuWrapper = () => {
+  const selectedElement = useEditedElementStore((state) => state.selectedElement)
+  const { elementType, rootElement, elementId } = selectedElement || {}
+  const cancelSelectingElement = useEditedElementStore((state) => state.cancelSelectingElement)
+
+  const scrollToSelectedElement = () => {
+    if (elementType !== 'sticker') return
+    document.body
+      .querySelector('.NAME-menu-sticker-element')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+
+  useEffect(() => {
+    scrollToSelectedElement()
+  }, [elementId, elementType, rootElement])
+
+  return (
+    <>
+      {elementType === 'sticker' && rootElement && elementId && (
+        <StickerElementMenu elementId={elementId} onClose={cancelSelectingElement} />
+      )}
+    </>
+  )
+}
+
+export const StickerPicker = () => {
+  return (
+    <div className="mt-6 w-fit">
+      <h3 className="mb-1 font-bold text-gray-800">Thêm nhãn dán</h3>
+      <PickerModalWrapper />
+      <StickerMenuWrapper />
+    </div>
+  )
+}

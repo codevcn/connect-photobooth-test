@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useHtmlToCanvas } from '@/hooks/use-html-to-canvas'
 import { cleanPrintAreaOnExtractMockupImage } from './helpers'
 

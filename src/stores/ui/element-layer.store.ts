@@ -1,8 +1,16 @@
 import { getInitialContants } from '@/utils/contants'
-import { TElementLayerContextValue } from '@/utils/types/global'
+import { TElementLayerState } from '@/utils/types/global'
 import { create } from 'zustand'
 
-export const useElementLayerStore = create<TElementLayerContextValue>((set) => ({
+type TUseElementLayerStore = {
+  elementLayers: TElementLayerState[]
+  setElementLayers: (elementLayers: TElementLayerState[]) => void
+  addToElementLayers: (elementLayer: TElementLayerState) => void
+  removeFromElementLayers: (elementId: string[]) => void
+  updateElementLayerIndex: (elementId: string, newIndex: number) => void
+}
+
+export const useElementLayerStore = create<TUseElementLayerStore>((set) => ({
   elementLayers: [],
   setElementLayers: (elementLayers) => set({ elementLayers }),
   addToElementLayers: (newLayer) =>
@@ -10,9 +18,7 @@ export const useElementLayerStore = create<TElementLayerContextValue>((set) => (
       if (elementLayers.some((el) => el.elementId === newLayer.elementId)) {
         return { elementLayers }
       }
-      const updatedLayers = [...elementLayers, newLayer]
-      updatedLayers.sort((a, b) => a.index - b.index)
-      return { elementLayers: updatedLayers }
+      return { elementLayers: [...elementLayers, newLayer] }
     }),
   removeFromElementLayers: (elementIds) => {
     set((state) => ({

@@ -3,27 +3,30 @@ import { useEffect, useRef } from 'react'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { useTextElementControl } from '@/hooks/element/use-text-element-control'
 import { typeToObject } from '@/utils/helpers'
+import { useElementLayerStore } from '@/stores/ui/element-layer.store'
 
-const MAX_TEXT_FONT_SIZE: number = 1000
-const MIN_TEXT_FONT_SIZE: number = 5
+const MAX_TEXT_FONT_SIZE: number = 128
+const MIN_TEXT_FONT_SIZE: number = 8
 
-type TextElementProps = {
+type TTextElementProps = {
   element: TTextVisualState
-  canvasAreaRef: React.RefObject<HTMLDivElement | null>
+  elementContainerRef: React.RefObject<HTMLDivElement | null>
   mountType: 'new' | 'from-saved'
   isSelected: boolean
   selectElement: (elementId: string, element: HTMLElement, elementType: 'text') => void
   removeTextElement: (textElementId: string) => void
+  printAreaContainerRef: React.RefObject<HTMLDivElement | null>
 }
 
 export const TextElement = ({
   element,
-  canvasAreaRef,
+  elementContainerRef,
   mountType,
   isSelected,
   selectElement,
   removeTextElement,
-}: TextElementProps) => {
+  printAreaContainerRef,
+}: TTextElementProps) => {
   const { id } = element
   const {
     forPinch: { ref: refForPinch },
@@ -45,7 +48,6 @@ export const TextElement = ({
     fontWeight: element.fontWeight,
   })
   const rootRef = useRef<HTMLElement | null>(null)
-  // const { addToElementLayers } = useElementLayerContext()
 
   const pickElement = () => {
     const root = rootRef.current
@@ -80,19 +82,26 @@ export const TextElement = ({
     }
   }
 
-  const moveElementIntoCenter = (root: HTMLElement, editContainer: HTMLElement) => {
-    const editContainerRect = editContainer.getBoundingClientRect()
+  const moveElementIntoCenter = (
+    root: HTMLElement,
+    elementContainer: HTMLElement,
+    printAreaContainer: HTMLElement
+  ) => {
+    const elementContainerRect = elementContainer.getBoundingClientRect()
     const rootRect = root.getBoundingClientRect()
-    root.style.left = `${(editContainerRect.width - rootRect.width) / 2}px`
-    root.style.top = `${(editContainerRect.height - rootRect.height) / 2}px`
+    const printAreaContainerRect = printAreaContainer.getBoundingClientRect()
+    handleSetElementState(
+      elementContainerRect.left +
+        (elementContainerRect.width - rootRect.width) / 2 -
+        printAreaContainerRect.left,
+      elementContainerRect.top +
+        (elementContainerRect.height - rootRect.height) / 2 -
+        printAreaContainerRect.top
+    )
   }
 
-  const initElementDisplaySize = (root: HTMLElement, editContainer: HTMLElement) => {
-    handleSetElementState(
-      parseInt(getComputedStyle(root).left),
-      parseInt(getComputedStyle(root).top)
-    )
-    const editorContainerRect = editContainer.getBoundingClientRect()
+  const initElementDisplaySize = (root: HTMLElement, elementContainer: HTMLElement) => {
+    const editorContainerRect = elementContainer.getBoundingClientRect()
     const mainBox = root.querySelector<HTMLElement>('.NAME-element-main-box')
     if (!mainBox) return
     mainBox.style.cssText = `max-width: ${editorContainerRect.width - 16}px; max-height: ${
@@ -105,15 +114,23 @@ export const TextElement = ({
     requestAnimationFrame(() => {
       const root = rootRef.current
       if (!root) return
-      const editContainer = canvasAreaRef.current
-      if (!editContainer) return
-      moveElementIntoCenter(root, editContainer)
-      initElementDisplaySize(root, editContainer)
+      const elementContainer = elementContainerRef.current
+      if (!elementContainer) return
+      const printAreaContainer = printAreaContainerRef.current
+      if (!printAreaContainer) return
+      moveElementIntoCenter(root, elementContainer, printAreaContainer)
+      initElementDisplaySize(root, elementContainer)
     })
   }
 
   const handleAddElementLayer = () => {
-    // addToElementLayers({ elementId: id, index: zindex })
+    useElementLayerStore.getState().addToElementLayers({ elementId: id, index: zindex })
+  }
+
+  const removeElement = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation()
+    e.preventDefault()
+    removeTextElement(id)
   }
 
   useEffect(() => {
@@ -149,7 +166,7 @@ export const TextElement = ({
         zIndex: zindex,
       }}
       className={`${
-        isSelected ? 'shadow-[0_0_0_2px_#d91670]' : ''
+        isSelected ? 'shadow-[0_0_0_2px_#f54900]' : ''
       } NAME-root-element NAME-element-type-text absolute h-fit w-fit touch-none z-6`}
       onClick={pickElement}
       data-visual-state={JSON.stringify(
@@ -165,6 +182,9 @@ export const TextElement = ({
           fontWeight,
         })
       )}
+      onDragStart={(e) => e.preventDefault()}
+      onDrop={(e) => e.preventDefault()}
+      onDragOver={(e) => e.preventDefault()}
     >
       <div
         className={`NAME-element-main-box relative origin-center text-inherit max-w-[200px] max-h-[300px]`}
@@ -241,7 +261,7 @@ export const TextElement = ({
           } NAME-remove-box absolute -top-7 -right-7 z-999`}
         >
           <button
-            onClick={() => removeTextElement(id)}
+            onClick={removeElement}
             className="bg-red-600 text-white rounded-full p-1 active:scale-90 transition"
           >
             <svg

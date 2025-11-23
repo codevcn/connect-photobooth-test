@@ -13,20 +13,20 @@ type TInitialTextParams = Partial<
 
 type TTextElementControlReturn = {
   forPinch: {
-    ref: React.MutableRefObject<HTMLElement | null>
+    ref: React.RefObject<HTMLElement | null>
   }
   forRotate: {
-    ref: React.MutableRefObject<HTMLElement | null>
+    ref: React.RefObject<HTMLElement | null>
     isRotating: boolean
-    rotateButtonRef: React.MutableRefObject<HTMLButtonElement | null>
+    rotateButtonRef: React.RefObject<HTMLButtonElement | null>
   }
   forZoom: {
-    ref: React.MutableRefObject<HTMLElement | null>
+    ref: React.RefObject<HTMLElement | null>
     isZooming: boolean
-    zoomButtonRef: React.MutableRefObject<HTMLButtonElement | null>
+    zoomButtonRef: React.RefObject<HTMLButtonElement | null>
   }
   forDrag: {
-    ref: React.MutableRefObject<HTMLElement | null>
+    ref: React.RefObject<HTMLElement | null>
   }
   state: Omit<TTextVisualState, 'id'>
   handleSetElementState: (
@@ -82,15 +82,56 @@ export const useTextElementControl = (
   const [fontFamily, setFontFamily] = useState<TTextVisualState['fontFamily']>(initialFontFamily)
   const [fontWeight, setFontWeight] = useState<TTextVisualState['fontWeight']>(initialFontWeight)
 
-  const handleSetFontSize = (newFontSize: number) => {
-    let adjustedFontSize = newFontSize
-    if (minFontSize && minFontSize > newFontSize) {
+  const convertZoomValueToFontSize = (zoomValue: number): number => {
+    return roundZooming(zoomValue * getInitialContants<number>('ELEMENT_TEXT_FONT_SIZE'))
+  }
+
+  const convertFontSizeToZoomValue = (fontSize: number): number => {
+    return (
+      ((fontSize / getInitialContants<number>('ELEMENT_TEXT_FONT_SIZE')).toFixed(
+        2
+      ) as unknown as number) * 1
+    )
+  }
+
+  const handleSetFontSize = (fontSizeValue?: number, scaleValue?: number) => {
+    let adjustedFontSize
+    if (scaleValue) {
+      adjustedFontSize = convertZoomValueToFontSize(scaleValue)
+    } else if (fontSizeValue) {
+      adjustedFontSize = fontSizeValue
+    } else return
+    if (minFontSize && minFontSize > adjustedFontSize) {
       adjustedFontSize = minFontSize
     }
     if (maxFontSize && maxFontSize < adjustedFontSize) {
       adjustedFontSize = maxFontSize
     }
     setFontSize(adjustedFontSize)
+  }
+
+  const validateInputValueAndSet = (
+    value: string | number,
+    type: 'fontSize' | 'textColor' | 'content' | 'fontFamily' | 'fontWeight'
+  ) => {
+    let parsedValue: number | string = value
+    switch (type) {
+      case 'fontSize':
+        handleSetFontSize(parsedValue as number)
+        break
+      case 'fontWeight':
+        setFontWeight(parsedValue as number)
+        break
+      case 'textColor':
+        setTextColor(parsedValue as string)
+        break
+      case 'content':
+        setContent(parsedValue as string)
+        break
+      case 'fontFamily':
+        setFontFamily(parsedValue as string)
+        break
+    }
   }
 
   const handleSetElementState = (
@@ -105,28 +146,27 @@ export const useTextElementControl = (
     fontFamily?: string,
     fontWeight?: number
   ) => {
-    baseHandleSetElementState(posX, posY, scale, angle, zindex)
+    baseHandleSetElementState(posX, posY, undefined, angle, zindex)
     if (fontSize) {
-      handleSetFontSize(fontSize)
+      validateInputValueAndSet(fontSize, 'fontSize')
+      baseHandleSetElementState(undefined, undefined, convertFontSizeToZoomValue(fontSize))
     }
     if (textColor) {
-      setTextColor(textColor)
+      validateInputValueAndSet(textColor, 'textColor')
     }
     if (fontFamily) {
-      setFontFamily(fontFamily)
+      validateInputValueAndSet(fontFamily, 'fontFamily')
     }
     if (fontWeight) {
-      setFontWeight(fontWeight)
+      validateInputValueAndSet(fontWeight, 'fontWeight')
     }
     if (content) {
-      setContent(content)
+      validateInputValueAndSet(content, 'content')
     }
   }
 
   useEffect(() => {
-    handleSetFontSize(
-      roundZooming(baseState.scale * getInitialContants<number>('ELEMENT_TEXT_FONT_SIZE'))
-    )
+    handleSetFontSize(undefined, baseState.scale)
   }, [baseState.scale])
 
   return {

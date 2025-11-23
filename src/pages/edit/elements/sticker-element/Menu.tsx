@@ -6,12 +6,12 @@ import { useEffect, useRef } from 'react'
 
 type TPropertyType = 'scale' | 'angle' | 'posXY' | 'zindex-up' | 'zindex-down'
 
-interface Sticker {
+type TStickerElementMenu = {
   elementId: string
   onClose: () => void
 }
 
-export const StickerElementMenu = ({ elementId, onClose }: Sticker) => {
+export const StickerElementMenu = ({ elementId, onClose }: TStickerElementMenu) => {
   const menuRef = useRef<HTMLDivElement | null>(null)
   const { pickedElementRoot } = useGlobalContext()
 
@@ -153,35 +153,10 @@ export const StickerElementMenu = ({ elementId, onClose }: Sticker) => {
   }, [])
 
   return (
-    <>
-      <div className="absolute top-1/2 -translate-y-1/2 left-1 flex items-center z-30">
-        <button
-          onClick={onClose}
-          className="group flex flex-nowrap items-center justify-center shadow-md outline-2 outline-white font-bold bg-main-cl gap-1 text-white active:scale-90 transition rounded p-1"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="lucide lucide-x-icon lucide-x"
-          >
-            <path d="M18 6 6 18" />
-            <path d="m6 6 12 12" />
-          </svg>
-        </button>
-      </div>
-
-      <div
-        ref={menuRef}
-        className="NAME-menu-section STYLE-hide-scrollbar relative px-10 overflow-x-auto max-w-full flex flex-nowrap items-stretch justify-start md:justify-center gap-y-1 gap-x-1 py-1 rounded-md border border-gray-400/30 border-solid"
-      >
-        <div className="NAME-form-group NAME-form-scale flex items-center bg-main-cl rounded px-1 py-0.5 shadow w-full">
+    <div className="NAME-menu-section NAME-menu-sticker-element STYLE-hide-scrollbar w-full mt-2">
+      <h3 className="mt-3 mb-1 text-sm font-bold">Tùy chỉnh</h3>
+      <div ref={menuRef} className="grid grid-cols-3 rounded-md gap-2 text-white">
+        <div className="NAME-form-group NAME-form-scale flex items-center bg-main-cl rounded px-1 h-9 shadow">
           <div className="min-w-[22px]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -206,12 +181,12 @@ export const StickerElementMenu = ({ elementId, onClose }: Sticker) => {
               type="text"
               placeholder="Độ co giãn, VD: 55"
               onKeyDown={(e) => catchEnter(e, 'scale')}
-              className="border rounded px-1 py-0.5 text-base outline-none w-full"
+              className="text-black bg-white rounded px-1 py-0.5 text-base outline-none w-full"
             />
             <span className="text-white text-base font-bold">%</span>
           </div>
         </div>
-        <div className="NAME-form-group NAME-form-angle flex items-center bg-main-cl rounded px-1 py-0.5 shadow w-full">
+        <div className="NAME-form-group NAME-form-angle flex items-center bg-main-cl rounded px-1 py-0.5 shadow">
           <div className="min-w-[22px]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -236,12 +211,12 @@ export const StickerElementMenu = ({ elementId, onClose }: Sticker) => {
               type="text"
               placeholder="Độ xoay, VD: 22"
               onKeyDown={(e) => catchEnter(e, 'angle')}
-              className="border rounded px-1 py-0.5 text-base outline-none w-full"
+              className="text-black bg-white rounded px-1 py-0.5 text-base outline-none w-full"
             />
             <span className="text-white text-base font-bold">độ</span>
           </div>
         </div>
-        <div className="NAME-form-group NAME-form-zindex flex items-center justify-between bg-main-cl rounded px-1 py-0.5 shadow w-full">
+        <div className="NAME-form-group NAME-form-zindex flex items-center justify-between bg-main-cl rounded px-1 py-0.5 shadow">
           <div className="min-w-[22px]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -302,7 +277,7 @@ export const StickerElementMenu = ({ elementId, onClose }: Sticker) => {
             </button>
           </div>
         </div>
-        <div className="NAME-form-group NAME-form-position flex items-center bg-main-cl rounded px-1 py-0.5 shadow w-full">
+        <div className="NAME-form-group NAME-form-position flex items-center bg-main-cl rounded px-1 py-1 shadow">
           <div className="min-w-[22px]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -329,39 +304,38 @@ export const StickerElementMenu = ({ elementId, onClose }: Sticker) => {
               type="text"
               placeholder="Tọa độ X, VD: 100"
               onKeyDown={(e) => catchEnter(e, 'posXY')}
-              className="border rounded px-1 py-0.5 text-base outline-none w-full"
+              className="text-black bg-white rounded px-1 h-6.5 text-base outline-none w-full"
             />
             <input
               type="text"
               placeholder="Tọa độ Y, VD: 100"
               onKeyDown={(e) => catchEnter(e, 'posXY')}
-              className="border rounded px-1 py-0.5 text-base outline-none w-full"
+              className="text-black bg-white rounded px-1 h-6.5 text-base outline-none w-full"
             />
           </div>
         </div>
-      </div>
-
-      <div className="z-20 absolute top-1/2 -translate-y-1/2 right-1 flex items-center">
-        <button
-          onClick={handleClickCheck}
-          className="group flex flex-nowrap items-center justify-center shadow-md outline-2 outline-white font-bold bg-main-cl gap-1 text-white active:scale-90 transition rounded p-1"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="lucide lucide-check-icon lucide-check"
+        <div className="flex items-center h-full">
+          <button
+            onClick={handleClickCheck}
+            className="group w-full h-full px-1 flex flex-nowrap items-center justify-center shadow-md font-bold bg-main-cl gap-1 text-white mobile-touch rounded"
           >
-            <path d="M20 6 9 17l-5-5" />
-          </svg>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-check-icon lucide-check"
+            >
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+          </button>
+        </div>
       </div>
-    </>
+    </div>
   )
 }

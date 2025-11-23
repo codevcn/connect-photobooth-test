@@ -92,14 +92,6 @@ export type TGlobalContextValue = {
   addPreSentMockupImageLink: (imageUrl: string, mockupId: string) => void
 }
 
-export type TElementLayerContextValue = {
-  elementLayers: TElementLayerState[]
-  setElementLayers: (elementLayers: TElementLayerState[]) => void
-  addToElementLayers: (elementLayer: TElementLayerState) => void
-  removeFromElementLayers: (elementId: string[]) => void
-  updateElementLayerIndex: (elementId: string, newIndex: number) => void
-}
-
 export type TDetectCollisionWithViewportEdgesResult = {
   collidedEdge: 'left' | 'right' | 'top' | 'bottom' | null
 }
@@ -325,12 +317,13 @@ export type TPlacementState = {
   direction: 'top' | 'bottom' | 'left' | 'right' | 'center'
 }
 
-export type TFontName = string
-
-export type TFonts = {
-  [fontName: TFontName]: {
-    loadFontURL: string
-  }
+export type TTextFont = {
+  fontFamily: string
+  loadFontURL: string
+  fontWeight: string
+  fontDisplay: string
+  fontStyle: string
+  fontFormat: string
 }
 
 export type TLoadFontStatus = 'idle' | 'loading' | 'loaded' | 'error'

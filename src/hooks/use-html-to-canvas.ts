@@ -65,6 +65,7 @@ export const useHtmlToCanvas = (): TUseHtlmToCanvasReturn => {
   ) => {
     requestIdleCallback(async () => {
       try {
+        await document.fonts.ready
         const scale: number = upScale || 8
         const canvas = await domToCanvas(htmContainer, {
           scale: scale,

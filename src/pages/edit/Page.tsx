@@ -8,6 +8,7 @@ import { useEffect } from 'react'
 import { useEditedElementStore } from '@/stores/element/element.store'
 import { AdditionalInformation } from './product/AdditionalInformation'
 import { Actions } from './Actions'
+import { useFontLoader } from '@/hooks/use-font'
 
 const AddingToCartLoadingModal = () => {
   const isLoading = useProductUIDataStore((s) => s.isAddingToCart)
@@ -33,6 +34,7 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
   const pickedSurface = useProductUIDataStore((s) => s.pickedSurface)
   const pickedVariant = useProductUIDataStore((s) => s.pickedVariant)
   const cancelSelectingElement = useEditedElementStore((s) => s.cancelSelectingElement)
+  const { loadAllFonts } = useFontLoader()
 
   useEffect(() => {
     const listenClickOnPage = (e: PointerEvent) => {
@@ -55,6 +57,7 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
         }
       }
     }
+    loadAllFonts()
     document.body.addEventListener('click', listenClickOnPage)
     return () => {
       document.body.removeEventListener('click', listenClickOnPage)

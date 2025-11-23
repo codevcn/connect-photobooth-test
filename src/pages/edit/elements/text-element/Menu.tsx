@@ -1,59 +1,24 @@
-import { useGlobalContext } from '@/contexts/global-context'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
-import { TElementType, TFontName, TFonts, TTextVisualState } from '@/utils/types/global'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useFontLoader } from '@/hooks/use-font'
+import { TElementType, TTextVisualState } from '@/utils/types/global'
+import { useEffect, useRef, useState } from 'react'
 import { ColorPickerModal } from './ColorPicker'
 import { TextFontPicker } from './FontPicker'
 import { useEditedElementStore } from '@/stores/element/element.store'
+import { getInitialContants } from '@/utils/contants'
 
 type TPropertyType = 'font-size' | 'angle' | 'posXY' | 'zindex-up' | 'zindex-down'
 
-type PrintedImageMenuProps = {
+type TPrintedImageMenuProps = {
   elementId: string
   onClose: () => void
 }
 
-export const TextElementMenu = ({ elementId, onClose }: PrintedImageMenuProps) => {
+export const TextElementMenu = ({ elementId, onClose }: TPrintedImageMenuProps) => {
   const [showColorPicker, setShowColorPicker] = useState<boolean>(false)
   const [showTextFontPicker, setShowTextFontPicker] = useState<boolean>(false)
   const pickedElementRoot = useEditedElementStore((s) => s.selectedElement?.rootElement)
-  console.log('>>> pickedElementRoot :', pickedElementRoot)
   const menuRef = useRef<HTMLDivElement | null>(null)
   const [inputText, setInputText] = useState<string>()
-  console.log('>>> inputText :', inputText)
-  const [localFontNames, fonts] = useMemo<[TFontName[], TFonts]>(() => {
-    const fonts: TFonts = {
-      'Be Vietnam Pro': { loadFontURL: '/fonts/Be_Vietnam_Pro/BeVietnamPro-Regular.ttf' },
-      'Cormorant Garamond': {
-        loadFontURL: '/fonts/Cormorant_Garamond/static/CormorantGaramond-Regular.ttf',
-      },
-      'Dancing Script': { loadFontURL: '/fonts/Dancing_Script/static/DancingScript-Regular.ttf' },
-      Lora: { loadFontURL: '/fonts/Lora/static/Lora-Regular.ttf' },
-      Montserrat: { loadFontURL: '/fonts/Montserrat/static/Montserrat-Regular.ttf' },
-      Phudu: { loadFontURL: '/fonts/Phudu/static/Phudu-Regular.ttf' },
-      'Playfair Display': {
-        loadFontURL: '/fonts/Playfair_Display/static/PlayfairDisplay-Regular.ttf',
-      },
-      Roboto: { loadFontURL: '/fonts/Roboto/static/Roboto-Regular.ttf' },
-      'Saira Stencil One': {
-        loadFontURL: '/fonts/Saira_Stencil_One/SairaStencilOne-Regular.ttf',
-      },
-      'Amatic SC': { loadFontURL: '/fonts/Amatic_SC/AmaticSC-Regular.ttf' },
-      Bitcount: { loadFontURL: '/fonts/Bitcount/static/Bitcount-Regular.ttf' },
-      'Bungee Outline': { loadFontURL: '/fonts/Bungee_Outline/BungeeOutline-Regular.ttf' },
-      'Bungee Spice': { loadFontURL: '/fonts/Bungee_Spice/BungeeSpice-Regular.ttf' },
-      Creepster: { loadFontURL: '/fonts/Creepster/Creepster-Regular.ttf' },
-      'Emilys Candy': { loadFontURL: '/fonts/Emilys_Candy/EmilysCandy-Regular.ttf' },
-      Honk: { loadFontURL: '/fonts/Honk/Honk-Regular-VariableFont_MORF,SHLN.ttf' },
-      'Jersey 25 Charted': {
-        loadFontURL: '/fonts/Jersey_25_Charted/Jersey25Charted-Regular.ttf',
-      },
-      Nosifer: { loadFontURL: '/fonts/Nosifer/Nosifer-Regular.ttf' },
-    }
-    return [Object.keys(fonts), fonts]
-  }, [])
-  const { loadAllAvailableFonts, status } = useFontLoader(fonts)
 
   const validateInputsPositiveNumber = (
     inputs: (HTMLInputElement | HTMLTextAreaElement)[],
@@ -139,17 +104,6 @@ export const TextElementMenu = ({ elementId, onClose }: PrintedImageMenuProps) =
     onClose()
   }
 
-  const listenClickOnPage = (target: HTMLElement | null) => {
-    if (showColorPicker && target) {
-      if (!target.closest('.NAME-color-picker-modal')) {
-        setShowColorPicker(false)
-      }
-      if (!target.closest('.NAME-text-font-picker')) {
-        setShowTextFontPicker(false)
-      }
-    }
-  }
-
   const handleAdjustColorOnElement = (color: string) => {
     if (color) {
       handleChangeProperties(undefined, undefined, undefined, undefined, undefined, color)
@@ -160,9 +114,7 @@ export const TextElementMenu = ({ elementId, onClose }: PrintedImageMenuProps) =
     const textElement = pickedElementRoot?.querySelector<HTMLElement>(
       '.NAME-displayed-text-content'
     )
-    console.log('>>> 111 vcn:')
     if (textElement) {
-      console.log('>>> 222 vcn:')
       setInputText(textElement.textContent)
     }
   }
@@ -236,18 +188,35 @@ export const TextElementMenu = ({ elementId, onClose }: PrintedImageMenuProps) =
     }
   }
 
+  const onClickButton = (type: TPropertyType) => {
+    if (type === 'zindex-down') {
+      handleChangeProperties(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        -getInitialContants<number>('ELEMENT_ZINDEX_STEP')
+      )
+    } else if (type === 'zindex-up') {
+      handleChangeProperties(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        getInitialContants<number>('ELEMENT_ZINDEX_STEP')
+      )
+    }
+  }
+
   useEffect(() => {
     updateContentInputOnInputTextChange()
   }, [inputText])
 
   useEffect(() => {
-    eventEmitter.on(EInternalEvents.CLICK_ON_PAGE, listenClickOnPage)
     eventEmitter.on(EInternalEvents.SYNC_ELEMENT_PROPS, listenElementProps)
     initInputText()
-    loadAllAvailableFonts()
     listenElementProps(elementId, 'text')
     return () => {
-      eventEmitter.off(EInternalEvents.CLICK_ON_PAGE, listenClickOnPage)
       eventEmitter.off(EInternalEvents.SYNC_ELEMENT_PROPS, listenElementProps)
     }
   }, [elementId])
@@ -381,6 +350,67 @@ export const TextElementMenu = ({ elementId, onClose }: PrintedImageMenuProps) =
             />
           </div>
         </div>
+        <div className="NAME-form-group NAME-form-zindex flex items-center justify-between bg-main-cl rounded px-1 py-0.5 shadow">
+          <div className="min-w-[22px]">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-layers2-icon lucide-layers-2"
+            >
+              <path d="M13 13.74a2 2 0 0 1-2 0L2.5 8.87a1 1 0 0 1 0-1.74L11 2.26a2 2 0 0 1 2 0l8.5 4.87a1 1 0 0 1 0 1.74z" />
+              <path d="m20 14.285 1.5.845a1 1 0 0 1 0 1.74L13 21.74a2 2 0 0 1-2 0l-8.5-4.87a1 1 0 0 1 0-1.74l1.5-.845" />
+            </svg>
+          </div>
+          <div className="flex gap-1 grow flex-wrap">
+            <button
+              onClick={() => onClickButton('zindex-up')}
+              className="bg-white border-2 grow text-main-cl border-main-cl rounded px-1.5 py-0.5 flex gap-0.5 items-center justify-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-arrow-up-icon lucide-arrow-up"
+              >
+                <path d="m5 12 7-7 7 7" />
+                <path d="M12 19V5" />
+              </svg>
+            </button>
+            <button
+              onClick={() => onClickButton('zindex-down')}
+              className="bg-white border-2 grow text-main-cl border-main-cl rounded px-1.5 py-0.5 flex gap-0.5 items-center justify-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-arrow-down-icon lucide-arrow-down"
+              >
+                <path d="M12 5v14" />
+                <path d="m19 12-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+        </div>
         <div className="NAME-form-group NAME-form-color flex items-stretch justify-center gap-1 rounded">
           <div
             onClick={() => setShowColorPicker((pre) => !pre)}
@@ -407,12 +437,13 @@ export const TextElementMenu = ({ elementId, onClose }: PrintedImageMenuProps) =
               </svg>
             </div>
           </div>
-          <ColorPickerModal
-            show={showColorPicker}
-            onHideShow={setShowColorPicker}
-            onColorChange={handleAdjustColorOnElement}
-            inputText={inputText || ''}
-          />
+          {showColorPicker && (
+            <ColorPickerModal
+              onHideShow={setShowColorPicker}
+              onColorChange={handleAdjustColorOnElement}
+              inputText={inputText || ''}
+            />
+          )}
         </div>
         <div className="NAME-form-group NAME-form-font flex items-stretch justify-center gap-1 relative rounded">
           <div
@@ -438,19 +469,14 @@ export const TextElementMenu = ({ elementId, onClose }: PrintedImageMenuProps) =
               </div>
             </div>
           </div>
-          <TextFontPicker
-            show={showTextFontPicker}
-            onHideShow={setShowTextFontPicker}
-            onSelectFont={handleSelectFont}
-            loadedStatus={status}
-            localFontNames={localFontNames}
-            inputText={inputText || ''}
-          />
+          {showTextFontPicker && (
+            <TextFontPicker onHideShow={setShowTextFontPicker} onSelectFont={handleSelectFont} />
+          )}
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center h-full">
           <button
             onClick={handleClickCheck}
-            className="group w-full h-8 flex flex-nowrap items-center justify-center shadow-md font-bold bg-main-cl gap-1 text-white mobile-touch rounded p-1"
+            className="group w-full h-full flex flex-nowrap items-center justify-center shadow-md font-bold bg-main-cl gap-1 text-white mobile-touch rounded p-1"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

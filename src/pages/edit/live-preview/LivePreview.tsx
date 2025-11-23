@@ -124,7 +124,10 @@ export const LivePreview = ({
           isOutOfBounds={isOutOfBounds}
           displayWarningOverlay
         />
-        <EditedElementsArea printAreaContainerRef={printAreaContainerRef} />
+        <EditedElementsArea
+          allowedPrintAreaRef={printAreaRef}
+          printAreaContainerRef={printAreaContainerRef}
+        />
       </div>
     </div>
   )

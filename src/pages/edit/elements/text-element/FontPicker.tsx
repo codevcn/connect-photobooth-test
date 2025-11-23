@@ -1,28 +1,25 @@
-import { TFontName, TLoadFontStatus } from '@/utils/types/global'
-import { useMemo, useState } from 'react'
+import { useDebouncedCallback } from '@/hooks/use-debounce'
+import { useFontLoader } from '@/hooks/use-font'
+import { useEditedElementStore } from '@/stores/element/element.store'
+import { detectColorFormat, rgbStringToHex } from '@/utils/helpers'
+import { TTextVisualState } from '@/utils/types/global'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { toast } from 'react-toastify'
 
 type TextFontPickerProps = {
-  show: boolean
   onHideShow: (show: boolean) => void
   onSelectFont: (fontFamily: string) => void
-  localFontNames?: TFontName[]
-  loadedStatus: TLoadFontStatus
-  inputText: string
 }
 
-export const TextFontPicker = ({
-  show,
-  onHideShow,
-  onSelectFont,
-  loadedStatus,
-  localFontNames,
-  inputText,
-}: TextFontPickerProps) => {
+export const TextFontPicker = ({ onHideShow, onSelectFont }: TextFontPickerProps) => {
+  const { allLoadedFonts, fontLoadStatus } = useFontLoader()
   const [searchKeyword, setSearchKeyword] = useState<string>('')
+  const [currentTextFont, setCurrentTextFont] = useState<string>('')
+  const pickerContainerRef = useRef<HTMLDivElement>(null)
 
-  const onSearchFont = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onSearchFont = useDebouncedCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchKeyword(e.target.value)
-  }
+  }, 200)
 
   const handleSelectFont = (fontFamily: string) => {
     onSelectFont(fontFamily)
@@ -31,17 +28,59 @@ export const TextFontPicker = ({
 
   const filteredFonts = useMemo(
     () =>
-      localFontNames?.filter((font) => font.toLowerCase().includes(searchKeyword.toLowerCase())) ||
-      [],
-    [localFontNames, searchKeyword]
+      allLoadedFonts?.filter((font) =>
+        font.fontFamily.toLowerCase().includes(searchKeyword.toLowerCase())
+      ) || [],
+    [allLoadedFonts, searchKeyword]
   )
 
-  const isLoading = loadedStatus === 'loading'
+  const scrollToCurrentFont = () => {
+    if (!currentTextFont) return
+    pickerContainerRef.current
+      ?.querySelector<HTMLElement>('.NAME-text-font[data-is-picked="true"]')
+      ?.scrollIntoView({ block: 'center', behavior: 'instant' })
+  }
 
-  if (!show) return null
+  const initTextFontOnShow = () => {
+    requestAnimationFrame(() => {
+      const selectedElement = useEditedElementStore.getState().selectedElement
+      if (!selectedElement) return
+      const dataVisualState = selectedElement.rootElement.getAttribute('data-visual-state')
+      if (!dataVisualState) return
+      let textFont = (JSON.parse(dataVisualState) as TTextVisualState).fontFamily
+      if (textFont && detectColorFormat(textFont) === 'rgb') {
+        textFont = rgbStringToHex(textFont) || ''
+        if (!textFont) {
+          toast.error('Mã màu không hợp lệ. Vui lòng thử lại.')
+          return
+        }
+      }
+      setCurrentTextFont(textFont)
+      scrollToCurrentFont()
+    })
+  }
+
+  useEffect(() => {
+    if (!searchKeyword) {
+      scrollToCurrentFont()
+    }
+  }, [searchKeyword])
+
+  useEffect(() => {
+    scrollToCurrentFont()
+  }, [currentTextFont])
+
+  useEffect(() => {
+    initTextFontOnShow()
+  }, [])
+
+  const isLoading = fontLoadStatus === 'loading'
 
   return (
-    <div className="NAME-text-font-picker fixed inset-0 flex items-center justify-center z-50 animate-pop-in">
+    <div
+      ref={pickerContainerRef}
+      className="NAME-text-font-picker fixed inset-0 flex items-center justify-center z-50 animate-pop-in"
+    >
       <div onClick={() => onHideShow(false)} className="bg-black/60 absolute inset-0 z-10"></div>
       <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full mx-3 h-[95vh] flex flex-col relative z-20 overflow-hidden">
         {/* Header với gradient */}
@@ -90,20 +129,12 @@ export const TextFontPicker = ({
           </button>
         </div>
 
-        {/* Preview */}
-        <div className="px-4 h-14 flex items-center justify-center w-full relative">
-          <h3 className="top-0 left-0 absolute px-2 py-1 rounded-br-lg bg-gray-200 font-medium text-gray-800 text-xs">
-            Xem trước
-          </h3>
-          <p className="text-lg font-medium text-black">{inputText}</p>
-        </div>
-
         {/* Title bar */}
         <div className="bg-superlight-main-cl px-3 py-2 border-b border-light-main-cl">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-gray-800">Font chữ phổ biến</h3>
             <span className="text-xs font-medium text-main-cl bg-white px-2 py-0.5 rounded-full">
-              {filteredFonts.length} fonts
+              <span>{filteredFonts.length}</span> fonts
             </span>
           </div>
         </div>
@@ -139,11 +170,14 @@ export const TextFontPicker = ({
           {/* Danh sách font */}
           {!isLoading && (
             <div className="p-2 space-y-1.5">
-              {filteredFonts.map((fontFamily, index) => (
+              {filteredFonts.map(({ fontFamily }, index) => (
                 <div
                   key={fontFamily}
                   onClick={() => handleSelectFont(fontFamily)}
-                  className="group cursor-pointer bg-white hover:bg-linear-to-r hover:from-light-main-cl hover:to-superlight-main-cl border border-gray-200 hover:border-main-cl rounded-lg p-2.5 transition-all duration-200 hover:shadow-md active:scale-[0.98]"
+                  className={`${
+                    fontFamily === currentTextFont ? 'border-main-cl bg-light-main-cl' : ''
+                  } NAME-text-font group cursor-pointer hover:bg-light-main-cl border-2 border-gray-200 hover:border-main-cl rounded-lg p-2.5 transition-all duration-200 hover:shadow-md active:scale-[0.98]`}
+                  data-is-picked={fontFamily === currentTextFont}
                 >
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">

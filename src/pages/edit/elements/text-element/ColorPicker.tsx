@@ -1,16 +1,18 @@
 import { useDebouncedCallback } from '@/hooks/use-debounce'
+import { useEditedElementStore } from '@/stores/element/element.store'
+import { detectColorFormat, rgbStringToHex, rgbToHex } from '@/utils/helpers'
+import { TTextVisualState } from '@/utils/types/global'
 import { useEffect, useRef, useState } from 'react'
 import { HexColorPicker } from 'react-colorful'
+import { toast } from 'react-toastify'
 
 type ColorPickerModalProps = {
-  show: boolean
   onHideShow: (show: boolean) => void
   onColorChange: (color: string) => void
   inputText: string
 }
 
 export const ColorPickerModal = ({
-  show,
   onHideShow,
   onColorChange,
   inputText,
@@ -18,57 +20,49 @@ export const ColorPickerModal = ({
   const [currentColor, setCurrentColor] = useState<string>('#fe6e87')
   const inputRef = useRef<HTMLInputElement | null>(null)
 
-  // Hàm convert tên màu CSS sang hex
-  const convertColorToHex = (color: string): string => {
-    // Tạo element tạm để browser convert màu
-    const tempElement = document.createElement('div')
-    tempElement.style.color = color
-    document.body.appendChild(tempElement)
-
-    const computedColor = window.getComputedStyle(tempElement).color
-    document.body.removeChild(tempElement)
-
-    // Convert rgb/rgba sang hex
-    const match = computedColor.match(/\d+/g)
-    if (match && match.length >= 3) {
-      const r = parseInt(match[0]).toString(16).padStart(2, '0')
-      const g = parseInt(match[1]).toString(16).padStart(2, '0')
-      const b = parseInt(match[2]).toString(16).padStart(2, '0')
-      return `#${r}${g}${b}`
-    }
-
-    return color
-  }
-
   const handleColorPickerChange = (color: string) => {
     setCurrentColor(color)
     onColorChange(color)
   }
 
-  const validateColorValue = (value: string): boolean => {
-    const isValidHex = /^#[0-9A-F]{6}$/i.test(value)
-    const isValidShortHex = /^#[0-9A-F]{3}$/i.test(value)
-    const isNamedColor = /^[a-z]+$/i.test(value)
-    return isValidHex || isValidShortHex || isNamedColor
-  }
-
   const handleInputChange = useDebouncedCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.trim()
-    if (validateColorValue(value)) {
+    if (detectColorFormat(value) === 'rgb') {
       // Convert sang hex để HexColorPicker hiểu được
-      const hexColor = convertColorToHex(value)
+      const hexColor = rgbStringToHex(value)
+      if (!hexColor) {
+        toast.error('Mã màu không hợp lệ. Vui lòng thử lại.')
+        return
+      }
       setCurrentColor(hexColor)
       onColorChange(value) // Gửi giá trị gốc (có thể là tên màu)
+    } else {
+      setCurrentColor(value)
+      onColorChange(value)
     }
   }, 300)
 
-  useEffect(() => {
-    if (show) {
-      
-    }
-  }, [show])
+  const initColorOnShow = () => {
+    requestAnimationFrame(() => {
+      const selectedElement = useEditedElementStore.getState().selectedElement
+      if (!selectedElement) return
+      const dataVisualState = selectedElement.rootElement.getAttribute('data-visual-state')
+      if (!dataVisualState) return
+      let color = (JSON.parse(dataVisualState) as TTextVisualState).textColor
+      if (color && detectColorFormat(color) === 'rgb') {
+        color = rgbStringToHex(color) || ''
+        if (!color) {
+          toast.error('Mã màu không hợp lệ. Vui lòng thử lại.')
+          return
+        }
+      }
+      setCurrentColor(color)
+    })
+  }
 
-  if (!show) return null
+  useEffect(() => {
+    initColorOnShow()
+  }, [])
 
   return (
     <div className="NAME-color-picker-modal fixed inset-0 flex items-center justify-center z-50 animate-pop-in">

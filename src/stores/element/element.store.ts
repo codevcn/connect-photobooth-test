@@ -35,10 +35,12 @@ export const useEditedElementStore = create<TUseElementStore>((set, get) => ({
     set({ textElements: [...textElements, textElement] })
   },
   removeTextElement: (textElementId) => {
-    const { textElements } = get()
+    const { textElements, selectedElement } = get()
+    // Chỉ set selectedElement = null nếu text element đang xóa chính là element đang được chọn
+    const shouldClearSelection = selectedElement?.elementId === textElementId
     set({
       textElements: textElements.filter((textElement) => textElement.id !== textElementId),
-      selectedElement: null,
+      ...(shouldClearSelection && { selectedElement: null }),
     })
   },
   addStickerElement: (sticker) => {
@@ -46,10 +48,12 @@ export const useEditedElementStore = create<TUseElementStore>((set, get) => ({
     set({ stickerElements: [...stickerElements, sticker] })
   },
   removeStickerElement: (stickerId) => {
-    const { stickerElements } = get()
+    const { stickerElements, selectedElement } = get()
+    // Chỉ set selectedElement = null nếu sticker đang xóa chính là sticker đang được chọn
+    const shouldClearSelection = selectedElement?.elementId === stickerId
     set({
       stickerElements: stickerElements.filter((sticker) => sticker.id !== stickerId),
-      selectedElement: null,
+      ...(shouldClearSelection ? { selectedElement: null } : {}),
     })
   },
   selectElement: (elementId, rootElement, elementType, elementURL) => {

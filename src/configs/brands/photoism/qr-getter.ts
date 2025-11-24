@@ -10,7 +10,7 @@ type TGetImageDataProgressCallback = (
 
 let count = 0
 const getLinkByCount = () => {
-  return 'https://photobooth-public.s3.ap-southeast-1.amazonaws.com/ptb.png'
+  return 'https://photobooth-public.s3.ap-southeast-1.amazonaws.com/ptbs.jpg'
   // if (count === 1) {
   //   count++
   //   return 'https://photobooth-public.s3.ap-southeast-1.amazonaws.com/d63a64aa48c6c4989dd7.jpg'
@@ -272,12 +272,12 @@ class QRGetter {
     try {
       const result = await this.sendLinkToServer(imageURL)
       onProgress(90, null, null)
-      // const croppedImages = await this.cropImageFromBlob(imageBlob, result.image_part)
-      // onProgress(
-      //   90 + Math.round(10 / (imageIndex + 1 / totalImageToExtractAtServer)),
-      //   croppedImages.map((blob) => ({ blob, url: imageURL })),
-      //   null
-      // )
+      const croppedImages = await this.cropImageFromBlob(imageBlob, result.image_part)
+      onProgress(
+        90 + Math.round(10 / (imageIndex + 1 / totalImageToExtractAtServer)),
+        croppedImages.map((blob) => ({ blob, url: imageURL })),
+        null
+      )
       onProgress(100, null, null)
     } catch (error) {
       console.error('>>> Lỗi xử lý dữ liệu hình ảnh tại server:', error)

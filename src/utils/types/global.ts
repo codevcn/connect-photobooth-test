@@ -96,21 +96,6 @@ export type TDetectCollisionWithViewportEdgesResult = {
   collidedEdge: 'left' | 'right' | 'top' | 'bottom' | null
 }
 
-export type TProductCartInfo = {
-  productId: number
-  productImageId: number
-  color: {
-    title: string
-    value: string
-  }
-  size: TProductSize
-}
-
-export type TSavedMockupData = {
-  sessionId: string
-  productsInCart: TProductInCart[]
-}
-
 export type TPaymentType = 'momo' | 'zalo' | 'cod'
 
 export type TBrands = 'photoism'
@@ -187,25 +172,46 @@ export type TElementsVisualState = Partial<{
 export type TMockupDataId = string
 
 export type TMockupData = {
-  id: string
+  id: TMockupDataId
   elementsVisualState: TElementsVisualState
   imageData: TMockupImageData
+  preSentImageLink?: string
   surfaceInfo: {
     id: number
     type: TSurfaceType
   }
-  preSentImageLink?: string
+}
+
+export type TProductVariantInCart = {
+  variantId: TClientProductVariant['id']
+  size: TProductSize
+  color: {
+    title: string
+    value: string
+  }
+  quantity: number
+  mockupDataList: TMockupData[]
 }
 
 export type TProductInCart = TProductCartInfo & {
-  mockupDataList: TMockupData[]
+  productVariants: TProductVariantInCart[]
+}
+
+export type TProductCartInfo = {
+  productId: number
+  productName: string
+}
+
+export type TSavedMockupData = {
+  sessionId: string
+  productsInCart: TProductInCart[]
 }
 
 export type TSurfaceType = 'front' | 'back' | 'both'
 
 export type TPaymentProductItem = {
   productId: number
-  productImageId: number
+  productVariantId: number
   name: string
   size: string
   color: {

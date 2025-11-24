@@ -205,8 +205,11 @@ export const cleanPrintAreaOnExtractMockupImage = (
   printAreaContainer: HTMLDivElement
 ): TCleanPrintAreaResult => {
   const clonedPrintAreaContainer = printAreaContainer.cloneNode(true) as HTMLDivElement
-  clonedPrintAreaContainer.style.position = 'fixed'
+  clonedPrintAreaContainer.style.position = 'absolute'
   clonedPrintAreaContainer.style.zIndex = '-10'
+  clonedPrintAreaContainer.style.top = '0'
+  clonedPrintAreaContainer.style.left = '0'
+  clonedPrintAreaContainer.style.boxSizing = 'border-box'
   clonedPrintAreaContainer.style.width = `${printAreaContainer.getBoundingClientRect().width}px`
   clonedPrintAreaContainer.style.height = `${printAreaContainer.getBoundingClientRect().height}px`
   document.body.prepend(clonedPrintAreaContainer)

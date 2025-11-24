@@ -13,7 +13,7 @@ class OrderService {
     voucherCode?: string
   ): Promise<TOrderResponse> {
     // Sử dụng OrderAdapter để convert sang API format
-    const requestBody = OrderAdapter.toCreateOrderRequest(
+    const requestBody = OrderAdapter.toCreateOrderRequestPayload(
       cartItems,
       shippingInfo,
       import.meta.env.VITE_STORE_CODE,

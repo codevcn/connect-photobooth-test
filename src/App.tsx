@@ -23,7 +23,7 @@ import { usePrintedImageStore } from './stores/printed-image/printed-image.store
 //     onIdle: () => {
 //       // Quay về trang chủ khi hết thời gian
 //       navigate('/')
-//       LocalStorageHelper.clearAllMockupImages()
+//       LocalStorageHelper.clearAllMockupData()
 //     },
 //   })
 
@@ -39,7 +39,7 @@ function AppContent() {
 
   const handleReturnHome = () => {
     if (isHomePage()) {
-      LocalStorageHelper.clearAllMockupImages()
+      LocalStorageHelper.clearAllMockupData()
     }
   }
 
@@ -48,7 +48,7 @@ function AppContent() {
   }, [location.pathname])
 
   useEffect(() => {
-    LocalStorageHelper.clearAllMockupImages()
+    LocalStorageHelper.clearAllMockupData()
     return () => {
       clearAllPrintedImages()
     }

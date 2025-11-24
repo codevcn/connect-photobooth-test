@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { formatNumberWithCommas } from '@/utils/helpers'
-import { TPaymentProductItem, TClientProductVariant, TVoucher } from '@/utils/types/global'
+import {
+  TPaymentProductItem,
+  TClientProductVariant,
+  TVoucher,
+  TBaseProduct,
+  TMockupData,
+} from '@/utils/types/global'
 import { PaymentModal } from '@/pages/payment/PaymentModal'
 import { useNavigate } from 'react-router-dom'
 import { createPortal } from 'react-dom'
@@ -90,11 +96,11 @@ const PaymentPage = () => {
     )
   }
 
-  const findProductImageInProducts = (productImageId: number): TClientProductVariant | null => {
-    for (const product of products.flat()) {
-      for (const image of product.variants) {
-        if (image.id === productImageId) {
-          return image
+  const findProductVariantInProducts = (productVariantId: number): TClientProductVariant | null => {
+    for (const product of products) {
+      for (const variant of product.variants) {
+        if (variant.id === productVariantId) {
+          return variant
         }
       }
     }
@@ -103,32 +109,33 @@ const PaymentPage = () => {
 
   const loadCartItems = () => {
     const savedItems = LocalStorageHelper.getSavedMockupData()
-    if (savedItems) {
+    if (savedItems && sessionId && savedItems.sessionId === sessionId) {
       const productItems: TPaymentProductItem[] = []
       for (const product of savedItems.productsInCart) {
-        const productImage = findProductImageInProducts(product.productImageId)
-        if (!productImage) continue
-        // Duyệt qua danh sách mockup data
-        for (const mockupData of product.mockupDataList) {
-          const { imageData } = mockupData
-          productItems.push({
-            productId: product.productId,
-            productImageId: productImage.id,
-            name: productImage.name,
-            size: product.size,
-            color: product.color,
-            quantity: 1,
-            originalPrice: productImage.priceAmountOneSide,
-            discountedPrice: productImage.priceAfterDiscount,
-            mockupData: {
-              id: mockupData.id,
-              image: imageData.dataUrl,
-              heightPx: imageData.size.height,
-              widthPx: imageData.size.width,
-            },
-            elementsVisualState: mockupData.elementsVisualState,
-            surface: mockupData.surfaceInfo,
-          })
+        for (const variant of product.productVariants) {
+          const productVariant = findProductVariantInProducts(variant.variantId)
+          if (!productVariant) continue
+          for (const mockupData of variant.mockupDataList) {
+            const { imageData } = mockupData
+            productItems.push({
+              productId: product.productId,
+              productVariantId: productVariant.id,
+              name: product.productName,
+              size: productVariant.size,
+              color: productVariant.color,
+              quantity: variant.quantity,
+              originalPrice: productVariant.priceAmountOneSide,
+              discountedPrice: productVariant.priceAfterDiscount,
+              mockupData: {
+                id: mockupData.id,
+                image: imageData.dataUrl,
+                heightPx: imageData.size.height,
+                widthPx: imageData.size.width,
+              },
+              elementsVisualState: mockupData.elementsVisualState,
+              surface: mockupData.surfaceInfo,
+            })
+          }
         }
       }
       if (productItems.length > 0) {
@@ -137,19 +144,25 @@ const PaymentPage = () => {
     }
   }
 
-  const removeProductFromCart = (mockupId: string, productId: number) => {
+  const removeProductFromCart = (
+    productId: TBaseProduct['id'],
+    productVariantId: TClientProductVariant['id'],
+    mockupId: TMockupData['id']
+  ) => {
     if (!sessionId) return
     setCartItems((items) =>
       items.filter((item) => {
-        const matching = item.mockupData.id === mockupId
-        if (matching) {
-          LocalStorageHelper.removeSavedMockupImage(sessionId, productId, mockupId)
+        if (
+          item.productId === productId &&
+          item.productVariantId === productVariantId &&
+          item.mockupData.id === mockupId
+        ) {
           return false
-        } else {
-          return true
         }
+        return true
       })
     )
+    LocalStorageHelper.removeSavedMockupImage(sessionId, productId, productVariantId, mockupId)
   }
 
   const handleShowProductImageModal = (imgSrc: string) => {
@@ -180,7 +193,9 @@ const PaymentPage = () => {
   }, [showModal])
 
   useEffect(() => {
-    loadCartItems()
+    requestIdleCallback(() => {
+      loadCartItems()
+    })
   }, [])
 
   return (

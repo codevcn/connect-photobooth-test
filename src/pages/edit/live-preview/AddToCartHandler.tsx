@@ -37,6 +37,14 @@ export const AddToCartHandler = ({
     TBaseProduct | null,
     TPrintAreaInfo | null
   ] => {
+    if (checkIfAnyElementOutOfBounds()) {
+      return [
+        'Vui lòng đảm bảo tất cả phần tử nằm trong vùng in trước khi thêm vào giỏ hàng',
+        null,
+        null,
+        null,
+      ]
+    }
     const { pickedVariant, pickedProduct, pickedSurface } = useProductUIDataStore.getState()
     if (!pickedVariant?.color || !pickedVariant?.size) {
       return [
@@ -65,7 +73,6 @@ export const AddToCartHandler = ({
     if (!printAreaContainer || !allowedPrintArea) {
       return onError(new Error('Không tìm thấy khu vực in trên sản phẩm'))
     }
-    const setCartCount = useProductUIDataStore.getState().setCartCount
     const imgMimeType: TImgMimeType = 'image/png'
     saveHtmlAsImage(
       printAreaContainer,
@@ -73,12 +80,20 @@ export const AddToCartHandler = ({
       8,
       (imageData) => {
         const mockupId = LocalStorageHelper.saveMockupImageAtLocal(
-          elementsVisualState,
+          sessionId,
           {
             productId: pickedProduct.id,
-            productImageId: pickedVariant.id,
+            productName: pickedProduct.name,
+          },
+          {
+            variantId: pickedVariant.id,
             color: pickedVariant.color,
             size: pickedVariant.size,
+            quantity: 1,
+          },
+          {
+            id: pickedSurface.id,
+            type: pickedSurface.surfaceType,
           },
           {
             dataUrl: URL.createObjectURL(imageData),
@@ -87,11 +102,7 @@ export const AddToCartHandler = ({
               height: -1,
             },
           },
-          sessionId,
-          {
-            id: pickedSurface.id,
-            type: pickedSurface.surfaceType,
-          }
+          elementsVisualState
         )
         saveHtmlAsImageWithDesiredSize(
           allowedPrintArea,
@@ -106,10 +117,17 @@ export const AddToCartHandler = ({
                 `mockup-${Date.now()}.${convertMimeTypeToExtension(imgMimeType)}`
               )
               .then((res) => {
-                const result = LocalStorageHelper.updateMockupImagePreSent(mockupId, res.url, {
-                  width: canvasWithDesiredSize.width,
-                  height: canvasWithDesiredSize.height,
-                })
+                const result = LocalStorageHelper.updateMockupImagePreSent(
+                  sessionId,
+                  pickedProduct.id,
+                  pickedVariant.id,
+                  mockupId,
+                  res.url,
+                  {
+                    width: canvasWithDesiredSize.width,
+                    height: canvasWithDesiredSize.height,
+                  }
+                )
                 if (!result) {
                   toast.error('Không thể cập nhật kích thước mockup')
                 }
@@ -126,23 +144,18 @@ export const AddToCartHandler = ({
           }
         )
         toast.success('Đã thêm vào giỏ hàng')
-        setCartCount(LocalStorageHelper.countSavedMockupImages())
+        useProductUIDataStore.getState().setCartCount(LocalStorageHelper.countSavedMockupImages())
         onDoneAdd()
       },
       (error) => {
         console.error('Error saving mockup image:', error)
-        toast.warning(error.message || 'Không thể lưu mockup, không thể thêm sản phẩm vào giỏ hàng')
-        setCartCount(LocalStorageHelper.countSavedMockupImages())
-        onError(error)
+        useProductUIDataStore.getState().setCartCount(LocalStorageHelper.countSavedMockupImages())
+        onError(error || new Error('Không thể lưu mockup, không thể thêm sản phẩm vào giỏ hàng'))
       }
     )
   }
 
   const listenAddToCart = () => {
-    if (checkIfAnyElementOutOfBounds()) {
-      toast.warning('Vui lòng đảm bảo tất cả phần tử nằm trong vùng in trước khi thêm vào giỏ hàng')
-      return
-    }
     const setIsAddingToCart = useProductUIDataStore.getState().setIsAddingToCart
     setIsAddingToCart(true)
     useEditedElementStore.getState().cancelSelectingElement()
@@ -150,9 +163,10 @@ export const AddToCartHandler = ({
     handleAddToCart(
       collectMockupVisualStates(printAreaContainerRef.current || undefined),
       () => {
-        setIsAddingToCart(false)
+        useProductUIDataStore.getState().setIsAddingToCart(false)
       },
       (error) => {
+        toast.error(error.message || 'Đã có lỗi xảy ra khi thêm vào giỏ hàng')
         setIsAddingToCart(false)
       }
     )

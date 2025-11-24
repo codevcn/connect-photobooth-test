@@ -71,7 +71,7 @@ export const Customization = ({ printedImages }: TCustomizeProps) => {
           printedImagesCount={printedImages.length}
           classNames={{
             templatesList:
-              'smd:grid-cols-3 smd:overflow-x-hidden smd:grid-flow-row smd:grid-cols-4 grid-rows-1 grid-flow-col overflow-x-auto grid-flow grid gap-2 w-full gallery-scroll',
+              'smd:grid-cols-3 smd:overflow-x-hidden smd:grid-flow-row grid-rows-1 grid-flow-col overflow-x-auto grid-flow grid gap-2 w-full gallery-scroll',
             templateItem: 'aspect-square',
           }}
         />

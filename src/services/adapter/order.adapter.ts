@@ -1,9 +1,4 @@
-import {
-  TCreateOrderReq,
-  TOrderResponse,
-  TOrderStatusRes,
-  TOrderStatus,
-} from '@/utils/types/api'
+import { TCreateOrderReq, TOrderResponse, TOrderStatusRes, TOrderStatus } from '@/utils/types/api'
 import {
   TPaymentProductItem,
   TShippingInfo,
@@ -18,7 +13,7 @@ export class OrderAdapter {
   /**
    * Convert dữ liệu cart items + shipping info sang TCreateOrderReq (API format)
    */
-  static toCreateOrderRequest(
+  static toCreateOrderRequestPayload(
     cartItems: TPaymentProductItem[],
     shippingInfo: TShippingInfo,
     storeCode: string,
@@ -46,7 +41,7 @@ export class OrderAdapter {
         country: 'VN',
       },
       items: cartItems.map((item) => ({
-        variant_id: item.productImageId,
+        variant_id: item.productVariantId,
         quantity: item.quantity,
         surfaces: [
           {
@@ -71,7 +66,7 @@ export class OrderAdapter {
     countdownInSeconds: number = 300 // 5 phút mặc định
   ): TEndOfPaymentData {
     const paymentInstruction = orderResponse.payment_instructions[0]
-    
+
     // Xác định payment method
     const paymentMethod = this.detectPaymentMethod(paymentInstruction?.description || '')
 
@@ -119,7 +114,7 @@ export class OrderAdapter {
     title: string
   } {
     const lowerDesc = description.toLowerCase()
-    
+
     if (lowerDesc.includes('momo')) {
       return { method: 'momo', title: 'MoMo' }
     } else if (lowerDesc.includes('zalo')) {

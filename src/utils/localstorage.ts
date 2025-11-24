@@ -1,9 +1,14 @@
+import { generateUniqueId } from './helpers'
 import {
+  TBaseProduct,
+  TClientProductVariant,
   TElementsVisualState,
   TMockupData,
   TMockupDataId,
   TMockupImageData,
   TProductCartInfo,
+  TProductInCart,
+  TProductVariantInCart,
   TSavedMockupData,
 } from './types/global'
 
@@ -11,7 +16,7 @@ export class LocalStorageHelper {
   private static mockupImageName = 'mockup-data'
 
   private static generateMockupId(): string {
-    return crypto.randomUUID()
+    return generateUniqueId()
   }
 
   private static createMockupData(
@@ -29,11 +34,12 @@ export class LocalStorageHelper {
   }
 
   static saveMockupImageAtLocal(
-    elementsVisualState: TElementsVisualState,
-    productInfo: TProductCartInfo,
-    imageData: TMockupImageData,
     sessionId: string,
+    productInfo: TProductCartInfo,
+    productVariantInfo: Omit<TProductVariantInCart, 'mockupDataList'>,
     surfaceInfo: TMockupData['surfaceInfo'],
+    mockupImageData: TMockupImageData,
+    elementsVisualState: TElementsVisualState,
     mockupId?: TMockupDataId
   ): TMockupDataId {
     let existingData = this.getSavedMockupData()
@@ -41,47 +47,57 @@ export class LocalStorageHelper {
     // Tạo mockup data mới
     const newMockupData = this.createMockupData(
       elementsVisualState,
-      imageData,
+      mockupImageData,
       surfaceInfo,
       mockupId
     )
+
+    const createNewProductInCart = (): TProductInCart => {
+      return {
+        ...productInfo,
+        productVariants: [{ ...productVariantInfo, mockupDataList: [newMockupData] }],
+      }
+    }
+
     if (existingData && existingData.sessionId === sessionId) {
-      const productId = productInfo.productImageId
+      const newProductId = productInfo.productId
       let productFound = false
 
       // Tìm sản phẩm đã tồn tại
       for (const product of existingData.productsInCart) {
-        if (
-          product.productImageId === productId &&
-          product.color.value === productInfo.color.value &&
-          product.size === productInfo.size
-        ) {
-          // Thêm mockup data mới vào danh sách
-          product.mockupDataList.push(newMockupData)
+        if (product.productId === newProductId) {
+          // Tìm variant đã tồn tại
+          let variantFound = false
+          for (const variant of product.productVariants) {
+            if (variant.variantId === productVariantInfo.variantId) {
+              // Thêm mockup data mới vào variant
+              variant.mockupDataList.push(newMockupData)
+              variantFound = true
+              break
+            }
+          }
+          if (!variantFound) {
+            product.productVariants.push({
+              ...productVariantInfo,
+              mockupDataList: [newMockupData],
+            })
+          }
           productFound = true
-          break
         }
       }
-
       // Nếu chưa có sản phẩm này, tạo mới
       if (!productFound) {
-        existingData.productsInCart.push({
-          ...productInfo,
-          mockupDataList: [newMockupData],
-        })
+        existingData.productsInCart.push(createNewProductInCart())
       }
     } else {
-      // Tạo data mới hoàn toàn
+      this.clearAllMockupData()
+      // Tạo product mới hoàn toàn
       existingData = {
         sessionId,
-        productsInCart: [
-          {
-            ...productInfo,
-            mockupDataList: [newMockupData],
-          },
-        ],
+        productsInCart: [createNewProductInCart()],
       }
     }
+
     localStorage.setItem(LocalStorageHelper.mockupImageName, JSON.stringify(existingData))
     return newMockupData.id
   }
@@ -96,101 +112,113 @@ export class LocalStorageHelper {
     let count: number = 0
     if (data) {
       for (const product of data.productsInCart) {
-        count += product.mockupDataList.length
+        for (const variant of product.productVariants) {
+          count += variant.mockupDataList.length
+        }
       }
     }
     return count
   }
 
-  static removeSavedMockupImage(sessionId: string, productId: number, mockupDataId: string) {
+  static removeSavedMockupImage(
+    sessionId: string,
+    productId: TBaseProduct['id'],
+    productVariantId: TClientProductVariant['id'],
+    mockupDataId: string
+  ) {
     const data = this.getSavedMockupData()
-    if (data) {
-      for (let i = 0; i < data.productsInCart.length; i++) {
-        const product = data.productsInCart[i]
-        if (product.productImageId === productId) {
-          // Xóa mockup khỏi danh sách
-          product.mockupDataList = product.mockupDataList.filter(
-            (mockup) => mockup.id !== mockupDataId
-          )
-
-          // Nếu product không còn mockup nào, xóa luôn product khỏi cart
-          if (product.mockupDataList.length === 0) {
-            data.productsInCart.splice(i, 1)
-          }
-
-          break
+    if (!data || data.sessionId !== sessionId) return
+    for (const product of data.productsInCart) {
+      if (product.productId !== productId) continue
+      for (const variant of product.productVariants) {
+        if (variant.variantId !== productVariantId) continue
+        const mockupIndexFound = variant.mockupDataList.findIndex((m) => m.id === mockupDataId)
+        if (mockupIndexFound >= 0) {
+          variant.mockupDataList.splice(mockupIndexFound, 1)
+          localStorage.setItem(LocalStorageHelper.mockupImageName, JSON.stringify(data))
+          return
         }
       }
-      localStorage.setItem(LocalStorageHelper.mockupImageName, JSON.stringify(data))
     }
   }
 
   static updateMockupQuantity(
     sessionId: string,
-    productId: number,
-    mockupDataId: string,
+    productId: TBaseProduct['id'],
+    productVariantId: TClientProductVariant['id'],
+    mockupDataId: TMockupData['id'],
     amount: number
   ) {
     const data = this.getSavedMockupData()
     if (!data || data.sessionId !== sessionId) return
 
     for (const product of data.productsInCart) {
-      if (product.productImageId === productId) {
-        const mockupIndex = product.mockupDataList.findIndex((m) => m.id === mockupDataId)
-        if (mockupIndex === -1) return
-
-        const mockup = product.mockupDataList[mockupIndex]
-
-        if (amount > 0) {
-          // Thêm mockup: tạo bản sao với originalMockupId trỏ về mockup gốc
-          for (let i = 0; i < amount; i++) {
-            const duplicatedMockup: TMockupData = {
-              ...mockup,
-              id: this.generateMockupId(),
+      if (product.productId !== productId) continue
+      for (const variant of product.productVariants) {
+        if (variant.variantId !== productVariantId) continue
+        const mockupIndex = variant.mockupDataList.findIndex((m) => m.id === mockupDataId)
+        if (mockupIndex >= 0) {
+          const mockupFound = variant.mockupDataList[mockupIndex]
+          if (amount > 0) {
+            // Thêm bản sao mockup
+            for (let i = 0; i < amount; i++) {
+              variant.mockupDataList.push(
+                this.createMockupData(
+                  mockupFound.elementsVisualState,
+                  mockupFound.imageData,
+                  mockupFound.surfaceInfo,
+                  this.generateMockupId()
+                )
+              )
             }
-            product.mockupDataList.push(duplicatedMockup)
+          } else if (amount < 0) {
+            // Xóa bớt mockup
+            variant.mockupDataList.splice(
+              mockupIndex,
+              Math.min(-amount, variant.mockupDataList.length)
+            ) // Đảm bảo không xóa quá số lượng hiện có
           }
-        } else if (amount < 0) {
-          // Bớt mockup: chỉ bớt 1 bản gốc
-          product.mockupDataList.splice(mockupIndex, 1)
+          localStorage.setItem(LocalStorageHelper.mockupImageName, JSON.stringify(data))
+          return
         }
-
-        localStorage.setItem(LocalStorageHelper.mockupImageName, JSON.stringify(data))
-        break
       }
     }
   }
 
   static updateMockupImagePreSent(
-    mockupId: TMockupDataId,
+    sessionId: string,
+    productId: TBaseProduct['id'],
+    productVariantId: TClientProductVariant['id'],
+    mockupId: TMockupData['id'],
     preSentImageLink: TMockupData['preSentImageLink'],
     preSentImageSize: TMockupData['imageData']['size']
   ): boolean {
     const data = this.getSavedMockupData()
-    if (!data) return false
+    if (!data || data.sessionId !== sessionId) return false
 
     for (const product of data.productsInCart) {
-      const mockupIndex = product.mockupDataList.findIndex((m) => m.id === mockupId)
-      if (mockupIndex !== -1) {
-        // Cập nhật mockup với các thuộc tính mới
-        const mockup = product.mockupDataList[mockupIndex]
-        product.mockupDataList[mockupIndex] = {
-          ...mockup,
-          preSentImageLink,
-          imageData: {
+      if (product.productId !== productId) continue
+      for (const variant of product.productVariants) {
+        if (variant.variantId !== productVariantId) continue
+        const mockupIndexFound = variant.mockupDataList.findIndex((m) => m.id === mockupId)
+        if (mockupIndexFound >= 0) {
+          // Cập nhật mockup với các thuộc tính mới
+          const mockup = variant.mockupDataList[mockupIndexFound]
+          mockup.preSentImageLink = preSentImageLink
+          mockup.imageData = {
             ...mockup.imageData,
             size: preSentImageSize,
-          },
+          }
+          localStorage.setItem(LocalStorageHelper.mockupImageName, JSON.stringify(data))
+          return true
         }
-        localStorage.setItem(LocalStorageHelper.mockupImageName, JSON.stringify(data))
-        return true
       }
     }
 
     return false
   }
 
-  static clearAllMockupImages() {
+  static clearAllMockupData() {
     localStorage.removeItem(LocalStorageHelper.mockupImageName)
   }
 }

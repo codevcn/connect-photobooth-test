@@ -4,6 +4,7 @@ import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 import { formatNumberWithCommas, friendlyCurrency } from '@/utils/helpers'
 import { TBaseProduct, TClientProductVariant, TProductColor } from '@/utils/types/global'
 import { useMemo, useState } from 'react'
+import { PrintSurface } from '../print-surface/PrintSurface'
 
 type TProductImagePreviewProps = {
   imageURL: string
@@ -197,8 +198,7 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
         </div>
 
         <div className="rounded-lg mt-4">
-          <h3 className="text-slate-800 font-bold text-sm mb-3">Màu sắc</h3>
-
+          <h3 className="text-slate-800 font-bold text-sm mb-2">Màu sắc</h3>
           <div className="flex flex-wrap gap-3">
             {availableColors.map((color) => {
               const lowercasedColorValue = color.value.toLowerCase()
@@ -284,6 +284,8 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
             )}
           </div>
         </div>
+
+        <PrintSurface printSurfaces={pickedProduct.printAreaList} pickedVariant={pickedVariant} />
       </div>
 
       {showSizeChart && <SizeChartPreview setShowSizeChart={setShowSizeChart} />}

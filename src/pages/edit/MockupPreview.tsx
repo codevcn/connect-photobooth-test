@@ -74,12 +74,12 @@ export const MockupPreview = ({ onClose }: TMockupPreviewProps) => {
   }, [])
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-99 animate-pop-in p-4">
+    <div className="fixed inset-0 flex items-center justify-center z-99 animate-pop-in p-2">
       <div onClick={onClose} className="bg-black/50 absolute inset-0 z-10"></div>
-      <div className="relative z-20 flex flex-col bg-white rounded-lg shadow-2xl max-w-[95vw] overflow-hidden animate-pop-in">
+      <div className="relative z-20 flex flex-col bg-white rounded-lg shadow-2xl overflow-hidden animate-pop-in">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-1 border-b border-gray-200 bg-main-cl">
-          <h2 className="sms:text-xl text-base font-bold text-white flex items-center gap-2">
+        <div className="flex items-center justify-between px-2 py-1 border-b border-gray-200 bg-main-cl">
+          <h2 className="sms:text-xl text-sm font-bold text-white flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -121,7 +121,7 @@ export const MockupPreview = ({ onClose }: TMockupPreviewProps) => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 flex items-center justify-center min-h-[400px]">
+        <div className="flex-1 flex items-center justify-center py-4">
           {isLoading && (
             <div className="flex flex-col items-center gap-3">
               <svg
@@ -177,13 +177,13 @@ export const MockupPreview = ({ onClose }: TMockupPreviewProps) => {
 
           <div
             ref={previewImageContainerRef}
-            className="max-w-full max-h-full items-center justify-center hidden"
+            className="max-w-full max-h-full items-center justify-center hidden relative"
           >
             <img
               ref={previewImageRef}
               src={undefined}
               alt="Mockup preview"
-              className="w-full h-[calc(98vh-60px)] object-contain rounded-lg shadow-lg"
+              className="w-full max-h-[calc(98vh-88px)] max-w-[98vw] min-h-[280px] min-w-[280px] object-contain"
             />
           </div>
         </div>

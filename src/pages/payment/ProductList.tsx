@@ -1,10 +1,19 @@
 import { formatNumberWithCommas } from '@/utils/helpers'
-import { TPaymentProductItem } from '@/utils/types/global'
+import {
+  TBaseProduct,
+  TClientProductVariant,
+  TMockupData,
+  TPaymentProductItem,
+} from '@/utils/types/global'
 
 interface ProductListProps {
   cartItems: TPaymentProductItem[]
   onUpdateQuantity: (mockupDataId: string, delta: number, productId: number) => void
-  onRemoveProduct: (mockupDataId: string, productId: number) => void
+  onRemoveProduct: (
+    productId: TBaseProduct['id'],
+    productVariantId: TClientProductVariant['id'],
+    mockupId: TMockupData['id']
+  ) => void
   onShowProductImage: (imageUrl: string) => void
   onEditMockup: (mockupDataId: string) => void
 }
@@ -29,6 +38,7 @@ export const ProductList: React.FC<ProductListProps> = ({
           discountedPrice,
           quantity,
           surface,
+          productVariantId,
         }) => (
           <div
             key={mockupData.id}
@@ -149,7 +159,7 @@ export const ProductList: React.FC<ProductListProps> = ({
                     </div>
                     <div>
                       <button
-                        onClick={() => onRemoveProduct(mockupData.id, productId)}
+                        onClick={() => onRemoveProduct(productId, productVariantId, mockupData.id)}
                         className="p-1 rounded-full bg-red-600 hover:scale-90 transition"
                       >
                         <svg

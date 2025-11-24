@@ -35,7 +35,7 @@ export const TemplateFrame = ({
         ...styleFrameByTemplateType(templateType, templateFrame.index),
       }}
       className={cn(
-        'NAME-template-frame flex justify-center items-center h-full w-full border border-gray-600 border-dashed',
+        'NAME-template-frame flex justify-center items-center overflow-hidden h-full w-full border border-gray-600 border-dashed',
         classNames?.container
       )}
       onClick={onClickFrame ? (e) => onClickFrame(e, templateFrame.id) : undefined}

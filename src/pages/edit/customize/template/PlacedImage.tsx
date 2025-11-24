@@ -12,20 +12,20 @@ export const PlacedImage = ({ placedImage, templateType, frameIndex }: TPlacedIm
   const { placementState } = placedImage
 
   // Hook để kéo ảnh trong frame với ràng buộc boundary
-  const { imageRef } = useDragImageInFrame({
-    frameId: placedImage.id,
-    initialPosition: { x: 0, y: 0 },
-    disabled: false,
-    saveElementPosition: (frameId, position) => {
-      // TODO: Có thể lưu vị trí vào store nếu cần
-      // console.log(`Image ${frameId} moved to:`, position)
-    },
-  })
+  // const { imageRef } = useDragImageInFrame({
+  //   frameId: placedImage.id,
+  //   initialPosition: { x: 0, y: 0 },
+  //   disabled: false,
+  //   saveElementPosition: (frameId, position) => {
+  //     // TODO: Có thể lưu vị trí vào store nếu cần
+  //     // console.log(`Image ${frameId} moved to:`, position)
+  //   },
+  // })
 
   return (
     <div className="NAME-frame-placed-image w-full h-full relative">
       <img
-        ref={imageRef as React.RefObject<HTMLImageElement>}
+        // ref={imageRef as React.RefObject<HTMLImageElement>}
         src={placedImage.imgURL}
         alt="Placed Image"
         className="h-full w-full absolute top-0 left-0"

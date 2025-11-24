@@ -30,7 +30,7 @@ export const LivePreview = ({
   }, [pickedProduct, editedPrintSurfaceId])
 
   const { printAreaRef, printAreaContainerRef, checkIfAnyElementOutOfBounds, isOutOfBounds } =
-    usePrintArea(printAreaInfo, adjustPlacedImageStylesAfterPlacement)
+    usePrintArea(printAreaInfo)
 
   const displayedImage = useMemo<TDisplayedImage>(() => {
     const variantSurface = pickedProduct.variantSurfaces.find(

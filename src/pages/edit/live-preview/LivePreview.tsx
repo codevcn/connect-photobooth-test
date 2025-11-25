@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { PrintAreaOverlay } from './PrintAreaOverlay'
 import { EditedElementsArea } from './EditedElementsArea'
 import { AddToCartHandler } from './AddToCartHandler'
-import { adjustPlacedImageStylesAfterPlacement } from '../helpers'
+import { initPlacedImageStyle } from '../helpers'
 
 type TDisplayedImage = {
   surfaceId: TBaseProduct['printAreaList'][number]['id']
@@ -29,7 +29,7 @@ export const LivePreview = ({
   }, [pickedProduct, editedPrintSurfaceId])
 
   const { printAreaRef, printAreaContainerRef, checkIfAnyElementOutOfBounds, isOutOfBounds } =
-    usePrintArea(printAreaInfo, adjustPlacedImageStylesAfterPlacement)
+    usePrintArea(printAreaInfo, initPlacedImageStyle)
 
   // const { printAreaRef, printAreaContainerRef, checkIfAnyElementOutOfBounds, isOutOfBounds } =
   //   usePrintArea(printAreaInfo)

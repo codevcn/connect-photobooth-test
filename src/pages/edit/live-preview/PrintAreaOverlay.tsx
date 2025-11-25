@@ -5,7 +5,7 @@ import { useTemplateStore } from '@/stores/ui/template.store'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { useEditedElementStore } from '@/stores/element/element.store'
 import { useEffect } from 'react'
-import { adjustPlacedImageStylesAfterPlacement } from '../helpers'
+import { initPlacedImageStyle } from '../helpers'
 import { createPortal } from 'react-dom'
 
 type TPrintAreaOverlayPreviewProps = {
@@ -93,7 +93,7 @@ export const PrintAreaOverlay = ({
   }
 
   useEffect(() => {
-    adjustPlacedImageStylesAfterPlacement()
+    initPlacedImageStyle()
   }, [pickedTemplate])
 
   return (

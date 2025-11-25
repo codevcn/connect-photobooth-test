@@ -289,7 +289,7 @@ export const matchPrintedImgAndAllowSquareMatchToShapeSize = (
   return true
 }
 
-export const adjustPlacedImageStylesAfterPlacement = () => {
+export const initPlacedImageStyle = () => {
   requestAnimationFrame(() => {
     // Logic để điều chỉnh styles của ảnh đã đặt trong frame sau khi UI đã render xong
     for (const placedImage of document.body.querySelectorAll<HTMLImageElement>(
@@ -297,6 +297,8 @@ export const adjustPlacedImageStylesAfterPlacement = () => {
     )) {
       const imgWrapper = placedImage.closest<HTMLElement>('.NAME-frame-placed-image-wrapper')
       if (imgWrapper) {
+        placedImage.style.top = '0px'
+        placedImage.style.left = '0px'
         const { width, height } = imgWrapper.getBoundingClientRect()
         if (width < height) {
           placedImage.style.width = 'auto'

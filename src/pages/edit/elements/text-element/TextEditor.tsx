@@ -143,12 +143,15 @@ export const TextMenuWrapper = () => {
 
   const scrollToSelectedElement = () => {
     if (elementType !== 'text') return
-    document.body
-      .querySelector('.NAME-menu-text-element')
-      ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    document.body
-      .querySelector('.NAME-print-area-container')
-      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    if (window.innerWidth < 662) {
+      document.body
+        .querySelector('.NAME-print-area-container')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else {
+      document.body
+        .querySelector('.NAME-menu-text-element')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
   }
 
   useEffect(() => {

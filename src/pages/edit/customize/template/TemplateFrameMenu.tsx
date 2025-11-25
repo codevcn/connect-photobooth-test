@@ -327,7 +327,7 @@ export const TemplateFrameMenu = ({ frameId, onClose, printedImageURL }: Printed
       className="NAME-menu-section NAME-menu-template-frame STYLE-hide-scrollbar smd:text-sm text-sm w-full mt-2"
     >
       <h3 className="text-xs smd:text-sm mt-3 mb-1 font-bold">Tùy chỉnh</h3>
-      <div className="2xl:grid-cols-3 spmd:gap-2 smd:grid-cols-2 sm:grid-rows-1 grid-rows-2 grid-flow-col gap-1 grid rounded-md">
+      <div className="s2xl:grid-cols-3 smd:grid-cols-2 sms:grid-cols-4 grid-cols-2 spmd:gap-2 gap-1 grid rounded-md">
         <div className="NAME-form-group NAME-form-crop h-8 smd:h-9 mobile-touch cursor-pointer border-2 border-main-cl text-white hover:bg-white hover:text-main-cl flex items-center justify-center bg-main-cl rounded px-1 shadow">
           <CropImageModalWrapper frameId={frameId} imageUrl={printedImageURL} />
         </div>

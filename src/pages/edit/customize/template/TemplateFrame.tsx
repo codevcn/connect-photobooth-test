@@ -61,7 +61,7 @@ type TemplateFrameProps = {
   displayPlusIcon: boolean
   registerChild?: (index: number, el: HTMLImageElement | null) => void
   childIndex?: number
-  onMouseDown?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, frameId: string) => void
+  onPointerDown?: (e: React.PointerEvent<HTMLDivElement>, frameId: string) => void
 }>
 
 export const TemplateFrame = ({
@@ -74,13 +74,12 @@ export const TemplateFrame = ({
   displayPlusIcon = true,
   registerChild,
   childIndex,
-  onMouseDown,
+  onPointerDown,
 }: TemplateFrameProps) => {
   const selectedElement = useEditedElementStore((s) => s.selectedElement)
   return (
     <div
-      onMouseDown={onMouseDown ? (e) => onMouseDown(e, templateFrame.id) : undefined}
-      onTouchStart={onMouseDown ? (e) => onMouseDown(e as any, templateFrame.id) : undefined}
+      onPointerDown={onPointerDown ? (e) => onPointerDown(e, templateFrame.id) : undefined}
       style={{
         ...styles?.container,
         ...styleFrameByTemplateType(templateType, templateFrame.index),

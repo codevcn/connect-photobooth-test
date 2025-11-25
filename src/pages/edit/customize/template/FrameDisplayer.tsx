@@ -64,11 +64,12 @@ export const FramesDisplayer = ({
     return value
   }
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const onPointerDown = (e: React.PointerEvent, frameId: string) => {
     if (useTemplateStore.getState().pickedTemplate?.frames.some((f) => !f.placedImage)) return
     setDragging(true)
     startYRef.current = e.clientY
     startOffsetRef.current = offsetY
+    ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
   }
 
   const displayerRef = useRef<HTMLDivElement | null>(null)
@@ -113,7 +114,7 @@ export const FramesDisplayer = ({
   }, [offsetY])
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMove = (e: PointerEvent) => {
       if (!dragging) return
       const delta = e.clientY - startYRef.current
       const next = startOffsetRef.current + delta
@@ -121,17 +122,16 @@ export const FramesDisplayer = ({
       setOffsetY((prev) => clampOffset(next))
     }
 
-    const handleMouseUp = () => {
+    const handleUp = () => {
       if (!dragging) return
       setDragging(false)
     }
 
-    window.addEventListener('mousemove', handleMouseMove)
-    window.addEventListener('mouseup', handleMouseUp)
-    window.addEventListener('touchmove', handleCanMove)
+    window.addEventListener('pointermove', handleMove)
+    window.addEventListener('pointerup', handleUp)
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove)
-      window.removeEventListener('mouseup', handleMouseUp)
+      window.removeEventListener('pointermove', handleMove)
+      window.removeEventListener('pointerup', handleUp)
     }
   }, [dragging, framesBounds])
 
@@ -176,7 +176,7 @@ export const FramesDisplayer = ({
             onClickFrame={onClickFrame}
             registerChild={registerChild}
             childIndex={idx}
-            onMouseDown={handleMouseDown}
+            onPointerDown={onPointerDown}
           />
         ))}
       </div>

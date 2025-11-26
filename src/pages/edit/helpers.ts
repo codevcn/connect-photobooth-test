@@ -123,6 +123,35 @@ const handleCroppedFourSquarePrintedImages = (
   return null
 }
 
+export const matchBestPrintedImageToTemplate = (
+  template: TPrintTemplate,
+  printedImages: TPrintedImage[]
+): void => {
+  let templatePoint: number = 0
+  for (const image of printedImages) {
+    let point: number = 0
+    for (const frame of template.frames) {
+      const match = matchPrintedImageToShapeSize(
+        {
+          width: frame.width,
+          height: frame.height,
+        },
+        {
+          height: image.height,
+          width: image.width,
+        }
+      )
+      console.log('>>> match:', { match, frame, image, template })
+      if (match) {
+        point += frame.width > frame.height ? frame.width : frame.height
+      }
+      if (point > templatePoint) {
+        frame.placedImage = initFramePlacedImageByPrintedImage(frame.index, image)
+      }
+    }
+  }
+}
+
 const handleOtherShapePrintedImages = (
   printAreaWidth: TSizeInfo['width'],
   printAreaHeight: TSizeInfo['height'],

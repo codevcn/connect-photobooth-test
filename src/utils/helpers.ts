@@ -403,3 +403,34 @@ export function calContrastForReadableColor(hex: string): string {
   // Nếu màu sáng → trả về đen, nếu màu tối → trả về trắng
   return luminance > 160 ? '#000000' : '#FFFFFF'
 }
+
+export const sortSizes = (sizes: string[]): string[] => {
+  // Thứ tự nền tảng
+  const baseOrder: Record<string, number> = {
+    s: 1,
+    m: 2,
+    l: 3,
+    xl: 4,
+  }
+
+  const getRank = (size: string): number => {
+    const s = size.toLowerCase().trim()
+
+    // Size dạng Nxl (2xl, 3xl...)
+    const match = /^(\d+)xl$/.exec(s)
+    if (match) {
+      const n = parseInt(match[1], 10)
+      return 4 + n // xl=4 → 2xl=5 → 3xl=6...
+    }
+
+    // Size thường
+    if (baseOrder[s] !== undefined) {
+      return baseOrder[s]
+    }
+
+    // Nếu gặp size lạ → đẩy ra sau cùng nhưng vẫn cố giữ thứ tự ổn định
+    return 999
+  }
+
+  return [...sizes].sort((a, b) => getRank(a) - getRank(b))
+}

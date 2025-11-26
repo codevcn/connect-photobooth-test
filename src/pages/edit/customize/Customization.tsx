@@ -68,7 +68,7 @@ export const Customization = ({ printedImages }: TCustomizeProps) => {
       <Instructions />
       <div className="smd:mt-6 mt-1 overflow-hidden relative w-full">
         <TemplatesPicker
-          printedImagesCount={printedImages.length}
+          printedImages={printedImages}
           classNames={{
             templatesList:
               'smd:grid-cols-3 smd:overflow-x-hidden smd:grid-flow-row grid-rows-1 grid-flow-col overflow-x-auto grid-flow grid gap-2 w-full gallery-scroll',

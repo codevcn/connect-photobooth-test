@@ -1,10 +1,16 @@
-import { TPrintTemplate } from '@/utils/types/global'
+import { TPrintedImage, TPrintTemplate, TTemplateFrame } from '@/utils/types/global'
 import { cn } from '@/configs/ui/tailwind-utils'
 import { useTemplateStore } from '@/stores/ui/template.store'
 import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 import { TemplateFrame } from './TemplateFrame'
 import type React from 'react'
 import { styleToFramesDisplayerByTemplateType } from '@/configs/print-template/templates-helpers'
+import { useMemo } from 'react'
+import {
+  initFramePlacedImageByPrintedImage,
+  matchBestPrintedImageToTemplate,
+  matchPrintedImageToShapeSize,
+} from '../../helpers'
 
 type TFramesDisplayerProps = {
   template: TPrintTemplate
@@ -59,7 +65,7 @@ const FramesDisplayer = ({
 }
 
 type TTemplatePickerProps = {
-  printedImagesCount: number
+  printedImages: TPrintedImage[]
 } & Partial<{
   classNames: Partial<{
     templatesList: string
@@ -67,8 +73,64 @@ type TTemplatePickerProps = {
   }>
 }>
 
-export const TemplatesPicker = ({ classNames }: TTemplatePickerProps) => {
+export const TemplatesPicker = ({ printedImages, classNames }: TTemplatePickerProps) => {
   const allTemplates = useTemplateStore((s) => s.allTemplates)
+
+  const finalTemplates = useMemo(() => {
+    const templates = [...allTemplates]
+    let imgPoint: number = Number.MAX_SAFE_INTEGER
+    let foundImage: TPrintedImage | null = null
+    for (const template of templates) {
+      let foundFrame: TTemplateFrame | null = null
+      for (const frame of template.frames) {
+        let point: number = 0
+        if (template.type === '1-square') {
+          frame.placedImage = initFramePlacedImageByPrintedImage(frame.index, printedImages[2])
+        } else if (template.type === '2-horizon') {
+          frame.placedImage = initFramePlacedImageByPrintedImage(frame.index, printedImages[0])
+        } else if (template.type === '2-vertical') {
+          frame.placedImage = initFramePlacedImageByPrintedImage(frame.index, printedImages[1])
+        } else if (template.type === '3-left') {
+          frame.placedImage = initFramePlacedImageByPrintedImage(frame.index, printedImages[1])
+        } else if (template.type === '3-right') {
+          frame.placedImage = initFramePlacedImageByPrintedImage(frame.index, printedImages[1])
+        } else if (template.type === '3-top') {
+          frame.placedImage = initFramePlacedImageByPrintedImage(frame.index, printedImages[1])
+        } else if (template.type === '3-bottom') {
+          frame.placedImage = initFramePlacedImageByPrintedImage(frame.index, printedImages[1])
+        } else if (template.type === '4-square') {
+          frame.placedImage = initFramePlacedImageByPrintedImage(frame.index, printedImages[2])
+        } else {
+          frame.placedImage = initFramePlacedImageByPrintedImage(frame.index, printedImages[1])
+        }
+        // const match = matchPrintedImageToShapeSize(
+        //   {
+        //     width: frame.width,
+        //     height: frame.height,
+        //   },
+        //   {
+        //     height: image.height,
+        //     width: image.width,
+        //   }
+        // )
+        // if (match) {
+        //   point += Math.abs(frame.width / frame.height - image.width / image.height) || 1
+        // }
+        // if (point < imgPoint) {
+        //   imgPoint = point
+        //   frame.placedImage = initFramePlacedImageByPrintedImage(frame.index, image)
+        //   foundFrame = frame
+        // }
+      }
+      // if (!foundFrame) {
+      //   for (const frame of template.frames) {
+      //     frame.placedImage = initFramePlacedImageByPrintedImage(frame.index, printedImages[0])
+      //   }
+      // }
+    }
+    console.log('>>> templates:', templates)
+    return templates
+  }, [allTemplates, printedImages])
 
   const handlePickTemplate = (template: TPrintTemplate) => {
     const pickedSurface = useProductUIDataStore.getState().pickedSurface
@@ -80,7 +142,7 @@ export const TemplatesPicker = ({ classNames }: TTemplatePickerProps) => {
     <div className="NAME-sss w-full">
       <h3 className="smd:text-base text-xs mb-1 font-bold text-gray-800">Chọn mẫu in</h3>
       <div className={classNames?.templatesList}>
-        {allTemplates.map((template) => (
+        {finalTemplates.map((template) => (
           <div
             key={template.id}
             onClick={() => handlePickTemplate(template)}

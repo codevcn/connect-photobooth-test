@@ -1,7 +1,7 @@
 import { Modal } from '@/components/custom/common/Modal'
 import { VietnamFlag } from '@/components/custom/icons/VietnamFlag'
 import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
-import { formatNumberWithCommas, friendlyCurrency } from '@/utils/helpers'
+import { formatNumberWithCommas, friendlyCurrency, sortSizes } from '@/utils/helpers'
 import { TBaseProduct, TClientProductVariant, TProductColor } from '@/utils/types/global'
 import { useMemo, useState } from 'react'
 import { PrintSurface } from '../print-surface/PrintSurface'
@@ -68,6 +68,36 @@ const SizeChartPreview = ({ setShowSizeChart, sizeChartImageURL }: TSizeChartPre
   )
 }
 
+function sortVariantsBySize(variants: TClientProductVariant[]): TClientProductVariant[] {
+  const baseOrder: Record<string, number> = {
+    s: 1,
+    m: 2,
+    l: 3,
+    xl: 4,
+  }
+
+  const getRank = (size: string): number => {
+    const s = size.toLowerCase().trim()
+
+    // 2xl, 3xl, 4xl...
+    const match = /^(\d+)xl$/.exec(s)
+    if (match) {
+      const n = parseInt(match[1], 10)
+      return 4 + n // xl=4 → 2xl=5 → 3xl=6...
+    }
+
+    // Size cơ bản
+    if (baseOrder[s] !== undefined) {
+      return baseOrder[s]
+    }
+
+    // Size lạ → đẩy ra cuối
+    return 999
+  }
+
+  return [...variants].sort((a, b) => getRank(a.size) - getRank(b.size))
+}
+
 type TProductDetailsProps = {
   pickedProduct: TBaseProduct
   pickedVariant: TClientProductVariant
@@ -93,11 +123,9 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
 
   // Lấy danh sách size có sẵn cho màu đã chọn
   const availableSizesForColor = useMemo(() => {
-    return pickedProduct.variants
-      .filter((v) => v.color.value === pickedVariant.color.value)
-      .sort((a, b) => {
-        return b.size.localeCompare(a.size, undefined, { numeric: true })
-      })
+    return sortVariantsBySize(
+      pickedProduct.variants.filter((v) => v.color.value === pickedVariant.color.value)
+    )
   }, [pickedProduct, pickedVariant])
 
   const firstProductImageURL = pickedProduct.detailImages[0] || null
@@ -161,7 +189,7 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
         )}
       </div>
 
-      <div className="space-y-3 text-sm mt-2 pl-1">
+      {/* <div className="space-y-3 text-sm mt-2 pl-1">
         <div className="flex items-center">
           <div className="mr-2 text-lg">
             <VietnamFlag />
@@ -171,7 +199,7 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
             <span className="font-bold">Vietnam</span>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="mt-4 bg-gray-100 border-border rounded-lg overflow-hidden p-3">
         <div>
@@ -208,16 +236,16 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
                 <button
                   key={color.value}
                   onClick={() => handlePickColor(color)}
-                  className={`w-10 h-10 rounded-full bg-white focus:outline-none transition-all mobile-touch ${
-                    isSelected
-                      ? 'ring-2 ring-main-cl ring-offset-2 shadow-lg'
-                      : 'ring-1 ring-gray-300 ring-offset-2 hover:ring-secondary-cl hover:shadow-md'
-                  }`}
+                  className={`flex flex-col items-center rounded-full focus:outline-none transition-all mobile-touch`}
                   title={color.title}
                 >
                   <div
-                    style={{ backgroundColor: lowercasedColorValue }}
-                    className="h-full w-full rounded-full cursor-pointer"
+                    style={{ backgroundColor: lowercasedColorValue || '#fff' }}
+                    className={`${
+                      isSelected
+                        ? 'ring-2 ring-main-cl ring-offset-2 shadow-lg'
+                        : 'ring-1 ring-gray-300 ring-offset-2 hover:ring-secondary-cl hover:shadow-md'
+                    } h-10 w-10 rounded-full cursor-pointer`}
                   >
                     {isSelected && (
                       <div className="w-full h-full rounded-full flex items-center justify-center">
@@ -242,22 +270,22 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
                       </div>
                     )}
                   </div>
-                  <span
+                  <div
                     className="text-[12px] font-medium rounded-md py-0.5 px-1.5 mt-2 inline-block"
                     style={{
-                      backgroundColor: color.value,
+                      backgroundColor: color.value || '#fff',
                       color: color.value === '#fff' ? '#000' : '#fff',
                     }}
                   >
                     {color.title}
-                  </span>
+                  </div>
                 </button>
               )
             })}
           </div>
         </div>
 
-        <div className="mt-12">
+        <div className="mt-4">
           <div className="flex justify-between w-full mb-2">
             <label className="block text-sm font-bold text-slate-900">Kích thước</label>
             {firstProductImageURL && firstProductImageURL !== hintForSizeChart && (

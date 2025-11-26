@@ -62,6 +62,7 @@ export const AddToCartHandler = ({
     onDoneAdd: () => void,
     onError: (error: Error) => void
   ) => {
+    console.log('>>> elementsVisualState:', elementsVisualState)
     if (!sessionId) return
     const [message, pickedVariant, pickedProduct, pickedSurface] = validateBeforeAddToCart()
     if (message) {

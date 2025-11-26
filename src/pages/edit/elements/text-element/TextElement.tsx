@@ -1,4 +1,4 @@
-import { TTextVisualState } from '@/utils/types/global'
+import { TElementMountType, TTextVisualState } from '@/utils/types/global'
 import { useEffect, useRef } from 'react'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { useTextElementControl } from '@/hooks/element/use-text-element-control'
@@ -11,7 +11,7 @@ const MIN_TEXT_FONT_SIZE: number = 8
 type TTextElementProps = {
   element: TTextVisualState
   elementContainerRef: React.RefObject<HTMLDivElement | null>
-  mountType: 'new' | 'from-saved'
+  mountType: TElementMountType
   isSelected: boolean
   selectElement: (elementId: string, element: HTMLElement, elementType: 'text') => void
   removeTextElement: (textElementId: string) => void
@@ -27,6 +27,7 @@ export const TextElement = ({
   removeTextElement,
   printAreaContainerRef,
 }: TTextElementProps) => {
+
   const { id } = element
   const {
     forPinch: { ref: refForPinch },
@@ -46,6 +47,7 @@ export const TextElement = ({
     zindex: element.zindex,
     fontFamily: element.fontFamily,
     fontWeight: element.fontWeight,
+    mountType,
   })
   const rootRef = useRef<HTMLElement | null>(null)
 
@@ -110,7 +112,6 @@ export const TextElement = ({
   }
 
   const initElement = () => {
-    if (mountType === 'from-saved') return
     requestAnimationFrame(() => {
       const root = rootRef.current
       if (!root) return
@@ -118,8 +119,12 @@ export const TextElement = ({
       if (!elementContainer) return
       const printAreaContainer = printAreaContainerRef.current
       if (!printAreaContainer) return
-      moveElementIntoCenter(root, elementContainer, printAreaContainer)
-      initElementDisplaySize(root, elementContainer)
+      if (mountType === 'from-saved') {
+        initElementDisplaySize(root, elementContainer)
+      } else {
+        moveElementIntoCenter(root, elementContainer, printAreaContainer)
+        initElementDisplaySize(root, elementContainer)
+      }
     })
   }
 

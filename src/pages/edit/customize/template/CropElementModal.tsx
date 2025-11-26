@@ -96,8 +96,17 @@ export const CropElementModal = ({
     const img = new Image()
     img.crossOrigin = 'anonymous'
     img.onload = () => {
-      // Chỉ xoay nếu màn hình nhỏ hơn 590px và ảnh ngang
-      if (window.innerWidth < 590 && img.naturalWidth > img.naturalHeight) {
+      toast.info(
+        'Đang xử lý ảnh..., ' +
+          window.innerWidth +
+          ', ' +
+          img.naturalWidth +
+          'x' +
+          img.naturalHeight,
+        {}
+      )
+      // Chỉ xoay nếu màn hình nhỏ hơn 662px và ảnh ngang
+      if (window.innerWidth < 662 && img.naturalWidth > img.naturalHeight * 1.5) {
         // Ảnh ngang cần xoay 90 độ
         const canvas = document.createElement('canvas')
         const ctx = canvas.getContext('2d')

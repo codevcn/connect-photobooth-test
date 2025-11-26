@@ -86,7 +86,7 @@ export const ProductList: React.FC<ProductListProps> = ({
                   <button
                     onClick={() => {
                       toast.info('Đang tạm khóa')
-                      // onEditMockup(mockupData.id)
+                      onEditMockup(mockupData.id)
                     }}
                     className="shrink-0 p-1.5 text-gray-600 bg-gray-200 transition-colors rounded-lg active:scale-95"
                     aria-label="Chỉnh sửa sản phẩm"

@@ -17,6 +17,7 @@ const CropImageModalWrapper = ({ frameId, imageUrl }: TCropElementModalWrapperPr
 
   const handleCropComplete = (_: string, croppedImageUrl: string) => {
     useTemplateStore.getState().updateFrameImageURL(croppedImageUrl, frameId)
+    useEditedElementStore.getState().updateSelectedElement({ elementURL: croppedImageUrl })
     setShowCropModal(false)
   }
 

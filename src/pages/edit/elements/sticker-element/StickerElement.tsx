@@ -1,4 +1,4 @@
-import { TStickerVisualState } from '@/utils/types/global'
+import { TElementMountType, TStickerVisualState } from '@/utils/types/global'
 import { useEffect, useRef } from 'react'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { useElementControl } from '@/hooks/element/use-element-control'
@@ -11,7 +11,7 @@ const MIN_ZOOM: number = 0.2
 type TStickerElementProps = {
   element: TStickerVisualState
   elementContainerRef: React.RefObject<HTMLDivElement | null>
-  mountType: 'new' | 'from-saved'
+  mountType: TElementMountType
   isSelected: boolean
   selectElement: (
     elementId: string,
@@ -47,6 +47,7 @@ export const StickerElement = ({
     scale: element.scale,
     position: element.position,
     zindex: element.zindex,
+    mountType,
   })
   const rootRef = useRef<HTMLElement | null>(null)
 
@@ -88,7 +89,11 @@ export const StickerElement = ({
     )
   }
 
-  const initElementDisplaySize = (root: HTMLElement, elementContainer: HTMLElement) => {
+  const initElementDisplaySize = (
+    root: HTMLElement,
+    elementContainer: HTMLElement,
+    moveToCenter?: boolean
+  ) => {
     const display = root.querySelector<HTMLImageElement>('.NAME-element-display')
     if (!display) return
     getNaturalSizeOfImage(
@@ -113,8 +118,10 @@ export const StickerElement = ({
         }
         display.style.cssText = cssText
         display.onload = () => {
-          if (printAreaContainerRef.current) {
-            moveElementIntoCenter(root, elementContainer, printAreaContainerRef.current)
+          if (moveToCenter) {
+            if (printAreaContainerRef.current) {
+              moveElementIntoCenter(root, elementContainer, printAreaContainerRef.current)
+            }
           }
           // reset max size limit after image load
           const elementContainerRect = elementContainer.getBoundingClientRect()
@@ -131,7 +138,6 @@ export const StickerElement = ({
   }
 
   const initElement = () => {
-    if (mountType === 'from-saved') return
     requestAnimationFrame(() => {
       const root = rootRef.current
       if (!root) return
@@ -139,8 +145,12 @@ export const StickerElement = ({
       if (!elementContainer) return
       const printAreaContainer = printAreaContainerRef.current
       if (!printAreaContainer) return
-      moveElementIntoCenter(root, elementContainer, printAreaContainer)
-      initElementDisplaySize(root, elementContainer)
+      if (mountType === 'from-saved') {
+        initElementDisplaySize(root, elementContainer)
+      } else {
+        moveElementIntoCenter(root, elementContainer, printAreaContainer)
+        initElementDisplaySize(root, elementContainer, true)
+      }
     })
   }
 

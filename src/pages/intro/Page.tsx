@@ -9,10 +9,10 @@ const IntroPage = () => {
   return (
     <div className="h-screen w-screen bg-black">
       {/* Fullscreen Modal */}
-      <FullscreenModal
+      {/* <FullscreenModal
         show={showFullscreenModal}
         onConfirm={() => setShowFullscreenModal(false)}
-      />
+      /> */}
 
       <div className="relative h-full w-full">
         <div className="relative h-full w-full z-10">

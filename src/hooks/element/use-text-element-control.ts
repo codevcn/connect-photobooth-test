@@ -2,12 +2,13 @@ import { useElementControl } from '@/hooks/element/use-element-control'
 import { useEffect, useState } from 'react'
 import { roundZooming } from '@/utils/helpers'
 import { getInitialContants } from '@/utils/contants'
-import { TTextVisualState } from '@/utils/types/global'
+import { TElementMountType, TTextVisualState } from '@/utils/types/global'
 
 type TInitialTextParams = Partial<
   TTextVisualState & {
     maxFontSize: number
     minFontSize: number
+    mountType: TElementMountType
   }
 >
 
@@ -61,6 +62,7 @@ export const useTextElementControl = (
     fontWeight: initialFontWeight = getInitialContants<number>('ELEMENT_TEXT_FONT_WEIGHT'),
     angle: initialAngle = getInitialContants<number>('ELEMENT_ROTATION'),
     zindex: initialZindex = getInitialContants<number>('ELEMENT_ZINDEX'),
+    mountType,
   } = initialParams || {}
 
   const {
@@ -74,6 +76,7 @@ export const useTextElementControl = (
     position: { x: initialPosX, y: initialPosY },
     angle: initialAngle,
     zindex: initialZindex,
+    mountType: mountType,
   })
 
   const [content, setContent] = useState<TTextVisualState['content']>(initialContent)
@@ -165,9 +168,30 @@ export const useTextElementControl = (
     }
   }
 
+  const setupVisualData = () => {
+    if (mountType === 'from-saved') {
+      handleSetElementState(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        initialFontSize,
+        initialColor,
+        initialContent,
+        initialFontFamily,
+        initialFontWeight
+      )
+    }
+  }
+
   useEffect(() => {
     handleSetFontSize(undefined, baseState.scale)
   }, [baseState.scale])
+
+  useEffect(() => {
+    setupVisualData()
+  }, [initialFontSize, initialColor, initialContent, initialFontFamily, initialFontWeight])
 
   return {
     forPinch,

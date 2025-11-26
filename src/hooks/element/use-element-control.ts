@@ -2,15 +2,16 @@ import { useRotateElement } from '@/hooks/element/use-rotate-element'
 import { usePinchElement } from '@/hooks/element/use-pinch-element'
 import { useZoomElement } from '@/hooks/element/use-zoom-element'
 import { useDragElement } from '@/hooks/element/use-drag-element'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getInitialContants } from '@/utils/contants'
-import { TElementVisualBaseState } from '@/utils/types/global'
+import { TElementMountType, TElementVisualBaseState } from '@/utils/types/global'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
 
 type TInitialParams = Partial<
   TElementVisualBaseState & {
     maxZoom: number
     minZoom: number
+    mountType: TElementMountType
   }
 >
 
@@ -46,21 +47,24 @@ export const useElementControl = (
   initialParams?: TInitialParams
 ): TElementControlReturn => {
   const {
-    position: { x: initialPosX, y: initialPosY } = {
-      x: getInitialContants<number>('ELEMENT_X'),
-      y: getInitialContants<number>('ELEMENT_Y'),
-    },
+    position: initialPosition,
     maxZoom,
     minZoom,
     angle: initialAngle = getInitialContants<number>('ELEMENT_ROTATION'),
     scale: initialZoom = getInitialContants<number>('ELEMENT_ZOOM'),
     zindex: initialZindex = getInitialContants<number>('ELEMENT_ZINDEX'),
+    mountType,
   } = initialParams || {}
   const elementLayers = useElementLayerStore((s) => s.elementLayers)
   const [position, setPosition] = useState<TElementVisualBaseState['position']>({
-    x: initialPosX !== undefined ? initialPosX : getInitialContants<number>('ELEMENT_X'),
-    y: initialPosY !== undefined ? initialPosY : getInitialContants<number>('ELEMENT_Y'),
+    x: initialPosition?.x || getInitialContants<number>('ELEMENT_X'),
+    y: initialPosition?.y || getInitialContants<number>('ELEMENT_Y'),
   })
+  useEffect(() => { 
+    console.log('>>> tick position changed:', { position, initialPosition })
+  }, [position])
+
+  const firstRenderRef = useRef<boolean>(true)
   const [scale, setScale] = useState<TElementVisualBaseState['scale']>(initialZoom)
   const [angle, setAngle] = useState<TElementVisualBaseState['angle']>(initialAngle)
   const [zindex, setZindex] = useState<TElementVisualBaseState['zindex']>(initialZindex)
@@ -105,10 +109,18 @@ export const useElementControl = (
     let parsedValue: number | string = value
     switch (type) {
       case 'posX':
-        setPosition((prev) => ({ ...prev, x: value as number }))
+        // setPosition((prev) => ({ ...prev, x: value as number }))
+        setPosition((prev) => {
+          if (prev.x === value as number) return prev 
+          return { ...prev, x: value as number }
+        })
         break
       case 'posY':
-        setPosition((prev) => ({ ...prev, y: value as number }))
+        // setPosition((prev) => ({ ...prev, y: value as number }))
+        setPosition((prev) => {
+          if (prev.y === value as number) return prev 
+          return { ...prev, y: value as number }
+        })
         break
       case 'scale':
         if (minZoom) {
@@ -160,9 +172,36 @@ export const useElementControl = (
     setZindex((elementLayerIndex + 1) * getInitialContants<number>('ELEMENT_ZINDEX_STEP') + 1)
   }
 
+  const setupVisualData = () => {
+    if (mountType === 'from-saved') {
+      console.log('>>> setupVisualData called')
+      console.log('>>> initial params:', {
+        initialPosition,
+        initialAngle,
+        initialZoom,
+        initialZindex,
+      })
+      handleSetElementState(
+        initialPosition?.x,
+        initialPosition?.y,
+        initialZoom,
+        initialAngle,
+        initialZindex
+      )
+    }
+  }
+
   useEffect(() => {
     onElementLayersChange()
   }, [elementLayers])
+
+  useEffect(() => {
+    setupVisualData()
+  }, [initialPosition, initialAngle, initialZoom, initialZindex])
+
+  // useEffect(() => {
+  //   console.log('>>> initial pos changed:', initialPosition)
+  // }, [initialPosition])
 
   return {
     forPinch: {

@@ -1,15 +1,23 @@
-import { TElementType, TStickerVisualState, TTextVisualState } from '@/utils/types/global'
+import {
+  TElementType,
+  TPrintedImageVisualState,
+  TStickerVisualState,
+  TTextVisualState,
+} from '@/utils/types/global'
 import { create } from 'zustand'
 
+type TSelectedElement = {
+  elementId: string
+  rootElement: HTMLElement
+  elementType: TElementType
+  elementURL?: string
+}
+
 type TUseElementStore = {
-  selectedElement: {
-    elementId: string
-    rootElement: HTMLElement
-    elementType: TElementType
-    elementURL?: string
-  } | null
+  selectedElement: TSelectedElement | null
   stickerElements: TStickerVisualState[]
   textElements: TTextVisualState[]
+  printedImageElements: TPrintedImageVisualState[]
 
   // Actions
   selectElement: (
@@ -19,9 +27,11 @@ type TUseElementStore = {
     elementURL?: string
   ) => void
   cancelSelectingElement: () => void
-  addStickerElement: (sticker: TStickerVisualState) => void
+  updateSelectedElement: (updatedElement: Partial<TSelectedElement>) => void
+  addStickerElement: (stickers: TStickerVisualState[]) => void
   removeStickerElement: (stickerId: string) => void
-  addTextElement: (textElement: TTextVisualState) => void
+  addTextElement: (textElements: TTextVisualState[]) => void
+  addPrintedImageElement: (printedImageElements: TPrintedImageVisualState[]) => void
   removeTextElement: (textElementId: string) => void
   resetData: () => void
 }
@@ -30,13 +40,23 @@ export const useEditedElementStore = create<TUseElementStore>((set, get) => ({
   selectedElement: null,
   stickerElements: [],
   textElements: [],
+  printedImageElements: [],
 
+  addPrintedImageElement: (printedImages) => {
+    const { printedImageElements } = get()
+    set({ printedImageElements: [...printedImageElements, ...printedImages] })
+  },
+  updateSelectedElement: (updatedElement) => {
+    const { selectedElement } = get()
+    if (!selectedElement) return
+    set({ selectedElement: { ...selectedElement, ...updatedElement } })
+  },
   resetData: () => {
     set({ selectedElement: null, stickerElements: [], textElements: [] })
   },
-  addTextElement: (textElement) => {
+  addTextElement: (addedTextElements) => {
     const { textElements } = get()
-    set({ textElements: [...textElements, textElement] })
+    set({ textElements: [...textElements, ...addedTextElements] })
   },
   removeTextElement: (textElementId) => {
     const { textElements, selectedElement } = get()
@@ -47,9 +67,9 @@ export const useEditedElementStore = create<TUseElementStore>((set, get) => ({
       ...(shouldClearSelection && { selectedElement: null }),
     })
   },
-  addStickerElement: (sticker) => {
+  addStickerElement: (stickers) => {
     const { stickerElements } = get()
-    set({ stickerElements: [...stickerElements, sticker] })
+    set({ stickerElements: [...stickerElements, ...stickers] })
   },
   removeStickerElement: (stickerId) => {
     const { stickerElements, selectedElement } = get()

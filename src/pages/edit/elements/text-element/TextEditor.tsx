@@ -13,20 +13,22 @@ const EditorModal = ({ onClose }: EditorModalProps) => {
 
   const handleAddText = () => {
     if (text.trim()) {
-      useEditedElementStore.getState().addTextElement({
-        id: generateUniqueId(),
-        content: text,
-        angle: getInitialContants<number>('ELEMENT_ROTATION'),
-        position: {
-          x: getInitialContants<number>('ELEMENT_X'),
-          y: getInitialContants<number>('ELEMENT_Y'),
+      useEditedElementStore.getState().addTextElement([
+        {
+          id: generateUniqueId(),
+          content: text,
+          angle: getInitialContants<number>('ELEMENT_ROTATION'),
+          position: {
+            x: getInitialContants<number>('ELEMENT_X'),
+            y: getInitialContants<number>('ELEMENT_Y'),
+          },
+          fontSize: getInitialContants<number>('ELEMENT_TEXT_FONT_SIZE'),
+          textColor: getInitialContants<string>('ELEMENT_TEXT_COLOR'),
+          fontFamily: getInitialContants<string>('ELEMENT_TEXT_FONT_FAMILY'),
+          fontWeight: getInitialContants<number>('ELEMENT_TEXT_FONT_WEIGHT'),
+          zindex: getInitialContants<number>('ELEMENT_ZINDEX'),
         },
-        fontSize: getInitialContants<number>('ELEMENT_TEXT_FONT_SIZE'),
-        textColor: getInitialContants<string>('ELEMENT_TEXT_COLOR'),
-        fontFamily: getInitialContants<string>('ELEMENT_TEXT_FONT_FAMILY'),
-        fontWeight: getInitialContants<number>('ELEMENT_TEXT_FONT_WEIGHT'),
-        zindex: getInitialContants<number>('ELEMENT_ZINDEX'),
-      })
+      ])
       setText('')
       onClose()
     }

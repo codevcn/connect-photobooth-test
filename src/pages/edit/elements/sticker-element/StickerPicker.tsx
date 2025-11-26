@@ -88,17 +88,19 @@ const StickersModal = ({ onClose }: TStickersModalProps) => {
 
   // Xử lý chọn sticker
   const handleSelectSticker = (path: string) => {
-    useEditedElementStore.getState().addStickerElement({
-      id: generateUniqueId(),
-      path,
-      position: {
-        x: getInitialContants<number>('ELEMENT_X'),
-        y: getInitialContants<number>('ELEMENT_Y'),
+    useEditedElementStore.getState().addStickerElement([
+      {
+        id: generateUniqueId(),
+        path,
+        position: {
+          x: getInitialContants<number>('ELEMENT_X'),
+          y: getInitialContants<number>('ELEMENT_Y'),
+        },
+        angle: getInitialContants<number>('ELEMENT_ROTATION'),
+        scale: getInitialContants<number>('ELEMENT_ZOOM'),
+        zindex: getInitialContants<number>('ELEMENT_ZINDEX'),
       },
-      angle: getInitialContants<number>('ELEMENT_ROTATION'),
-      scale: getInitialContants<number>('ELEMENT_ZOOM'),
-      zindex: getInitialContants<number>('ELEMENT_ZINDEX'),
-    })
+    ])
     onClose()
   }
 

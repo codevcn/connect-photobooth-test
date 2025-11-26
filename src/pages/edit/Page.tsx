@@ -58,8 +58,15 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
         }
       }
     }
-    useEditedElementStore.getState().resetData()
-    useElementLayerStore.getState().resetData()
+    
+    // Chỉ reset data khi KHÔNG có mockupId (không restore mockup đã lưu)
+    const searchParams = new URLSearchParams(window.location.search)
+    const mockupId = searchParams.get('mockupId')
+    if (!mockupId) {
+      useEditedElementStore.getState().resetData()
+      useElementLayerStore.getState().resetData()
+    }
+    
     loadAllFonts()
     document.body.addEventListener('click', listenClickOnPage)
     return () => {

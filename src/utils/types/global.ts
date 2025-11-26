@@ -114,11 +114,6 @@ export type TEditedImageContextValue = {
   clearAllPrintedImages: () => void
 }
 
-export type TProductContextValue = {
-  products: TBaseProduct[]
-  setProducts: (products: TBaseProduct[]) => void
-}
-
 export type TVoucher = {
   code: string
   description: string
@@ -168,6 +163,14 @@ export type TElementsVisualState = Partial<{
   printedImages: TPrintedImageVisualState[]
   texts: TTextVisualState[]
 }>
+
+export type TMockupImageData = {
+  dataUrl: string
+  size: {
+    width: number
+    height: number
+  }
+}
 
 export type TMockupDataId = string
 
@@ -244,14 +247,6 @@ export type TShippingInfo = {
   city: string
   address: string
   message?: string
-}
-
-export type TMockupImageData = {
-  dataUrl: string
-  size: {
-    width: number
-    height: number
-  }
 }
 
 export type TImageSizeInfo = TSizeInfo
@@ -389,3 +384,5 @@ export type TPosition = {
   x: number
   y: number
 }
+
+export type TElementMountType = 'from-new' | 'from-saved'

@@ -4,6 +4,7 @@ import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { useTextElementControl } from '@/hooks/element/use-text-element-control'
 import { typeToObject } from '@/utils/helpers'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
+import { captureCurrentElementPosition } from '../../helpers'
 
 const MAX_TEXT_FONT_SIZE: number = 128
 const MIN_TEXT_FONT_SIZE: number = 8
@@ -28,6 +29,7 @@ export const TextElement = ({
 }: TTextElementProps) => {
   console.log('>>> mountType:', element.mountType)
   const { id, mountType } = element
+  const rootRef = useRef<HTMLElement | null>(null)
   const {
     forPinch: { ref: refForPinch },
     forRotate: { ref: refForRotate, rotateButtonRef },
@@ -35,7 +37,7 @@ export const TextElement = ({
     forDrag: { ref: refForDrag },
     state: { position, angle, zindex, fontSize, textColor, content, fontFamily, fontWeight },
     handleSetElementState,
-  } = useTextElementControl(id, {
+  } = useTextElementControl(id, rootRef, printAreaContainerRef, {
     maxFontSize: MAX_TEXT_FONT_SIZE,
     minFontSize: MIN_TEXT_FONT_SIZE,
     position: element.position,
@@ -48,7 +50,6 @@ export const TextElement = ({
     fontWeight: element.fontWeight,
     mountType,
   })
-  const rootRef = useRef<HTMLElement | null>(null)
 
   const pickElement = () => {
     const root = rootRef.current
@@ -99,15 +100,30 @@ export const TextElement = ({
         (elementContainerRect.height - rootRect.height) / 2 -
         printAreaContainerRect.top
     )
+    captureCurrentElementPosition(root, printAreaContainer)
   }
 
-  const initElementDisplaySize = (root: HTMLElement, elementContainer: HTMLElement) => {
+  const initElementDisplaySize = (
+    root: HTMLElement,
+    elementContainer: HTMLElement,
+    moveToCenter?: boolean
+  ) => {
     const editorContainerRect = elementContainer.getBoundingClientRect()
     const mainBox = root.querySelector<HTMLElement>('.NAME-element-main-box')
     if (!mainBox) return
     mainBox.style.cssText = `max-width: ${editorContainerRect.width - 16}px; max-height: ${
       editorContainerRect.height - 16
     }px;`
+
+    // Di chuyển vào giữa sau khi element đã được render hoàn toàn
+    if (moveToCenter) {
+      requestAnimationFrame(() => {
+        const printAreaContainer = printAreaContainerRef.current
+        if (printAreaContainer) {
+          moveElementIntoCenter(root, elementContainer, printAreaContainer)
+        }
+      })
+    }
   }
 
   const initElement = () => {
@@ -116,11 +132,8 @@ export const TextElement = ({
       if (!root) return
       const elementContainer = elementContainerRef.current
       if (!elementContainer) return
-      const printAreaContainer = printAreaContainerRef.current
-      if (!printAreaContainer) return
       if (mountType === 'from-new') {
-        moveElementIntoCenter(root, elementContainer, printAreaContainer)
-        initElementDisplaySize(root, elementContainer)
+        initElementDisplaySize(root, elementContainer, true)
       }
     })
   }

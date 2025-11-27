@@ -46,6 +46,8 @@ type TTextElementControlReturn = {
 
 export const useTextElementControl = (
   elementId: string,
+  elementRootRef: React.RefObject<HTMLElement | null>,
+  conatinerElementAbsoluteToRef: React.RefObject<HTMLDivElement | null>,
   initialParams?: TInitialTextParams
 ): TTextElementControlReturn => {
   const {
@@ -72,7 +74,7 @@ export const useTextElementControl = (
     forZoom,
     state: baseState,
     handleSetElementState: baseHandleSetElementState,
-  } = useElementControl(elementId, {
+  } = useElementControl(elementId, elementRootRef, conatinerElementAbsoluteToRef, {
     position: { x: initialPosX, y: initialPosY },
     angle: initialAngle,
     zindex: initialZindex,

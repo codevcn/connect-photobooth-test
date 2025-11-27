@@ -190,34 +190,37 @@ export const useElementControl = (
       initialZindex
     )
   }
-  console.log('>>> [jjj] curr pos:', position)
-  // const dragElementAlongWithPrintContainer = () => {
-  //   console.log('>>> [jjj] run this 195')
-  //   const element = elementRootRef.current
-  //   if (!element) return
-  //   const printAreaContainer = conatinerElementAbsoluteToRef.current
-  //   if (!printAreaContainer) return
-  //   console.log('>>> [jjj] dataset:', element.dataset)
-  //   const centerX = parseFloat(element.dataset.centerX || '0')
-  //   const centerY = parseFloat(element.dataset.centerY || '0')
+  const dragElementAlongWithPrintContainer = () => {
+    const elementRoot = elementRootRef.current
+    if (!elementRoot) return
+    const container = conatinerElementAbsoluteToRef.current
+    if (!container) return
 
-  //   // Chuyển từ center về top-left để set position
-  //   const width = element.offsetWidth // Kích thước gốc, không bị ảnh hưởng rotation
-  //   const height = element.offsetHeight
+    const leftPercent = parseFloat(elementRoot.dataset.leftPercent || '')
+    const topPercent = parseFloat(elementRoot.dataset.topPercent || '')
 
-  //   const left = centerX - width / 2
-  //   const top = centerY - height / 2
-  //   console.log('>>> [jjj] left top:', { left, top })
-  //   setPosition({
-  //     x: left,
-  //     y: top,
-  //   })
-  // }
+    if (!isNaN(leftPercent) && !isNaN(topPercent)) {
+      const containerRect = container.getBoundingClientRect()
+      const newX = (leftPercent / 100) * containerRect.width
+      const newY = (topPercent / 100) * containerRect.height
+      setPosition({
+        x: newX,
+        y: newY,
+      })
+    }
+  }
 
   useEffect(() => {
-    // window.addEventListener('resize', dragElementAlongWithPrintContainer)
+    const container = conatinerElementAbsoluteToRef.current
+    if (!container) return
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        dragElementAlongWithPrintContainer()
+      }
+    })
+    observer.observe(container)
     return () => {
-      // window.removeEventListener('resize', dragElementAlongWithPrintContainer)
+      observer.unobserve(container)
     }
   }, [])
 

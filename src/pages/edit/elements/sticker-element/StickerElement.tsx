@@ -90,7 +90,7 @@ export const StickerElement = ({
         (elementContainerRect.height - rootRect.height) / 2 -
         printAreaContainerRect.top
     )
-    // captureCurrentElementPosition(root, printAreaContainer)
+    captureCurrentElementPosition(root, printAreaContainer)
   }
 
   const initElementDisplaySize = (
@@ -138,7 +138,6 @@ export const StickerElement = ({
       const printAreaContainer = printAreaContainerRef.current
       if (!printAreaContainer) return
       if (mountType === 'from-new') {
-        moveElementIntoCenter(root, elementContainer, printAreaContainer)
         initElementDisplaySize(root, elementContainer, true)
       }
     })

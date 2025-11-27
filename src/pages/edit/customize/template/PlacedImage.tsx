@@ -1,14 +1,6 @@
-import {
-  TPlacedImage,
-  TPlacedImageMetaData,
-  TTemplateFrame,
-  TTemplateType,
-} from '@/utils/types/global'
-import { useDragImageInFrame } from '@/hooks/element/use-drag-image-in-frame'
-import { typeToObject } from '@/utils/helpers'
+import { TPlacedImage, TTemplateFrame, TTemplateType } from '@/utils/types/global'
 import { stylePlacedImageByTemplateType } from '@/configs/print-template/templates-helpers'
-import { use, useRef } from 'react'
-import { useEditedElementStore } from '@/stores/element/element.store'
+import { useRef } from 'react'
 
 type TPlacedImageProps = {
   placedImage: TPlacedImage
@@ -18,6 +10,7 @@ type TPlacedImageProps = {
   isLog?: boolean
   registerChild?: (index: number, el: HTMLImageElement | null) => void
   childIndex?: number
+  onImageLoad?: () => void
 }
 
 export const PlacedImage = ({
@@ -28,16 +21,10 @@ export const PlacedImage = ({
   isLog,
   registerChild,
   childIndex,
+  onImageLoad,
 }: TPlacedImageProps) => {
   const { placementState } = placedImage
 
-  // Hook để kéo ảnh trong frame với ràng buộc boundary
-  // const { imageRef } = useDragImageInFrame({
-  //   frameId: placedImage.id,
-  //   initialPosition: { x: 0, y: 0 },
-  //   disabled: false,
-  //   saveElementPosition: (frameId, position) => {},
-  // })
   const imgRef = useRef<HTMLImageElement | null>(null)
   const handleRef = (el: HTMLImageElement | null) => {
     imgRef.current = el
@@ -48,7 +35,6 @@ export const PlacedImage = ({
 
   return (
     <img
-      // ref={imageRef as React.RefObject<HTMLImageElement>}
       onDragStart={(e) => e.preventDefault()}
       ref={handleRef}
       src={placedImage.imgURL}
@@ -59,6 +45,7 @@ export const PlacedImage = ({
         willChange: 'transform',
         ...stylePlacedImageByTemplateType(templateType, placedImage, frame, {}, isLog),
       }}
+      onLoad={(e) => onImageLoad?.()}
       // data-placed-image-meta-data={JSON.stringify(
       //   typeToObject<TPlacedImageMetaData>({
       //     placedImageInitialSize:,

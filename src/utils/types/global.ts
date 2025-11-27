@@ -151,21 +151,24 @@ export type TTextVisualState = Omit<TElementVisualBaseState, 'scale'> & {
   content: string
   fontFamily: string
   fontWeight: number
+  mountType?: TElementMountType
 }
 
 export type TStickerVisualState = TElementVisualBaseState & {
   id: string
   path: string
+  mountType?: TElementMountType
+  height?: number
+  width?: number
 }
 
-export type TPrintedImageVisualState = TElementVisualBaseState & {
-  id: string
-  url: string
+export type TStoredTemplate = TPrintTemplate & {
+  offsetY: number
 }
 
 export type TElementsVisualState = Partial<{
   stickers: TStickerVisualState[]
-  printedImages: TPrintedImageVisualState[]
+  storedTemplates: TStoredTemplate[]
   texts: TTextVisualState[]
 }>
 

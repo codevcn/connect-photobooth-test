@@ -99,6 +99,7 @@ const StickersModal = ({ onClose }: TStickersModalProps) => {
         angle: getInitialContants<number>('ELEMENT_ROTATION'),
         scale: getInitialContants<number>('ELEMENT_ZOOM'),
         zindex: getInitialContants<number>('ELEMENT_ZINDEX'),
+        mountType: 'from-new',
       },
     ])
     onClose()

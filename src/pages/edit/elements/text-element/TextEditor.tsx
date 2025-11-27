@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from 'react'
 import { TextElementMenu } from './Menu'
 import { generateUniqueId } from '@/utils/helpers'
 
-type EditorModalProps = {
+type TEditorModalProps = {
   onClose: () => void
 }
 
-const EditorModal = ({ onClose }: EditorModalProps) => {
+const EditorModal = ({ onClose }: TEditorModalProps) => {
   const [text, setText] = useState<string>('')
 
   const handleAddText = () => {
@@ -27,6 +27,7 @@ const EditorModal = ({ onClose }: EditorModalProps) => {
           fontFamily: getInitialContants<string>('ELEMENT_TEXT_FONT_FAMILY'),
           fontWeight: getInitialContants<number>('ELEMENT_TEXT_FONT_WEIGHT'),
           zindex: getInitialContants<number>('ELEMENT_ZINDEX'),
+          mountType: 'from-new',
         },
       ])
       setText('')

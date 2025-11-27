@@ -1,7 +1,8 @@
 import {
   TElementType,
-  TPrintedImageVisualState,
+  TPrintTemplate,
   TStickerVisualState,
+  TStoredTemplate,
   TTextVisualState,
 } from '@/utils/types/global'
 import { create } from 'zustand'
@@ -17,7 +18,8 @@ type TUseElementStore = {
   selectedElement: TSelectedElement | null
   stickerElements: TStickerVisualState[]
   textElements: TTextVisualState[]
-  printedImageElements: TPrintedImageVisualState[]
+  storedTemplate: TStoredTemplate | null
+  didSetStoredTemplate: boolean
 
   // Actions
   selectElement: (
@@ -31,20 +33,32 @@ type TUseElementStore = {
   addStickerElement: (stickers: TStickerVisualState[]) => void
   removeStickerElement: (stickerId: string) => void
   addTextElement: (textElements: TTextVisualState[]) => void
-  addPrintedImageElement: (printedImageElements: TPrintedImageVisualState[]) => void
   removeTextElement: (textElementId: string) => void
   resetData: () => void
+  setDidSetStoredTemplate: (didSet: boolean) => void
+  setStickerElements: (stickers: TStickerVisualState[]) => void
+  setTextElements: (textElements: TTextVisualState[]) => void
+  setStoredTemplate: (storedTemplate: TStoredTemplate) => void
 }
 
 export const useEditedElementStore = create<TUseElementStore>((set, get) => ({
   selectedElement: null,
   stickerElements: [],
   textElements: [],
-  printedImageElements: [],
+  storedTemplate: null,
+  didSetStoredTemplate: false,
 
-  addPrintedImageElement: (printedImages) => {
-    const { printedImageElements } = get()
-    set({ printedImageElements: [...printedImageElements, ...printedImages] })
+  setStickerElements: (stickers) => {
+    set({ stickerElements: stickers })
+  },
+  setTextElements: (textElements) => {
+    set({ textElements })
+  },
+  setDidSetStoredTemplate: (didSet) => {
+    set({ didSetStoredTemplate: didSet })
+  },
+  setStoredTemplate: (storedTemplate) => {
+    set({ storedTemplate })
   },
   updateSelectedElement: (updatedElement) => {
     const { selectedElement } = get()
@@ -52,7 +66,13 @@ export const useEditedElementStore = create<TUseElementStore>((set, get) => ({
     set({ selectedElement: { ...selectedElement, ...updatedElement } })
   },
   resetData: () => {
-    set({ selectedElement: null, stickerElements: [], textElements: [] })
+    set({
+      selectedElement: null,
+      stickerElements: [],
+      textElements: [],
+      storedTemplate: null,
+      didSetStoredTemplate: false,
+    })
   },
   addTextElement: (addedTextElements) => {
     const { textElements } = get()

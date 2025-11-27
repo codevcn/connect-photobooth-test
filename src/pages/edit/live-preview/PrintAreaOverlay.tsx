@@ -1,4 +1,4 @@
-import { TPrintTemplate, TTemplateFrame } from '@/utils/types/global'
+import { TPrintedImage, TPrintTemplate, TTemplateFrame } from '@/utils/types/global'
 import { FramesDisplayer } from '../customize/template/FrameDisplayer'
 import { cn } from '@/configs/ui/tailwind-utils'
 import { useTemplateStore } from '@/stores/ui/template.store'
@@ -44,6 +44,7 @@ export const PrintAreaOverlayPreview = ({
         }}
         displayerClassNames={{ container: 'bg-transparent' }}
         allowDragging={false}
+        printedImages={[]}
       />
     </div>
   )
@@ -52,6 +53,7 @@ export const PrintAreaOverlayPreview = ({
 type TPrintAreaOverlayProps = {
   printAreaRef: React.RefObject<HTMLDivElement | null>
   isOutOfBounds: boolean
+  printedImages: TPrintedImage[]
 } & Partial<{
   printAreaOptions: {
     className: string
@@ -76,6 +78,8 @@ export const PrintAreaOverlay = ({
   isOutOfBounds,
   printAreaOptions,
   displayWarningOverlay = true,
+  printedImages,
+  frameDisplayerOptions,
 }: TPrintAreaOverlayProps) => {
   const pickedTemplate = useTemplateStore((s) => s.pickedTemplate)
 
@@ -87,11 +91,9 @@ export const PrintAreaOverlay = ({
     if (image) {
       let elementURL: string | undefined = undefined
       const pickedFrame = useTemplateStore.getState().getFrameById(frameId)
-      console.log('>>> ppppppp:', pickedFrame)
       if (pickedFrame) {
         elementURL = pickedFrame.placedImage?.imgURL
       }
-      console.log('>>> elementURL:', elementURL)
       useEditedElementStore
         .getState()
         .selectElement(frameId, e.currentTarget, 'template-frame', elementURL)
@@ -100,12 +102,6 @@ export const PrintAreaOverlay = ({
       eventEmitter.emit(EInternalEvents.HIDE_SHOW_PRINTED_IMAGES_MODAL, true, frameId)
     }
   }
-
-  useEffect(() => {
-    setTimeout(() => {
-      // initPlacedImageStyle()
-    }, 0)
-  }, [pickedTemplate])
 
   return (
     <div
@@ -134,9 +130,11 @@ export const PrintAreaOverlay = ({
           frameClassNames={{
             container: 'cursor-pointer',
           }}
+          displayerClassNames={frameDisplayerOptions?.classNames}
           displayScrollButton
           displaySelectingColor
           scrollable={false}
+          printedImages={printedImages}
         />
       )}
     </div>

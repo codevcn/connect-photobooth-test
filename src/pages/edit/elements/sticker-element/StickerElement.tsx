@@ -1,9 +1,10 @@
 import { TElementMountType, TStickerVisualState } from '@/utils/types/global'
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { useElementControl } from '@/hooks/element/use-element-control'
 import { getNaturalSizeOfImage, typeToObject } from '@/utils/helpers'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
+import { captureCurrentElementPosition } from '../../helpers'
 
 const MAX_ZOOM: number = 4
 const MIN_ZOOM: number = 0.2
@@ -26,13 +27,14 @@ type TStickerElementProps = {
 export const StickerElement = ({
   element,
   elementContainerRef,
-  mountType,
   isSelected,
   selectElement,
   removeStickerElement,
   printAreaContainerRef,
 }: TStickerElementProps) => {
-  const { path, id } = element
+  console.log('>>> [now] element sticker:', element)
+  const { path, id, mountType, height, width } = element
+  const rootRef = useRef<HTMLElement | null>(null)
   const {
     forPinch: { ref: refForPinch },
     forRotate: { ref: refForRotate, rotateButtonRef },
@@ -40,7 +42,7 @@ export const StickerElement = ({
     forDrag: { ref: refForDrag },
     state: { position, angle, scale, zindex },
     handleSetElementState,
-  } = useElementControl(id, {
+  } = useElementControl(id, rootRef, printAreaContainerRef, {
     maxZoom: MAX_ZOOM,
     minZoom: MIN_ZOOM,
     angle: element.angle,
@@ -49,7 +51,7 @@ export const StickerElement = ({
     zindex: element.zindex,
     mountType,
   })
-  const rootRef = useRef<HTMLElement | null>(null)
+  console.log('>>> [now] state visual:', { position, angle, scale, zindex })
 
   const pickElement = () => {
     const root = rootRef.current
@@ -76,6 +78,7 @@ export const StickerElement = ({
     elementContainer: HTMLElement,
     printAreaContainer: HTMLElement
   ) => {
+    console.log('>>> [now] quay ve 1:', element)
     const elementContainerRect = elementContainer.getBoundingClientRect()
     const rootRect = root.getBoundingClientRect()
     const printAreaContainerRect = printAreaContainer.getBoundingClientRect()
@@ -87,6 +90,7 @@ export const StickerElement = ({
         (elementContainerRect.height - rootRect.height) / 2 -
         printAreaContainerRect.top
     )
+    // captureCurrentElementPosition(root, printAreaContainer)
   }
 
   const initElementDisplaySize = (
@@ -94,34 +98,16 @@ export const StickerElement = ({
     elementContainer: HTMLElement,
     moveToCenter?: boolean
   ) => {
+    console.log('>>> [now] quay ve 2:', element)
     const display = root.querySelector<HTMLImageElement>('.NAME-element-display')
     if (!display) return
     getNaturalSizeOfImage(
       path,
       (naturalWidth, naturalHeight) => {
-        const elementContainerRect = elementContainer.getBoundingClientRect()
-        // Nếu moveToCenter === true (thêm mới), giới hạn kích thước hiển thị nhỏ để vừa khung preview.
-        // Nếu load từ saved (moveToCenter falsy), giữ kích thước hiển thị lớn hơn để thể hiện đúng scale đã lưu.
-        const maxWidth = moveToCenter
-          ? Math.min(elementContainerRect.width, 100)
-          : Math.max(60, elementContainerRect.width - 16)
-        const maxHeight = moveToCenter
-          ? Math.min(elementContainerRect.height, 100)
-          : Math.max(60, elementContainerRect.height - 16)
-        let cssText = `aspect-ratio: ${naturalWidth} / ${naturalHeight};`
-        if (naturalWidth > maxWidth) {
-          cssText += ` width: ${maxWidth}px;`
-        } else if (naturalHeight > maxHeight) {
-          cssText += ` height: ${maxHeight}px;`
-        } else {
-          const minWidth = 60
-          const minHeight = 60
-          if (naturalWidth < minWidth) {
-            cssText += ` width: ${minWidth}px;`
-          } else if (naturalHeight < minHeight) {
-            cssText += ` height: ${minHeight}px;`
-          }
-        }
+        let cssText = `
+          height: ${75}px;
+          aspect-ratio: ${naturalWidth} / ${naturalHeight};
+        `
         display.style.cssText = cssText
         display.onload = () => {
           if (moveToCenter) {
@@ -151,9 +137,7 @@ export const StickerElement = ({
       if (!elementContainer) return
       const printAreaContainer = printAreaContainerRef.current
       if (!printAreaContainer) return
-      if (mountType === 'from-saved') {
-        initElementDisplaySize(root, elementContainer)
-      } else {
+      if (mountType === 'from-new') {
         moveElementIntoCenter(root, elementContainer, printAreaContainer)
         initElementDisplaySize(root, elementContainer, true)
       }
@@ -201,6 +185,12 @@ export const StickerElement = ({
         top: position.y,
         transform: `scale(${scale}) rotate(${angle}deg)`,
         zIndex: zindex,
+        ...(mountType === 'from-new'
+          ? { height: '75px' }
+          : {
+              height: `${height}px`,
+              width: `${width}px`,
+            }),
       }}
       className={`${
         isSelected ? 'shadow-[0_0_0_2px_#f54900]' : ''
@@ -214,17 +204,21 @@ export const StickerElement = ({
           scale,
           angle,
           zindex,
+          height,
+          width,
         })
       )}
       onDragStart={(e) => e.preventDefault()}
       onDrop={(e) => e.preventDefault()}
       onDragOver={(e) => e.preventDefault()}
     >
-      <div
-        className={`NAME-element-main-box select-none relative origin-center max-w-[200px] max-h-[300px]`}
-      >
+      <div className={`NAME-element-main-box select-none relative origin-center h-full w-full`}>
         <div className="h-full w-full">
-          <img src={path} alt={`Sticker`} className="NAME-element-display object-contain" />
+          <img
+            src={path}
+            alt={`Sticker`}
+            className="NAME-element-display object-contain h-full w-full"
+          />
         </div>
         <div
           className={`${
@@ -243,7 +237,7 @@ export const StickerElement = ({
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-rotate-cw-icon lucide-rotate-cw h-[18px] w-[18px] md:w-[26px] md:h-[26px]"
+              className="lucide lucide-rotate-cw-icon lucide-rotate-cw h-[18px] w-[18px] md:w-[22px] md:h-[22px]"
             >
               <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
               <path d="M21 3v5h-5" />
@@ -270,7 +264,7 @@ export const StickerElement = ({
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-scaling-icon lucide-scaling h-[18px] w-[18px] md:w-[26px] md:h-[26px]"
+              className="lucide lucide-scaling-icon lucide-scaling h-[18px] w-[18px] md:w-[22px] md:h-[22px]"
             >
               <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
               <path d="M14 15H9v-5" />
@@ -298,7 +292,7 @@ export const StickerElement = ({
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-x-icon lucide-x h-[18px] w-[18px] md:w-[26px] md:h-[26px]"
+              className="lucide lucide-x-icon lucide-x h-[18px] w-[18px] md:w-[22px] md:h-[22px]"
             >
               <path d="M18 6 6 18" />
               <path d="m6 6 12 12" />

@@ -1,5 +1,5 @@
 import { usePrintArea } from '@/hooks/use-print-area'
-import { TBaseProduct, TProductWithTemplate } from '@/utils/types/global'
+import { TBaseProduct, TPrintedImage, TProductWithTemplate } from '@/utils/types/global'
 import { useEffect, useMemo, useRef } from 'react'
 import { PrintAreaOverlay } from './PrintAreaOverlay'
 import { EditedElementsArea } from './EditedElementsArea'
@@ -20,12 +20,14 @@ type TLivePreviewProps = {
   pickedProduct: TProductWithTemplate
   editedVariantId: TBaseProduct['variants'][number]['id']
   editedPrintSurfaceId: TBaseProduct['printAreaList'][number]['id']
+  printedImages: TPrintedImage[]
 }
 
 export const LivePreview = ({
   pickedProduct,
   editedVariantId,
   editedPrintSurfaceId,
+  printedImages,
 }: TLivePreviewProps) => {
   const printAreaInfo = useMemo(() => {
     return pickedProduct.printAreaList.find((printArea) => printArea.id === editedPrintSurfaceId)!
@@ -135,6 +137,8 @@ export const LivePreview = ({
           printAreaRef={printAreaRef}
           isOutOfBounds={isOutOfBounds}
           displayWarningOverlay
+          printedImages={printedImages}
+          frameDisplayerOptions={{ classNames: { container: 'NAME-frames-displayer-print-area' } }}
         />
         <EditedElementsArea
           allowedPrintAreaRef={printAreaRef}

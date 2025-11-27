@@ -1,13 +1,23 @@
-import { TPrintTemplate } from '@/utils/types/global'
+import {
+  TPrintedImage,
+  TPrintTemplate,
+  TStoredTemplate,
+  TTemplateFrame,
+} from '@/utils/types/global'
 import { TemplateFrame } from './TemplateFrame'
 import type React from 'react'
 import { cn } from '@/configs/ui/tailwind-utils'
 import { styleToFramesDisplayerByTemplateType } from '@/configs/print-template/templates-helpers'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTemplateStore } from '@/stores/ui/template.store'
+import { useEditedElementStore } from '@/stores/element/element.store'
+import { initFramePlacedImageByPrintedImage } from '../../helpers'
+import { useSearchParams } from 'react-router-dom'
+import { typeToObject } from '@/utils/helpers'
 
 type TFramesDisplayerProps = {
   template: TPrintTemplate
+  printedImages: TPrintedImage[]
 } & Partial<{
   plusIconReplacer?: React.JSX.Element
   frameStyles: Partial<{
@@ -44,15 +54,44 @@ export const FramesDisplayer = ({
   displaySelectingColor = false,
   allowDragging = true,
   scrollable = true,
+  printedImages,
 }: TFramesDisplayerProps) => {
-  const { frames, type } = template
+  const { type } = template
+  const mockupId = useSearchParams()[0].get('mockupId')
   const pickedTemplate = useTemplateStore((s) => s.pickedTemplate)
+  const storedTemplate = useEditedElementStore((s) => s.storedTemplate)
+  const didSetStoredTemplate = useEditedElementStore((s) => s.didSetStoredTemplate)
   const [offsetY, setOffsetY] = useState(0) // margin-top động
   const [dragging, setDragging] = useState(false)
+  const restoredOffsetYRef = useRef(0)
   const startYRef = useRef(0)
   const startOffsetRef = useRef(0)
-
   const [framesBounds, setFramesBounds] = useState<Record<string, TFrameBounds>>({})
+
+  const finalFrames = useMemo<TTemplateFrame[]>(() => {
+    console.log('>>> [now] toyyy vcn:', {
+      didSetStoredTemplate,
+      storedTemplate,
+      template,
+    })
+    if (!mockupId) return template.frames
+    if (!didSetStoredTemplate) return []
+    let frames = storedTemplate ? storedTemplate.frames : template.frames
+    if (storedTemplate) {
+      restoredOffsetYRef.current = storedTemplate.offsetY
+    }
+    return frames
+  }, [didSetStoredTemplate, storedTemplate, template])
+
+  const restoreOffsetY = () => {
+    requestAnimationFrame(() => {
+      if (restoredOffsetYRef.current) setOffsetY(restoredOffsetYRef.current)
+    })
+  }
+
+  useEffect(() => {
+    restoreOffsetY()
+  }, [])
 
   // hàm clamp offsetY theo tất cả frames
   const clampOffset = (value: number) => {
@@ -147,33 +186,17 @@ export const FramesDisplayer = ({
     <div ref={displayerRef} className="relative w-full h-full overflow-hidden">
       <div
         className={cn(
-          'relative NAME-frames-displayer p-0.5 h-full w-full',
+          'NAME-frames-displayer relative p-0.5 h-full w-full',
           displayerClassNames?.container
         )}
         style={{ ...styleToFramesDisplayerByTemplateType(type), marginTop: offsetY }}
+        data-visual-state={JSON.stringify(
+          typeToObject<Pick<TStoredTemplate, 'offsetY'>>({
+            offsetY,
+          })
+        )}
       >
-        {/* {displayScrollButton && (
-          <button
-            type="button"
-            className="absolute -left-8 top-1/2 -translate-y-1/2 cursor-row-resize select-none"
-            onMouseDown={handleMouseDown}
-          >
-            <svg
-              className="shadow-lg"
-              xmlns="http://www.w3.org/2000/svg"
-              width="32"
-              height="32"
-              viewBox="-9 0 32 32"
-            >
-              <path
-                fill="#fff"
-                fillRule="evenodd"
-                d="M12 24H9V8h3c.643 0 1.293.02 1.687-.38.393-.39.393-1.02 0-1.42L7.747.28A.968.968 0 0 0 6.984 0a.968.968 0 0 0-.762.28L.283 6.2c-.393.4-.393 1.03 0 1.42C.676 8.02 1.294 8 2 8h3v16H2c-.643 0-1.324-.02-1.717.38a1.002 1.002 0 0 0 0 1.42l5.939 5.92c.21.21.488.3.762.28.275.02.553-.07.763-.28l5.94-5.92c.393-.4.393-1.03 0-1.42-.394-.4-.95-.38-1.687-.38"
-              />
-            </svg>
-          </button>
-        )} */}
-        {frames.map((frame, idx) => (
+        {finalFrames.map((frame, idx) => (
           <TemplateFrame
             key={frame.id}
             templateFrame={frame}
@@ -187,6 +210,9 @@ export const FramesDisplayer = ({
             onPointerDown={onPointerDown}
             displaySelectingColor={displaySelectingColor}
             scrollable={scrollable}
+            onImageLoad={() => {
+              restoreOffsetY()
+            }}
           />
         ))}
       </div>

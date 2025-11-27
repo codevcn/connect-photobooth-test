@@ -2,10 +2,11 @@ import { useRotateElement } from '@/hooks/element/use-rotate-element'
 import { usePinchElement } from '@/hooks/element/use-pinch-element'
 import { useZoomElement } from '@/hooks/element/use-zoom-element'
 import { useDragElement } from '@/hooks/element/use-drag-element'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getInitialContants } from '@/utils/contants'
 import { TElementMountType, TElementVisualBaseState } from '@/utils/types/global'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
+import { captureCurrentElementPosition } from '@/pages/edit/helpers'
 
 type TInitialParams = Partial<
   TElementVisualBaseState & {
@@ -44,6 +45,8 @@ type TElementControlReturn = {
 
 export const useElementControl = (
   elementId: string,
+  elementRootRef: React.RefObject<HTMLElement | null>,
+  conatinerElementAbsoluteToRef: React.RefObject<HTMLDivElement | null>,
   initialParams?: TInitialParams
 ): TElementControlReturn => {
   const {
@@ -91,10 +94,18 @@ export const useElementControl = (
     currentZoom: scale,
     setCurrentZoom: setScale,
   })
+
   const { ref: refForDrag } = useDragElement({
     disabled: isRotating || isZooming,
     currentPosition: position,
     setCurrentPosition: setPosition,
+    postFunctionDrag: () => {
+      const element = elementRootRef.current
+      if (!element) return
+      const container = conatinerElementAbsoluteToRef.current
+      if (!container) return
+      captureCurrentElementPosition(element, container)
+    },
   })
 
   const validateInputValueAndSet = (
@@ -179,6 +190,36 @@ export const useElementControl = (
       initialZindex
     )
   }
+  console.log('>>> [jjj] curr pos:', position)
+  // const dragElementAlongWithPrintContainer = () => {
+  //   console.log('>>> [jjj] run this 195')
+  //   const element = elementRootRef.current
+  //   if (!element) return
+  //   const printAreaContainer = conatinerElementAbsoluteToRef.current
+  //   if (!printAreaContainer) return
+  //   console.log('>>> [jjj] dataset:', element.dataset)
+  //   const centerX = parseFloat(element.dataset.centerX || '0')
+  //   const centerY = parseFloat(element.dataset.centerY || '0')
+
+  //   // Chuyển từ center về top-left để set position
+  //   const width = element.offsetWidth // Kích thước gốc, không bị ảnh hưởng rotation
+  //   const height = element.offsetHeight
+
+  //   const left = centerX - width / 2
+  //   const top = centerY - height / 2
+  //   console.log('>>> [jjj] left top:', { left, top })
+  //   setPosition({
+  //     x: left,
+  //     y: top,
+  //   })
+  // }
+
+  useEffect(() => {
+    // window.addEventListener('resize', dragElementAlongWithPrintContainer)
+    return () => {
+      // window.removeEventListener('resize', dragElementAlongWithPrintContainer)
+    }
+  }, [])
 
   useEffect(() => {
     onElementLayersChange()
@@ -186,14 +227,7 @@ export const useElementControl = (
 
   useEffect(() => {
     setupVisualData()
-  }, [
-    mountType,
-    initialPosition?.x,
-    initialPosition?.y,
-    initialAngle,
-    initialZoom,
-    initialZindex,
-  ])
+  }, [mountType, initialPosition?.x, initialPosition?.y, initialAngle, initialZoom, initialZindex])
 
   // useEffect(() => {
   //   console.log('>>> initial pos changed:', initialPosition)

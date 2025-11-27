@@ -343,3 +343,38 @@ export const initPlacedImageStyle = (
     }
   })
 }
+
+export const captureCurrentElementPosition = (
+  element: HTMLElement,
+  conatinerElementAbsoluteTo: HTMLElement
+) => {
+  console.log('>>> [jjj] element:', element)
+  console.log('>>> [jjj] parentElement:', conatinerElementAbsoluteTo)
+  const parentRect = conatinerElementAbsoluteTo.getBoundingClientRect()
+  const elementRect = element.getBoundingClientRect()
+  console.log('>>> [jjj] boundings:', { parentRect, elementRect })
+  // Lấy vị trí CENTER của element (không bị ảnh hưởng bởi rotation)
+  const centerX = elementRect.left + elementRect.width / 2
+  const centerY = elementRect.top + elementRect.height / 2
+
+  // Tính vị trí center tương đối so với parent
+  const relativeCenterX = centerX - parentRect.left
+  const relativeCenterY = centerY - parentRect.top
+
+  // Lưu vị trí center
+  element.dataset.centerX = String(relativeCenterX)
+  element.dataset.centerY = String(relativeCenterY)
+
+  // const parentRect = conatinerElementAbsoluteTo.getBoundingClientRect()
+  // const childRect = element.getBoundingClientRect()
+  // const leftPx = childRect.left - parentRect.left
+  // const topPx = childRect.top - parentRect.top
+  // console.log('>>> [now] leftPx, topPx:', {
+  //   leftPx,
+  //   topPx,
+  //   parentRect,
+  //   childRect,
+  // })
+  // element.setAttribute('data-visual-left-px', `${leftPx}`)
+  // element.setAttribute('data-visual-top-px', `${topPx}`)
+}

@@ -8,7 +8,6 @@ import {
   TClientProductVariant,
   TMockupData,
   TPrintAreaInfo,
-  TPrintedImageVisualState,
   TProductCartInfo,
   TProductSize,
   TProductVariantInCart,
@@ -25,9 +24,8 @@ import { useSearchParams } from 'react-router-dom'
  * Restore mockup visual states từ localStorage
  */
 const restoreMockupVisualStates = (mockupId: string) => {
-  console.log('>>> mock:', { mockupId })
   const savedMockup = LocalStorageHelper.getSavedMockupData()
-  console.log('>>> savedMockup:', savedMockup)
+  console.log('>>> savedMockup:', { savedMockup, mockupId })
   if (!savedMockup) return
 
   const cartItems = savedMockup.productsInCart
@@ -56,43 +54,49 @@ const restoreMockupVisualStates = (mockupId: string) => {
 
   if (!foundMockup || !foundProductVariant || !foundProductId) return
 
-  const { addStickerElement, addTextElement, addPrintedImageElement } =
-    useEditedElementStore.getState()
-  const { getProductById } = useProductStore.getState()
   useEditedElementStore.getState().resetData()
 
-  // Restore text elements
-  const restoredTextElements = foundMockup.elementsVisualState.texts || []
-  console.log('>>> texts:', restoredTextElements)
-  if (restoredTextElements.length > 0) {
-    useEditedElementStore.getState().addTextElement(restoredTextElements)
-  }
+  setTimeout(() => {
+    // Restore text elements
+    const restoredTextElements = foundMockup.elementsVisualState.texts || []
+    console.log('>>> texts:', restoredTextElements)
+    if (restoredTextElements.length > 0) {
+      useEditedElementStore
+        .getState()
+        .setTextElements(restoredTextElements.map((text) => ({ ...text, isFromSaved: true })))
+    }
 
-  // Restore sticker elements
-  const restoredStickerElements = foundMockup.elementsVisualState.stickers || []
-  console.log('>>> stickers:', restoredStickerElements)
-  if (restoredStickerElements.length > 0) {
-    useEditedElementStore.getState().addStickerElement(restoredStickerElements)
-  }
+    // Restore sticker elements
+    const restoredStickerElements = foundMockup.elementsVisualState.stickers || []
+    console.log('>>> stickers:', restoredStickerElements)
+    if (restoredStickerElements.length > 0) {
+      useEditedElementStore
+        .getState()
+        .setStickerElements(
+          restoredStickerElements.map((sticker) => ({ ...sticker, isFromSaved: true }))
+        )
+    }
 
-  // Restore printed image elements
-  const restoredPrintedImageElements = foundMockup.elementsVisualState.printedImages || []
-  console.log('>>> printed images:', restoredPrintedImageElements)
-  if (restoredPrintedImageElements.length > 0) {
-    useEditedElementStore.getState().addPrintedImageElement(restoredPrintedImageElements)
-  }
+    // Restore printed image elements
+    const storedTemplates = foundMockup.elementsVisualState.storedTemplates || []
+    console.log('>>> placed images:', storedTemplates)
+    if (storedTemplates && storedTemplates.length > 0) {
+      useEditedElementStore.getState().setStoredTemplate(storedTemplates[0])
+      useEditedElementStore.getState().setDidSetStoredTemplate(true)
+    }
 
-  // Restore product selection
-  const product = useProductStore.getState().getProductById(foundProductId)
-  console.log('>>> product 86:', product)
-  if (!product) return
-  const variantId = foundProductVariant.variantId
-  const variant = product.variants.find((v) => v.id === variantId)
-  if (!variant) return
-  useProductUIDataStore.getState().handlePickVariant(variant)
+    // Restore product selection
+    const product = useProductStore.getState().getProductById(foundProductId)
+    console.log('>>> product 86:', product)
+    if (!product) return
+    const variantId = foundProductVariant.variantId
+    const variant = product.variants.find((v) => v.id === variantId)
+    if (!variant) return
+    useProductUIDataStore.getState().handlePickVariant(variant)
 
-  // Restore surface type
-  useProductUIDataStore.getState().handlePickVariantSurface(variantId, foundMockup.surfaceInfo.id)
+    // Restore surface type
+    useProductUIDataStore.getState().handlePickVariantSurface(variantId, foundMockup.surfaceInfo.id)
+  }, 0)
 }
 
 type TEditedElementsAreaProps = {
@@ -110,7 +114,7 @@ export const EditedElementsArea = ({
   const selectElement = useEditedElementStore((s) => s.selectElement)
   const mockupId = useSearchParams()[0].get('mockupId')
   const firstRenderRef = useRef(true)
-  console.log('>>> mockup id:', { mockupId, stickerElements, textElements })
+  console.log('>>> [now] mockup id:', { mockupId, stickerElements, textElements })
 
   useEffect(() => {
     console.log('>>> run this 115')

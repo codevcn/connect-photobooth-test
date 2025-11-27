@@ -21,14 +21,13 @@ type TTextElementProps = {
 export const TextElement = ({
   element,
   elementContainerRef,
-  mountType,
   isSelected,
   selectElement,
   removeTextElement,
   printAreaContainerRef,
 }: TTextElementProps) => {
-
-  const { id } = element
+  console.log('>>> mountType:', element.mountType)
+  const { id, mountType } = element
   const {
     forPinch: { ref: refForPinch },
     forRotate: { ref: refForRotate, rotateButtonRef },
@@ -119,9 +118,7 @@ export const TextElement = ({
       if (!elementContainer) return
       const printAreaContainer = printAreaContainerRef.current
       if (!printAreaContainer) return
-      if (mountType === 'from-saved') {
-        initElementDisplaySize(root, elementContainer)
-      } else {
+      if (mountType === 'from-new') {
         moveElementIntoCenter(root, elementContainer, printAreaContainer)
         initElementDisplaySize(root, elementContainer)
       }

@@ -66,6 +66,7 @@ type TemplateFrameProps = {
   onPointerDown?: (e: React.PointerEvent<HTMLDivElement>, frameId: string) => void
   displaySelectingColor: boolean
   scrollable: boolean
+  onImageLoad?: () => void
 }>
 
 export const TemplateFrame = ({
@@ -81,6 +82,7 @@ export const TemplateFrame = ({
   onPointerDown,
   displaySelectingColor = false,
   scrollable = true,
+  onImageLoad,
 }: TemplateFrameProps) => {
   const selectedElement = useEditedElementStore((s) => s.selectedElement)
   const frameSelected = selectedElement?.elementId === templateFrame.id
@@ -116,6 +118,7 @@ export const TemplateFrame = ({
           frame={templateFrame}
           registerChild={registerChild}
           childIndex={childIndex}
+          onImageLoad={onImageLoad}
         />
       ) : (
         displayPlusIcon &&

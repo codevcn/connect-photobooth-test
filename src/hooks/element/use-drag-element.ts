@@ -6,6 +6,7 @@ interface UseDraggableOptions {
   currentPosition: TPosition
   setCurrentPosition: React.Dispatch<React.SetStateAction<TPosition>>
   disabled?: boolean // Thêm option để disable dragging
+  postFunctionDrag?: (element: HTMLDivElement, position: TPosition) => void // Callback sau khi drag xong
 }
 
 interface UseDraggableReturn {
@@ -13,7 +14,7 @@ interface UseDraggableReturn {
 }
 
 export const useDragElement = (options: UseDraggableOptions): UseDraggableReturn => {
-  const { currentPosition, setCurrentPosition, disabled = false } = options
+  const { currentPosition, setCurrentPosition, disabled = false, postFunctionDrag } = options
 
   const [dragging, setDragging] = useState<boolean>(false)
   const [offset, setOffset] = useState<TPosition>({ x: 0, y: 0 })
@@ -43,6 +44,10 @@ export const useDragElement = (options: UseDraggableOptions): UseDraggableReturn
   const handleMouseUp = () => {
     if (!disabled) {
       setDragging(false)
+    }
+    // Gọi callback sau khi drag xong
+    if (postFunctionDrag && ref.current) {
+      postFunctionDrag(ref.current, currentPosition)
     }
   }
 

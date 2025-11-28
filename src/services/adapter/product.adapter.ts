@@ -4,9 +4,13 @@ import {
   TClientProductVariant,
   TPrintAreaInfo,
   TProductVariantSurface,
-  TProductSize,
   TSurfaceType,
   TProductCategory,
+  TProductAttributes,
+  TColorAttribute,
+  TMaterialAttribute,
+  TScentAttribute,
+  TSizeAttribute,
 } from '@/utils/types/global'
 
 /**
@@ -22,16 +26,19 @@ export class ProductAdapter {
     if (apiProduct.variants.length === 0) return null
     if (apiProduct.surfaces.length === 0) return null
 
+    const clientVariants = this.toClientVariants(apiProduct)
+
     return {
       id: apiProduct.id,
       url: apiProduct.base_image_url,
       name: apiProduct.name,
       description: apiProduct.description,
       detailImages: apiProduct.detail_img,
-      variants: this.toClientVariants(apiProduct),
+      variants: clientVariants,
       inNewLine: false,
       printAreaList: this.toPrintAreaList(apiProduct),
-      variantSurfaces: this.toVariantSurfaces(apiProduct.mockups),
+      variantSurfaces: this.toMockups(apiProduct.mockups),
+      mergedAttributes: this.mergeVariantAttributes(clientVariants),
       slug: apiProduct.slug,
     }
   }
@@ -67,27 +74,117 @@ export class ProductAdapter {
     product: TProduct,
     category?: TProductCategory
   ): TClientProductVariant {
-    let colorJSON: { text: string; hex: string; title: string }
-    try {
-      colorJSON = JSON.parse(variant.color)
-    } catch (error) {
-      colorJSON = null as any
-    }
+    const attrs = variant.attributes_json || {}
+
     return {
       id: variant.id,
       name: product.name,
-      size: variant.size.toUpperCase() as TProductSize,
-      color: {
-        title: colorJSON ? colorJSON.text : 'Unknown',
-        value: colorJSON ? colorJSON.hex : '#000000',
-        withTitleFromServer: colorJSON && colorJSON.title ? colorJSON : undefined,
-      },
+      attributes: attrs,
       priceAmountOneSide: parseFloat(variant.price_amount_oneside),
-      priceAmountBothSide: parseFloat(variant.price_amount_bothside),
+      priceAmountBothSide: variant.price_amount_bothside
+        ? parseFloat(variant.price_amount_bothside)
+        : null,
       currency: variant.currency,
       stock: variant.stock_qty,
       category,
     }
+  }
+
+  /**
+   * Merge variants thành cấu trúc phân cấp attributes
+   * Độ ưu tiên: material -> scent -> color -> size
+   */
+  static mergeVariantAttributes(variants: TClientProductVariant[]): TProductAttributes {
+    const result: TProductAttributes = {}
+
+    // Collect unique values
+    const materials = new Set<string>()
+    const scents = new Set<string>()
+    const colors = new Map<string, { hex?: string; title?: string }>()
+    const sizes = new Set<string>()
+
+    let materialTitle: string | null = null
+    let scentTitle: string | null = null
+    let colorTitle: string | null = null
+    let sizeTitle: string | null = null
+
+    for (const variant of variants) {
+      const attrs = variant.attributes
+
+      // Material
+      if (attrs.material) {
+        materials.add(attrs.material)
+        if (attrs.materialTitle) materialTitle = attrs.materialTitle
+      }
+
+      // Scent
+      if (attrs.scent) {
+        scents.add(attrs.scent)
+        if (attrs.scentTitle) scentTitle = attrs.scentTitle
+      }
+
+      // Color - Handle cases 1, 2, 3
+      if (attrs.color !== null && attrs.color !== undefined) {
+        if (!colors.has(attrs.color)) {
+          colors.set(attrs.color, {
+            hex: attrs.hex || undefined,
+            title: attrs.colorTitle || undefined,
+          })
+        }
+        if (attrs.colorTitle) colorTitle = attrs.colorTitle
+      }
+
+      // Size
+      if (attrs.size) {
+        sizes.add(attrs.size.toUpperCase())
+        if (attrs.sizeTitle) sizeTitle = attrs.sizeTitle
+      }
+    }
+
+    // Build result theo thứ tự: material -> scent -> color -> size
+    if (materials.size > 0) {
+      result.materials = {
+        title: materialTitle || 'Chất liệu',
+        options: Array.from(materials).map((m) => ({
+          value: m,
+          displayValue: m,
+        })),
+      }
+    }
+
+    if (scents.size > 0) {
+      result.scents = {
+        title: scentTitle || 'Mùi hương',
+        options: Array.from(scents).map((s) => ({
+          value: s,
+          displayValue: s,
+        })),
+      }
+    }
+
+    if (colors.size > 0) {
+      result.colors = {
+        title: colorTitle || 'Màu sắc',
+        options: Array.from(colors.entries()).map(([color, data]) => ({
+          value: color,
+          displayValue: color,
+          hex: data.hex,
+          displayType: (data.hex ? 'swatch' : 'label') as 'swatch' | 'label',
+        })),
+      }
+    }
+
+    if (sizes.size > 0) {
+      result.sizes = {
+        title: sizeTitle || 'Kích thước',
+        options: Array.from(sizes).map((s) => ({
+          value: s,
+          displayValue: s,
+        })),
+      }
+    }
+
+    return result
   }
 
   /**
@@ -131,13 +228,14 @@ export class ProductAdapter {
   }
 
   /**
-   * Convert mockups sang variant surfaces
+   * Convert mockups với transform_json sang variant surfaces
    */
-  private static toVariantSurfaces(mockups: TProductMockup[]): TProductVariantSurface[] {
+  private static toMockups(mockups: TProductMockup[]): TProductVariantSurface[] {
     return mockups.map((mockup) => ({
       variantId: mockup.variant_id,
       surfaceId: mockup.surface_id,
       imageURL: mockup.mockup_url,
+      transform: mockup.transform_json || {},
     }))
   }
 

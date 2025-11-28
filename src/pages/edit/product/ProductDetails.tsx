@@ -1,7 +1,14 @@
 import { Modal } from '@/components/custom/common/Modal'
 import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 import { formatNumberWithCommas, friendlyCurrency, getContrastColor } from '@/utils/helpers'
-import { TBaseProduct, TClientProductVariant, TProductColor } from '@/utils/types/global'
+import {
+  TBaseProduct,
+  TClientProductVariant,
+  TColorAttribute,
+  TMaterialAttribute,
+  TScentAttribute,
+  TSizeAttribute,
+} from '@/utils/types/global'
 import { useMemo, useState } from 'react'
 import { PrintSurface } from '../print-surface/PrintSurface'
 
@@ -67,65 +74,38 @@ const SizeChartPreview = ({ setShowSizeChart, sizeChartImageURL }: TSizeChartPre
   )
 }
 
-function sortVariantsBySize(variants: TClientProductVariant[]): TClientProductVariant[] {
-  const baseOrder: Record<string, number> = {
-    s: 1,
-    m: 2,
-    l: 3,
-    xl: 4,
-  }
-
-  const getRank = (size: string): number => {
-    const s = size.toLowerCase().trim()
-
-    // 2xl, 3xl, 4xl...
-    const match = /^(\d+)xl$/.exec(s)
-    if (match) {
-      const n = parseInt(match[1], 10)
-      return 4 + n // xl=4 → 2xl=5 → 3xl=6...
-    }
-
-    // Size cơ bản
-    if (baseOrder[s] !== undefined) {
-      return baseOrder[s]
-    }
-
-    // Size lạ → đẩy ra cuối
-    return 999
-  }
-
-  return [...variants].sort((a, b) => getRank(a.size) - getRank(b.size))
-}
-
 type TProductDetailsProps = {
   pickedProduct: TBaseProduct
   pickedVariant: TClientProductVariant
 }
 
+/**
+ * Helper: Tìm variant khớp với attributes đã chọn
+ */
+const findVariantByAttributes = (
+  variants: TClientProductVariant[],
+  selectedAttrs: Record<string, string>
+): TClientProductVariant | null => {
+  return (
+    variants.find((variant) => {
+      const attrs = variant.attributes
+      return (
+        (!selectedAttrs.material || attrs.material === selectedAttrs.material) &&
+        (!selectedAttrs.scent || attrs.scent === selectedAttrs.scent) &&
+        (!selectedAttrs.color || attrs.color === selectedAttrs.color) &&
+        (!selectedAttrs.size || attrs.size?.toUpperCase() === selectedAttrs.size?.toUpperCase())
+      )
+    }) || null
+  )
+}
+
 export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetailsProps) => {
   const [showSizeChart, setShowSizeChart] = useState(false)
   const [selectedImageToPreview, setSelectedImageToPreview] = useState<string>()
-  const { size: selectedSize, color: selectedColor } = pickedVariant
-  const handlePickColor = useProductUIDataStore((s) => s.handlePickColor)
-  const handlePickSize = useProductUIDataStore((s) => s.handlePickSize)
+  const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({})
+  const handlePickVariant = useProductUIDataStore((s) => s.handlePickVariant)
 
-  // Lấy danh sách màu unique từ variants
-  const availableColors = useMemo(() => {
-    const colorMap = new Map<string, TProductColor>()
-    for (const variant of pickedProduct.variants) {
-      if (!colorMap.has(variant.color.value)) {
-        colorMap.set(variant.color.value, variant.color)
-      }
-    }
-    return Array.from(colorMap.values())
-  }, [pickedProduct])
-
-  // Lấy danh sách size có sẵn cho màu đã chọn
-  const availableSizesForColor = useMemo(() => {
-    return sortVariantsBySize(
-      pickedProduct.variants.filter((v) => v.color.value === pickedVariant.color.value)
-    )
-  }, [pickedProduct, pickedVariant])
+  const { mergedAttributes } = pickedProduct
 
   const firstProductImageURL = pickedProduct.detailImages[0] || null
 
@@ -213,27 +193,101 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
           </div>
         </div>
 
-        <div className="rounded-lg mt-4">
-          <h3 className="text-slate-800 font-bold text-sm mb-2">
-            {pickedVariant.color.withTitleFromServer
-              ? pickedVariant.color.withTitleFromServer.title
-              : 'Màu sắc'}
-          </h3>
-          <div className="flex flex-wrap gap-3">
-            {pickedVariant.color.withTitleFromServer
-              ? pickedVariant.color.withTitleFromServer.text
-              : availableColors.map((color) => {
-                  const lowercasedColorValue = color.value.toLowerCase()
-                  const isSelected = selectedColor.value === color.value
+        {/* Material Section */}
+        {mergedAttributes.materials && (
+          <div className="rounded-lg mt-4">
+            <h3 className="text-slate-800 font-bold text-sm mb-2">
+              {mergedAttributes.materials.title}
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {mergedAttributes.materials.options.map((material) => {
+                const isSelected = pickedVariant.attributes.material === material.value
+                return (
+                  <button
+                    key={material.value}
+                    onClick={() => {
+                      const newAttrs = { ...selectedAttributes, material: material.value }
+                      setSelectedAttributes(newAttrs)
+                      const matchedVariant = findVariantByAttributes(
+                        pickedProduct.variants,
+                        newAttrs
+                      )
+                      if (matchedVariant) handlePickVariant(matchedVariant)
+                    }}
+                    className={`px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
+                      isSelected
+                        ? 'bg-main-cl border-2 border-main-cl text-white shadow-md'
+                        : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
+                    }`}
+                  >
+                    {material.displayValue}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Scent Section */}
+        {mergedAttributes.scents && (
+          <div className="rounded-lg mt-4">
+            <h3 className="text-slate-800 font-bold text-sm mb-2">{mergedAttributes.scents.title}</h3>
+            <div className="flex flex-wrap gap-2">
+              {mergedAttributes.scents.options.map((scent) => {
+                const isSelected = pickedVariant.attributes.scent === scent.value
+                return (
+                  <button
+                    key={scent.value}
+                    onClick={() => {
+                      const newAttrs = { ...selectedAttributes, scent: scent.value }
+                      setSelectedAttributes(newAttrs)
+                      const matchedVariant = findVariantByAttributes(
+                        pickedProduct.variants,
+                        newAttrs
+                      )
+                      if (matchedVariant) handlePickVariant(matchedVariant)
+                    }}
+                    className={`px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
+                      isSelected
+                        ? 'bg-main-cl border-2 border-main-cl text-white shadow-md'
+                        : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
+                    }`}
+                  >
+                    {scent.displayValue}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Color Section */}
+        {mergedAttributes.colors && (
+          <div className="rounded-lg mt-4">
+            <h3 className="text-slate-800 font-bold text-sm mb-2">{mergedAttributes.colors.title}</h3>
+            <div className="flex flex-wrap gap-3">
+              {mergedAttributes.colors.options.map((color) => {
+                const isSelected = pickedVariant.attributes.color === color.value
+
+                if (color.displayType === 'swatch' && color.hex) {
+                  // Case 1: Display color swatch with hex
                   return (
                     <button
                       key={color.value}
-                      onClick={() => handlePickColor(color)}
-                      className={`flex flex-col items-center rounded-full focus:outline-none transition-all mobile-touch`}
-                      title={color.title}
+                      onClick={() => {
+                        const newAttrs = { ...selectedAttributes, color: color.value }
+                        setSelectedAttributes(newAttrs)
+                        const matchedVariant = findVariantByAttributes(
+                          pickedProduct.variants,
+                          newAttrs
+                        )
+                        if (matchedVariant) handlePickVariant(matchedVariant)
+                      }}
+                      className="flex flex-col items-center rounded-full focus:outline-none transition-all mobile-touch"
+                      title={color.displayValue}
                     >
                       <div
-                        style={{ backgroundColor: lowercasedColorValue || '#000' }}
+                        style={{ backgroundColor: color.hex }}
                         className={`${
                           isSelected
                             ? 'ring-2 ring-main-cl ring-offset-2 shadow-lg'
@@ -243,13 +297,11 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
                         {isSelected && (
                           <div className="w-full h-full rounded-full flex items-center justify-center">
                             <svg
-                              className={` w-5 h-5 drop-shadow-lg`}
+                              className="w-5 h-5 drop-shadow-lg"
                               fill="currentColor"
                               viewBox="0 0 20 20"
                               style={{
-                                color: color.value.includes('transparent')
-                                  ? 'black'
-                                  : getContrastColor(color.value.toLowerCase()) || '#000',
+                                color: getContrastColor(color.hex) || '#000',
                               }}
                             >
                               <path
@@ -264,41 +316,84 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
                       <div
                         className="text-[12px] font-medium rounded-md py-0.5 px-1.5 mt-2 inline-block"
                         style={{
-                          backgroundColor: color.value || '#000',
-                          color: color.value.includes('transparent')
-                            ? 'black'
-                            : getContrastColor(color.value.toLowerCase()) || '#000',
+                          backgroundColor: color.hex,
+                          color: getContrastColor(color.hex) || '#000',
                         }}
                       >
-                        {color.title}
+                        {color.displayValue}
                       </div>
                     </button>
                   )
-                })}
+                } else {
+                  // Case 2: Display as label (no hex)
+                  return (
+                    <button
+                      key={color.value}
+                      onClick={() => {
+                        const newAttrs = { ...selectedAttributes, color: color.value }
+                        setSelectedAttributes(newAttrs)
+                        const matchedVariant = findVariantByAttributes(
+                          pickedProduct.variants,
+                          newAttrs
+                        )
+                        if (matchedVariant) handlePickVariant(matchedVariant)
+                      }}
+                      className={`px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
+                        isSelected
+                          ? 'bg-main-cl border-2 border-main-cl text-white shadow-md'
+                          : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
+                      }`}
+                    >
+                      {color.displayValue}
+                    </button>
+                  )
+                }
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="mt-4">
-          <div className="flex justify-between w-full mb-2">
-            <label className="block text-sm font-bold text-slate-900">Kích thước</label>
-            {firstProductImageURL && firstProductImageURL !== hintForSizeChart && (
-              <button
-                onClick={() => setShowSizeChart(true)}
-                className="cursor-pointer mobile-touch text-main-cl underline text-sm font-medium hover:text-secondary-cl"
-              >
-                Bảng size
-              </button>
-            )}
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {availableSizesForColor.length > 0 ? (
-              availableSizesForColor.map((variant) => {
-                const isSelected = selectedSize === variant.size
-                const isOutOfStock = variant.stock === 0
+        {/* Size Section */}
+        {mergedAttributes.sizes && (
+          <div className="mt-4">
+            <div className="flex justify-between w-full mb-2">
+              <label className="block text-sm font-bold text-slate-900">
+                {mergedAttributes.sizes.title}
+              </label>
+              {firstProductImageURL && firstProductImageURL !== hintForSizeChart && (
+                <button
+                  onClick={() => setShowSizeChart(true)}
+                  className="cursor-pointer mobile-touch text-main-cl underline text-sm font-medium hover:text-secondary-cl"
+                >
+                  Bảng size
+                </button>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {mergedAttributes.sizes.options.map((size) => {
+                const isSelected =
+                  pickedVariant.attributes.size?.toUpperCase() === size.value.toUpperCase()
+                // Find variant with this size to check stock
+                const variantForSize = findVariantByAttributes(pickedProduct.variants, {
+                  ...selectedAttributes,
+                  size: size.value,
+                })
+                const isOutOfStock = !variantForSize || variantForSize.stock === 0
+
                 return (
                   <button
-                    key={variant.id}
-                    onClick={() => !isOutOfStock && handlePickSize(selectedColor, variant.size)}
+                    key={size.value}
+                    onClick={() => {
+                      if (!isOutOfStock) {
+                        const newAttrs = { ...selectedAttributes, size: size.value }
+                        setSelectedAttributes(newAttrs)
+                        const matchedVariant = findVariantByAttributes(
+                          pickedProduct.variants,
+                          newAttrs
+                        )
+                        if (matchedVariant) handlePickVariant(matchedVariant)
+                      }
+                    }}
                     disabled={isOutOfStock}
                     className={`px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
                       isOutOfStock
@@ -308,15 +403,13 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
                         : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
                     }`}
                   >
-                    {variant.size}
+                    {size.displayValue}
                   </button>
                 )
-              })
-            ) : (
-              <p className="text-sm text-gray-500 italic">Vui lòng chọn màu sắc</p>
-            )}
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         <PrintSurface printSurfaces={pickedProduct.printAreaList} pickedVariant={pickedVariant} />
       </div>

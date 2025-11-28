@@ -25,24 +25,39 @@ export type TProduct = {
   mockups: TProductMockup[]
 }
 
+/**
+ * Attributes JSON structure for product variants
+ * All fields are optional and can be null
+ */
+export type TProductVariantAttributesJson = {
+  color?: string | null
+  colorTitle?: string | null
+  hex?: string | null // Hex color code starting with #
+  size?: string | null
+  sizeTitle?: string | null
+  material?: string | null
+  materialTitle?: string | null
+  scent?: string | null
+  scentTitle?: string | null
+  // Legacy/custom fields
+  binding?: string
+  finish?: string
+  fit?: string
+  [key: string]: any // Allow custom attributes
+}
+
 export type TProductVariant = {
   id: number
   product_id: number
   sku: string
-  size: string
-  color: string
   price_amount_oneside: string
-  price_amount_bothside: string
+  price_amount_bothside: string | null
   currency: string
   stock_qty: number
-  attributes_json: Record<string, unknown> & {
-    binding?: string
-    finish?: string
-    fit?: string
-    material?: string
-  }
+  attributes_json: TProductVariantAttributesJson
   created_at: string
   updated_at: string
+  variant_surfaces: [] // Deprecated, use mockups instead
 }
 
 export type TSurfaceCode = 'front' | 'back'
@@ -260,10 +275,24 @@ export type TAddressProvinceItem = {
   name: string
 }
 
+/**
+ * Product mockup with dynamic transform information
+ * Each variant can have different print areas via transform_json
+ */
 export type TProductMockup = {
   variant_id: number
   surface_id: number
   mockup_url: string
+  transform_json: {
+    x_px?: number
+    y_px?: number
+    scale?: number
+    width_px?: number
+    height_px?: number
+    width_real_px?: number
+    height_real_px?: number
+  }
+  zindex_json: Record<string, unknown>
 }
 
 export type TAddressProvince = {

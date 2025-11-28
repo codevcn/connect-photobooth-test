@@ -45,16 +45,7 @@ export const AddToCartHandler = ({
         null,
       ]
     }
-    const { pickedVariant, pickedProduct, pickedSurface } = useProductUIDataStore.getState()
-    if (!pickedVariant?.color || !pickedVariant?.size) {
-      return [
-        'Vui lòng chọn màu và kích thước sản phẩm trước khi thêm vào giỏ hàng',
-        null,
-        null,
-        null,
-      ]
-    }
-    return [null, pickedVariant, pickedProduct, pickedSurface]
+    return [null, null, null, null]
   }
 
   const handleAddToCart = async (
@@ -96,8 +87,6 @@ export const AddToCartHandler = ({
           },
           {
             variantId: pickedVariant.id,
-            color: pickedVariant.color,
-            size: pickedVariant.size,
           },
           {
             id: pickedSurface.id,

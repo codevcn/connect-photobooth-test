@@ -1,0 +1,155 @@
+{
+            "id": 6,
+            "name": "NAT",
+            "slug": "a",
+            "base_image_url": "http://localhost:3000/files/1764323223294-983403134.jpg",
+            "description": "abc",
+            "status": "active",
+            "attributes_json": {}, ------- không xét cái này
+            "detail_img": [],
+            "created_at": "2025-11-28T09:47:07.810Z",
+            "updated_at": "2025-11-28T09:47:07.810Z",
+            "variants": [
+                {
+                    "id": 22,
+                    "product_id": 6,
+                    "sku": "A-M-RED",
+                    "price_amount_oneside": "0",
+                    "price_amount_bothside": null,
+                    "currency": "VND",
+                    "attributes_json": { ---------------------------------------- đây là thuộc tính
+                        "size": "M",
+                        "color": "Red"
+                    },
+                    "created_at": "2025-11-28T10:27:55.628Z",
+                    "updated_at": "2025-11-28T10:27:55.628Z",
+                    "variant_surfaces": []
+                },
+                {
+                    "id": 21,
+                    "product_id": 6,
+                    "sku": "A-S-RED",
+                    "price_amount_oneside": "0",
+                    "price_amount_bothside": null,
+                    "currency": "VND",
+                    "attributes_json": {
+                        "size": "S",
+                        "color": "Red"
+                    },
+                    "created_at": "2025-11-28T10:27:55.070Z",
+                    "updated_at": "2025-11-28T10:27:55.070Z",
+                    "variant_surfaces": [
+                        {
+                            "variant_id": 21,
+                            "surface_id": 14,
+                            "mockup_url": "http://localhost:3000/files/1764327399428-550915417.jpg",
+                            "transform_json": {
+                                "x_px": 399,
+                                "y_px": 552,
+                                "scale": 10,
+                                "width_px": 120,
+                                "height_px": 120,
+                                "width_real_px": 12,
+                                "height_real_px": 12
+                            },
+                            "zindex_json": {}
+                        },
+                        {
+                            "variant_id": 21,
+                            "surface_id": 13,
+                            "mockup_url": "http://localhost:3000/files/1764327386011-823626979.jpg",
+                            "transform_json": {
+                                "x_px": 433,
+                                "y_px": 529,
+                                "scale": 0.367,
+                                "width_px": 367,
+                                "height_px": 367,
+                                "width_real_px": 1000,
+                                "height_real_px": 1000
+                            },
+                            "zindex_json": {}
+                        }
+                    ]
+                }
+            ],
+            "surfaces": [
+                {
+                    "id": 13,
+                    "product_id": 6,
+                    "code": "front",
+                    "display_name": "Mặt trước",
+                    "preview_image_url": "http://localhost:3000/files/1764325883869-171611691.png",
+                    "order_index": 0,
+                    "created_at": "2025-11-28T09:47:25.427Z",
+                    "updated_at": "2025-11-28T10:31:33.120Z",
+                    "print_areas": {
+                        "width_px": 265,
+                        "height_px": 265,
+                        "x_px": 96,
+                        "y_px": 66,
+                        "width_real_px": 1000,
+                        "height_real_px": 1000
+                    }
+                },
+
+
+
+
+
+
+LƯU Ý: Nếu "status" != "active" thì không hiển thị sản phẩm này
+Các sản phẩm hiển thị theo thứ tự slug
+
+
+API catalog mới, mỗi thuộc tính sẽ bỏ đi các trường: color, size, số lượng. Thay vào đó, mọi thuộc tính đều định nghĩa bởi attributes_json.
+attributes_json sẽ có thể có các cột sau: color, colorTitle, hex, size, sizeTitle, material, materialTitle, scent, scentTitle (các cột này có thể null, nếu cột nào null thì không hiển thị trên UI).
+
+
+Trước khi hiển thị trên UI, phải merge lại các thuộc tính. thành các thuộc tính duy nhất:
+ví dụ nhận được từ server: (Màu, size): vàng,X - vàng,L, vàng-M, xanh-X, xanh-L
+=> thành [vàng[X,L,M] , xanh[X,L]]
+
+Độ ưu tiên khi merge: vật liệu -> mùi hương -> màu -> size
+
+
+Case:
+1. nếu có color != null and hex != null (nếu khác null thì luôn bắt đầu bằng #xxx ví dụ #000000) => hiển thị trên giao diện phần màu sắc như hiện tại. (ví dụ: color : "Màu đen", hex : "#000000")
+
+2. Nếu color != null and hex == null  =>  hiển thị theo label. (ví dụ: color : "black", hex: null => hiển thị theo lable : Black; server tự động validate label đúng chuẩn.)
+
+3. color == null (hex dù có null hay không) => không hiển thị phần color.
+
+4. size, material, scent : 3 cái này, cái nào null thì không hiển thị section phần đó.
+
+5. các cái cồn lại không null thì hiển thị đúng section của nó: "Kích thước", "Chất liệu", "Mùi hương".
+
+Thứ tự hiển thị:
+từ trên xuống dưới:
+[Chất liệu]
+[Mùi hương]
+[Màu sắc]
+[Kích thước]
+(các cái text trên này sẽ dùng từ Title tương ứng nếu title đó khác rỗng.)
+ví dụ: server truyền về colorTitle: null thì vẫn hiển thị:
+[Chất liệu]
+[Mùi hương]
+[Màu sắc]
+[Kích thước]
+
+Nếu trả về colorTitle: "Màu nè" thì hiển thị:
+[Chất liệu]
+[Mùi hương]
+[Màu nè]
+[Kích thước]
+Tương tự các title khác :  colorTitle, sizeTitle, materialTitle, scentTitle 
+
+
+
+
+Ở code cũ. mỗi khi chọn thuộc tính thì sẽ đổi ảnh mockup tương ứng của mặt tương ứng của thuộc tính đó. ở api mới. sẽ đổi luôn vùng in, dựa vào "transform_json" của mockup đó.
+Trường hợp này để: ốp điện thoại có nhiều mẫu khác nhau, mỗi mẫu lại 1 kích thước khác nhau.
+
+
+
+
+

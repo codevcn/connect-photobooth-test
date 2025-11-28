@@ -5,7 +5,7 @@ import { cn } from '@/configs/ui/tailwind-utils'
 import { styleFrameByTemplateType } from '@/configs/print-template/templates-helpers'
 import { useRef, useState } from 'react'
 import { useEditedElementStore } from '@/stores/element/element.store'
-import { calContrastForReadableColor } from '@/utils/helpers'
+import { calContrastForReadableColor, getFinalColorValue } from '@/utils/helpers'
 import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 
 type TAddImageIconProps = {} & Partial<{
@@ -96,7 +96,7 @@ export const TemplateFrame = ({
         outline: `${
           displaySelectingColor && frameSelected
             ? `1px solid ${calContrastForReadableColor(
-                useProductUIDataStore.getState().pickedVariant?.color.value || 'var(--vcn-main-cl)'
+                getFinalColorValue() || 'var(--vcn-main-cl)'
               )}`
             : 'none'
         }`,

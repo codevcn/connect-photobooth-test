@@ -13,6 +13,50 @@ export type TProductColor = {
   }
 }
 
+/**
+ * Generic attribute option for material, scent, size, etc.
+ */
+export type TAttributeOption = {
+  value: string
+  displayValue: string
+  title?: string
+}
+
+/**
+ * Color attribute with hex support
+ */
+export type TColorAttribute = TAttributeOption & {
+  hex?: string // Hex color code (#000000)
+  displayType: 'swatch' | 'label' // Case 1,2: swatch if hex exists, else label
+}
+
+export type TMaterialAttribute = TAttributeOption
+export type TScentAttribute = TAttributeOption
+export type TSizeAttribute = TAttributeOption
+
+/**
+ * Merged product attributes structure
+ * Priority order: material -> scent -> color -> size
+ */
+export type TProductAttributes = {
+  materials?: {
+    title: string // "Chất liệu" or custom title
+    options: TMaterialAttribute[]
+  }
+  scents?: {
+    title: string // "Mùi hương" or custom title
+    options: TScentAttribute[]
+  }
+  colors?: {
+    title: string // "Màu sắc" or custom title
+    options: TColorAttribute[]
+  }
+  sizes?: {
+    title: string // "Kích thước" or custom title
+    options: TSizeAttribute[]
+  }
+}
+
 export type TPrintAreaInfo = {
   // productImageId: string
   id: number
@@ -32,6 +76,15 @@ export type TProductVariantSurface = {
   variantId: number
   surfaceId: number
   imageURL: string
+  transform?: {
+    x_px?: number
+    y_px?: number
+    scale?: number
+    width_px?: number
+    height_px?: number
+    width_real_px?: number
+    height_real_px?: number
+  }
 }
 
 export type TBaseProduct = {
@@ -44,6 +97,7 @@ export type TBaseProduct = {
   inNewLine: boolean
   printAreaList: TPrintAreaInfo[] // surfaces
   variantSurfaces: TProductVariantSurface[]
+  mergedAttributes: TProductAttributes // NEW: Merged attributes from all variants
   slug: string
 }
 
@@ -59,10 +113,20 @@ export type TProductCategory =
 export type TClientProductVariant = {
   id: number
   name: string
-  size: TProductSize
-  color: TProductColor
+  attributes: {
+    color?: string | null
+    colorTitle?: string | null
+    hex?: string | null
+    size?: string | null
+    sizeTitle?: string | null
+    material?: string | null
+    materialTitle?: string | null
+    scent?: string | null
+    scentTitle?: string | null
+    [key: string]: any
+  }
   priceAmountOneSide: number
-  priceAmountBothSide: number
+  priceAmountBothSide: number | null
   currency: string
   priceAfterDiscount?: number
   stock: number
@@ -199,11 +263,6 @@ export type TMockupData = {
 
 export type TProductVariantInCart = {
   variantId: TClientProductVariant['id']
-  size: TProductSize
-  color: {
-    title: string
-    value: string
-  }
   mockupDataList: TMockupData[]
 }
 

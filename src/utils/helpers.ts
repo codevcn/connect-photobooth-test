@@ -1,3 +1,4 @@
+import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 import { getInitialContants } from './contants'
 import { TImgMimeType, TPrintAreaShapeType, TSurfaceType, TTextFont } from './types/global'
 
@@ -517,4 +518,9 @@ export function getContrastColor(bgColor: string): string {
 
   // Nếu nền sáng → dùng chữ đen, nền tối → chữ trắng
   return luminance > 180 ? '#000' : '#fff'
+}
+
+export const getFinalColorValue = () => {
+  const attr = useProductUIDataStore.getState().pickedVariant?.attributes
+  return attr?.color || attr?.hex
 }

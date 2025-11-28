@@ -6,7 +6,7 @@ import { EditedElementsArea } from './EditedElementsArea'
 import { AddToCartHandler } from './AddToCartHandler'
 import { adjustSizeOfPlacedImageOnPlaced } from './test'
 import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
-import { adjustNearF3F4F6 } from '@/utils/helpers'
+import { adjustNearF3F4F6, getFinalColorValue } from '@/utils/helpers'
 import { SectionLoading } from '@/components/custom/Loading'
 import { createPortal } from 'react-dom'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
@@ -115,7 +115,7 @@ export const LivePreview = ({
         ref={printAreaContainerRef}
         className="NAME-print-area-container w-full h-full overflow-hidden bg-gray-100 border z-50 border-gray-400/30 relative"
         style={{
-          backgroundColor: adjustNearF3F4F6(pickedVariant?.color.value || '#ffffff'),
+          backgroundColor: adjustNearF3F4F6(getFinalColorValue() || '#ffffff'),
         }}
       >
         <div

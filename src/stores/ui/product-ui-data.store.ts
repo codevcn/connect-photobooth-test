@@ -2,7 +2,6 @@ import {
   TBaseProduct,
   TClientProductVariant,
   TPrintTemplate,
-  TProductColor,
   TPrintAreaInfo,
   TProductAttatchedData,
 } from '@/utils/types/global'
@@ -27,8 +26,6 @@ type TProductUIDataStore = {
   getProductAttachedData: (productId: TBaseProduct['id']) => TProductAttatchedData | undefined
   handlePickProduct: (prod: TBaseProduct, initialTemplate?: TPrintTemplate) => void
   handlePickVariant: (variant: TClientProductVariant) => void
-  handlePickColor: (color: TProductColor) => void
-  handlePickSize: (selectedColor: TProductColor, size: string) => void
   handlePickVariantSurface: (
     variantId: TClientProductVariant['id'],
     surfaceId: TPrintAreaInfo['id']
@@ -109,28 +106,6 @@ export const useProductUIDataStore = create<TProductUIDataStore>((set, get) => (
     }
   },
 
-  handlePickColor: (color: TProductColor) => {
-    const currentVariants = get().pickedProduct?.variants || []
-    if (currentVariants.length > 0) {
-      const variantsForColor = currentVariants.filter((v) => v.color.value === color.value)
-      if (variantsForColor.length > 0) {
-        get().handlePickVariant(variantsForColor[0])
-      }
-    }
-  },
-
-  handlePickSize: (selectedColor: TProductColor, size: string) => {
-    const currentVariants = get().pickedProduct?.variants || []
-    if (currentVariants.length > 0) {
-      const variantForSize = currentVariants.find(
-        (v) => v.color.value === selectedColor.value && v.size === size
-      )
-      if (variantForSize) {
-        get().handlePickVariant(variantForSize)
-      }
-    }
-  },
-
   handlePickProductOnRestore: (product, initialTemplate, initialVariant, initialSurface) => {
     console.log('>>> [ddd] handle Pick Product On Restore:', {
       product,
@@ -158,6 +133,34 @@ export const useProductUIDataStore = create<TProductUIDataStore>((set, get) => (
   },
 
   handlePickVariant: (variant) => {
-    set({ pickedVariant: variant })
+    const { pickedProduct, pickedSurface } = get()
+    if (!pickedProduct || !pickedSurface) {
+      set({ pickedVariant: variant })
+      return
+    }
+
+    // Tìm mockup tương ứng với variant + surface để lấy dynamic transform
+    const mockup = pickedProduct.variantSurfaces.find(
+      (vs) => vs.variantId === variant.id && vs.surfaceId === pickedSurface.id
+    )
+
+    // Nếu có transform động, cập nhật print area
+    if (mockup && mockup.transform && Object.keys(mockup.transform).length > 0) {
+      const { transform } = mockup
+      const updatedSurface: TPrintAreaInfo = {
+        ...pickedSurface,
+        area: {
+          printX: transform.x_px ?? pickedSurface.area.printX,
+          printY: transform.y_px ?? pickedSurface.area.printY,
+          printW: transform.width_px ?? pickedSurface.area.printW,
+          printH: transform.height_px ?? pickedSurface.area.printH,
+          widthRealPx: transform.width_real_px ?? pickedSurface.area.widthRealPx,
+          heightRealPx: transform.height_real_px ?? pickedSurface.area.heightRealPx,
+        },
+      }
+      set({ pickedVariant: variant, pickedSurface: updatedSurface })
+    } else {
+      set({ pickedVariant: variant })
+    }
   },
 }))

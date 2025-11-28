@@ -108,23 +108,64 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
   const { size: selectedSize, color: selectedColor } = pickedVariant
   const handlePickColor = useProductUIDataStore((s) => s.handlePickColor)
   const handlePickSize = useProductUIDataStore((s) => s.handlePickSize)
+  const handlePickMaterial = useProductUIDataStore((s) => s.handlePickMaterial)
+  const handlePickScent = useProductUIDataStore((s) => s.handlePickScent)
 
-  // Lấy danh sách màu unique từ variants
-  const availableColors = useMemo(() => {
-    const colorMap = new Map<string, TProductColor>()
-    for (const variant of pickedProduct.variants) {
-      if (!colorMap.has(variant.color.value)) {
-        colorMap.set(variant.color.value, variant.color)
+  // Lấy danh sách chất liệu unique
+  const availableMaterials = useMemo(() => {
+    const set = new Set<string>()
+    const list: Array<{ key: string; label: string }> = []
+    for (const v of pickedProduct.variants) {
+      if (v.material) {
+        if (!set.has(v.material)) {
+          set.add(v.material)
+          list.push({ key: v.material, label: v.material })
+        }
       }
     }
-    return Array.from(colorMap.values())
+    return list
   }, [pickedProduct])
 
-  // Lấy danh sách size có sẵn cho màu đã chọn
+  // Lấy danh sách mùi hương theo chất liệu đang chọn (nếu có)
+  const availableScents = useMemo(() => {
+    const set = new Set<string>()
+    const list: Array<{ key: string; label: string }> = []
+    for (const v of pickedProduct.variants) {
+      const matchMaterial = pickedVariant.material ? v.material === pickedVariant.material : true
+      if (matchMaterial && v.scent) {
+        if (!set.has(v.scent)) {
+          set.add(v.scent)
+          list.push({ key: v.scent, label: v.scent })
+        }
+      }
+    }
+    return list
+  }, [pickedProduct, pickedVariant.material])
+
+  // Lấy danh sách màu theo material & scent hiện tại
+  const availableColors = useMemo(() => {
+    const map = new Map<string, TProductColor>()
+    for (const v of pickedProduct.variants) {
+      const matchMaterial = pickedVariant.material ? v.material === pickedVariant.material : true
+      const matchScent = pickedVariant.scent ? v.scent === pickedVariant.scent : true
+      if (matchMaterial && matchScent) {
+        if (!map.has(v.color.value)) {
+          map.set(v.color.value, v.color)
+        }
+      }
+    }
+    return Array.from(map.values())
+  }, [pickedProduct, pickedVariant.material, pickedVariant.scent])
+
+  // Lấy danh sách size có sẵn theo màu + material/scent hiện tại
   const availableSizesForColor = useMemo(() => {
-    return sortVariantsBySize(
-      pickedProduct.variants.filter((v) => v.color.value === pickedVariant.color.value)
+    const filtered = pickedProduct.variants.filter(
+      (v) =>
+        v.color.value === pickedVariant.color.value &&
+        (pickedVariant.material ? v.material === pickedVariant.material : true) &&
+        (pickedVariant.scent ? v.scent === pickedVariant.scent : true)
     )
+    return sortVariantsBySize(filtered)
   }, [pickedProduct, pickedVariant])
 
   const firstProductImageURL = pickedProduct.detailImages[0] || null
@@ -213,6 +254,65 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
           </div>
         </div>
 
+        {/* Chất liệu */}
+        {availableMaterials.length > 0 && (
+          <div className="rounded-lg mt-4">
+            <h3 className="text-slate-800 font-bold text-sm mb-2">
+              {pickedVariant.materialTitle && pickedVariant.materialTitle.trim().length > 0
+                ? pickedVariant.materialTitle
+                : 'Chất liệu'}
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {availableMaterials.map((m) => {
+                const isSelected = pickedVariant.material === m.key
+                return (
+                  <button
+                    key={m.key}
+                    onClick={() => handlePickMaterial(m.key)}
+                    className={`px-3 py-1 font-bold rounded-lg transition-all mobile-touch ${
+                      isSelected
+                        ? 'bg-main-cl border-2 border-main-cl text-white shadow-md'
+                        : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
+                    }`}
+                  >
+                    {m.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Mùi hương */}
+        {availableScents.length > 0 && (
+          <div className="rounded-lg mt-4">
+            <h3 className="text-slate-800 font-bold text-sm mb-2">
+              {pickedVariant.scentTitle && pickedVariant.scentTitle.trim().length > 0
+                ? pickedVariant.scentTitle
+                : 'Mùi hương'}
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {availableScents.map((s) => {
+                const isSelected = pickedVariant.scent === s.key
+                return (
+                  <button
+                    key={s.key}
+                    onClick={() => handlePickScent(s.key)}
+                    className={`px-3 py-1 font-bold rounded-lg transition-all mobile-touch ${
+                      isSelected
+                        ? 'bg-main-cl border-2 border-main-cl text-white shadow-md'
+                        : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Màu sắc */}
         <div className="rounded-lg mt-4">
           <h3 className="text-slate-800 font-bold text-sm mb-2">
             {pickedVariant.color.withTitleFromServer
@@ -278,9 +378,14 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
           </div>
         </div>
 
+        {/* Kích thước */}
         <div className="mt-4">
           <div className="flex justify-between w-full mb-2">
-            <label className="block text-sm font-bold text-slate-900">Kích thước</label>
+            <label className="block text-sm font-bold text-slate-900">
+              {pickedVariant.sizeTitle && pickedVariant.sizeTitle.trim().length > 0
+                ? pickedVariant.sizeTitle
+                : 'Kích thước'}
+            </label>
             {firstProductImageURL && firstProductImageURL !== hintForSizeChart && (
               <button
                 onClick={() => setShowSizeChart(true)}
@@ -313,7 +418,7 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
                 )
               })
             ) : (
-              <p className="text-sm text-gray-500 italic">Vui lòng chọn màu sắc</p>
+              <p className="text-sm text-gray-500 italic">Vui lòng chọn thuộc tính ở trên</p>
             )}
           </div>
         </div>

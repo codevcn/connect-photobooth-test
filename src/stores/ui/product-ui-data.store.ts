@@ -27,6 +27,8 @@ type TProductUIDataStore = {
   getProductAttachedData: (productId: TBaseProduct['id']) => TProductAttatchedData | undefined
   handlePickProduct: (prod: TBaseProduct, initialTemplate?: TPrintTemplate) => void
   handlePickVariant: (variant: TClientProductVariant) => void
+  handlePickMaterial: (material: string) => void
+  handlePickScent: (scent: string) => void
   handlePickColor: (color: TProductColor) => void
   handlePickSize: (selectedColor: TProductColor, size: string) => void
   handlePickVariantSurface: (
@@ -109,10 +111,36 @@ export const useProductUIDataStore = create<TProductUIDataStore>((set, get) => (
     }
   },
 
+  handlePickMaterial: (material) => {
+    const currentVariants = get().pickedProduct?.variants || []
+    if (currentVariants.length > 0) {
+      const variantsForMaterial = currentVariants.filter((v) => v.material === material)
+      if (variantsForMaterial.length > 0) {
+        get().handlePickVariant(variantsForMaterial[0])
+      }
+    }
+  },
+
+  handlePickScent: (scent) => {
+    const currentVariants = get().pickedProduct?.variants || []
+    if (currentVariants.length > 0) {
+      const variantsForScent = currentVariants.filter((v) => v.scent === scent)
+      if (variantsForScent.length > 0) {
+        get().handlePickVariant(variantsForScent[0])
+      }
+    }
+  },
+
   handlePickColor: (color: TProductColor) => {
     const currentVariants = get().pickedProduct?.variants || []
     if (currentVariants.length > 0) {
-      const variantsForColor = currentVariants.filter((v) => v.color.value === color.value)
+      const pv = get().pickedVariant
+      const variantsForColor = currentVariants.filter(
+        (v) =>
+          v.color.value === color.value &&
+          (!pv?.material || v.material === pv.material) &&
+          (!pv?.scent || v.scent === pv.scent)
+      )
       if (variantsForColor.length > 0) {
         get().handlePickVariant(variantsForColor[0])
       }
@@ -122,8 +150,13 @@ export const useProductUIDataStore = create<TProductUIDataStore>((set, get) => (
   handlePickSize: (selectedColor: TProductColor, size: string) => {
     const currentVariants = get().pickedProduct?.variants || []
     if (currentVariants.length > 0) {
+      const pv = get().pickedVariant
       const variantForSize = currentVariants.find(
-        (v) => v.color.value === selectedColor.value && v.size === size
+        (v) =>
+          v.color.value === selectedColor.value &&
+          v.size === size &&
+          (!pv?.material || v.material === pv.material) &&
+          (!pv?.scent || v.scent === pv.scent)
       )
       if (variantForSize) {
         get().handlePickVariant(variantForSize)

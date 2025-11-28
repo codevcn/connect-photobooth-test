@@ -1,4 +1,4 @@
-import { TProduct, TProductVariant, TProductSurface, TProductMockup } from '@/utils/types/api'
+import { TProduct, TProductVariant, TProductSurface } from '@/utils/types/api'
 import {
   TBaseProduct,
   TClientProductVariant,
@@ -7,6 +7,7 @@ import {
   TProductSize,
   TSurfaceType,
   TProductCategory,
+  TProductColor,
 } from '@/utils/types/global'
 
 /**
@@ -31,7 +32,7 @@ export class ProductAdapter {
       variants: this.toClientVariants(apiProduct),
       inNewLine: false,
       printAreaList: this.toPrintAreaList(apiProduct),
-      variantSurfaces: this.toVariantSurfaces(apiProduct.mockups),
+      variantSurfaces: this.toVariantSurfacesFromVariants(apiProduct),
       slug: apiProduct.slug,
     }
   }
@@ -67,25 +68,58 @@ export class ProductAdapter {
     product: TProduct,
     category?: TProductCategory
   ): TClientProductVariant {
-    let colorJSON: { text: string; hex: string; title: string }
-    try {
-      colorJSON = JSON.parse(variant.color)
-    } catch (error) {
-      colorJSON = null as any
-    }
+    const attrs = (variant as any).attributes_json || {}
+    const color = attrs.color as string | undefined
+    const hex = attrs.hex as string | undefined
+    const colorTitle = attrs.colorTitle as string | undefined
+    const size = attrs.size as string | undefined
+    const sizeTitle = attrs.sizeTitle as string | undefined
+    const material = attrs.material as string | undefined
+    const materialTitle = attrs.materialTitle as string | undefined
+    const scent = attrs.scent as string | undefined
+    const scentTitle = attrs.scentTitle as string | undefined
+
+    const clientColor = (() => {
+      // Case 1: color != null and hex != null → dùng chip màu theo hex, title là color
+      if (color && hex) {
+        return {
+          title: color,
+          value: hex,
+          withTitleFromServer: colorTitle
+            ? { title: colorTitle, text: color }
+            : undefined,
+        } as TProductColor
+      }
+      // Case 2: color != null and hex == null → hiển thị theo label từ server (đã chuẩn hoá)
+      if (color && !hex) {
+        return {
+          title: color,
+          value: color,
+          withTitleFromServer: colorTitle
+            ? { title: colorTitle, text: color }
+            : undefined,
+        } as TProductColor
+      }
+      // Case 3: color == null → không hiển thị phần màu (đặt mặc định)
+      return { title: 'N/A', value: 'transparent' } as TProductColor
+    })()
+
+    const clientSize = (size || 'N/A').toString().toUpperCase() as TProductSize
+
     return {
       id: variant.id,
       name: product.name,
-      size: variant.size.toUpperCase() as TProductSize,
-      color: {
-        title: colorJSON ? colorJSON.text : 'Unknown',
-        value: colorJSON ? colorJSON.hex : '#000000',
-        withTitleFromServer: colorJSON && colorJSON.title ? colorJSON : undefined,
-      },
-      priceAmountOneSide: parseFloat(variant.price_amount_oneside),
-      priceAmountBothSide: parseFloat(variant.price_amount_bothside),
-      currency: variant.currency,
-      stock: variant.stock_qty,
+      size: clientSize,
+      color: clientColor,
+      material,
+      materialTitle,
+      scent,
+      scentTitle,
+      sizeTitle,
+      priceAmountOneSide: parseFloat(String(variant.price_amount_oneside ?? '0')),
+      priceAmountBothSide: parseFloat(String(variant.price_amount_bothside ?? '0')),
+      currency: variant.currency ?? 'VND',
+      stock: (variant as any).stock_qty ?? 0,
       category,
     }
   }
@@ -133,12 +167,28 @@ export class ProductAdapter {
   /**
    * Convert mockups sang variant surfaces
    */
-  private static toVariantSurfaces(mockups: TProductMockup[]): TProductVariantSurface[] {
-    return mockups.map((mockup) => ({
-      variantId: mockup.variant_id,
-      surfaceId: mockup.surface_id,
-      imageURL: mockup.mockup_url,
-    }))
+  private static toVariantSurfacesFromVariants(apiProduct: TProduct): TProductVariantSurface[] {
+    const out: TProductVariantSurface[] = []
+    for (const v of apiProduct.variants) {
+      const variantSurfaces = (v as any).variant_surfaces || []
+      for (const vs of variantSurfaces) {
+        const transform = vs.transform_json || {}
+        out.push({
+          variantId: vs.variant_id ?? v.id,
+          surfaceId: vs.surface_id,
+          imageURL: vs.mockup_url,
+          transformArea: {
+            printX: Number(transform.x_px ?? 0),
+            printY: Number(transform.y_px ?? 0),
+            printW: Number(transform.width_px ?? 0),
+            printH: Number(transform.height_px ?? 0),
+            widthRealPx: Number(transform.width_real_px ?? 0),
+            heightRealPx: Number(transform.height_real_px ?? 0),
+          },
+        })
+      }
+    }
+    return out
   }
 
   /**

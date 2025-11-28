@@ -32,6 +32,14 @@ export type TProductVariantSurface = {
   variantId: number
   surfaceId: number
   imageURL: string
+  transformArea?: {
+    printX: number
+    printY: number
+    printW: number
+    printH: number
+    widthRealPx: number
+    heightRealPx: number
+  }
 }
 
 export type TBaseProduct = {
@@ -61,6 +69,11 @@ export type TClientProductVariant = {
   name: string
   size: TProductSize
   color: TProductColor
+  material?: string
+  scent?: string
+  materialTitle?: string
+  scentTitle?: string
+  sizeTitle?: string
   priceAmountOneSide: number
   priceAmountBothSide: number
   currency: string

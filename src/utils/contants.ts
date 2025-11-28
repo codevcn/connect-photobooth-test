@@ -22,6 +22,8 @@ type TInitialContentsType =
   | 'MAX_DIFF_RATIO_VALUE'
   | 'PLACED_IMG_DIRECTION'
   | 'MOCK_TEMPLATE_HEIGHT_BY_TEMPLATE_TYPE'
+  | 'EDIT_BACKGROUND_MIN_ZOOM'
+  | 'EDIT_BACKGROUND_MAX_ZOOM'
 
 export const getInitialContants = <R>(type: TInitialContentsType): R => {
   switch (type) {
@@ -71,6 +73,10 @@ export const getInitialContants = <R>(type: TInitialContentsType): R => {
       return 'center' as R
     case 'MOCK_TEMPLATE_HEIGHT_BY_TEMPLATE_TYPE':
       return 1000 as R
+    case 'EDIT_BACKGROUND_MIN_ZOOM':
+      return 0.5 as R
+    case 'EDIT_BACKGROUND_MAX_ZOOM':
+      return 8 as R
     default:
       return null as R
   }

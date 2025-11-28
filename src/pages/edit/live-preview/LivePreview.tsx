@@ -1,6 +1,6 @@
 import { usePrintArea } from '@/hooks/use-print-area'
-import { TBaseProduct, TPrintedImage } from '@/utils/types/global'
-import { useEffect, useMemo, useRef } from 'react'
+import { TBaseProduct, TPosition, TPrintedImage, TPrintAreaInfo } from '@/utils/types/global'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { PrintAreaOverlay } from './PrintAreaOverlay'
 import { EditedElementsArea } from './EditedElementsArea'
 import { AddToCartHandler } from './AddToCartHandler'
@@ -11,6 +11,7 @@ import { SectionLoading } from '@/components/custom/Loading'
 import { createPortal } from 'react-dom'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { getCommonContants } from '@/utils/contants'
+import { useUniversalZoomForEditBackground } from '@/hooks/element/use-zoom-edit-background'
 
 type TDisplayedImage = {
   surfaceId: TBaseProduct['printAreaList'][number]['id']
@@ -32,9 +33,34 @@ export const LivePreview = ({
   editedPrintSurfaceId,
   printedImages,
 }: TLivePreviewProps) => {
-  const printAreaInfo = useMemo(() => {
-    return pickedProduct.printAreaList.find((printArea) => printArea.id === editedPrintSurfaceId)!
-  }, [pickedProduct.id, pickedProduct.printAreaList, editedPrintSurfaceId])
+  const printAreaInfo = useMemo<TPrintAreaInfo>(() => {
+    const base = pickedProduct.printAreaList.find((pa) => pa.id === editedPrintSurfaceId)!
+    // Tìm variant surface tương ứng để override vùng in nếu có transformArea
+    const vs = pickedProduct.variantSurfaces.find(
+      (v) => v.variantId === editedVariantId && v.surfaceId === editedPrintSurfaceId
+    )
+    const transformArea = vs?.transformArea
+    if (vs && transformArea) {
+      return {
+        ...base,
+        area: {
+          printX: transformArea.printX,
+          printY: transformArea.printY,
+          printW: transformArea.printW,
+          printH: transformArea.printH,
+          widthRealPx: transformArea.widthRealPx,
+          heightRealPx: transformArea.heightRealPx,
+        },
+      }
+    }
+    return base
+  }, [
+    pickedProduct.id,
+    pickedProduct.printAreaList,
+    pickedProduct.variantSurfaces,
+    editedVariantId,
+    editedPrintSurfaceId,
+  ])
   const pickedVariant = useProductUIDataStore((s) => s.pickedVariant)
 
   const { printAreaRef, printAreaContainerRef, checkIfAnyElementOutOfBounds, isOutOfBounds } =
@@ -44,6 +70,16 @@ export const LivePreview = ({
       }, getCommonContants<number>('ANIMATION_DURATION_PRINT_AREA_BOUNDS_CHANGE') + 100)
       adjustSizeOfPlacedImageOnPlaced()
     })
+
+  const [position, setPosition] = useState<TPosition>({ x: 0, y: 0 })
+  const [scale, setScale] = useState<number>(1)
+  const { refForZoom } = useUniversalZoomForEditBackground(
+    {},
+    setScale,
+    setPosition,
+    scale,
+    position
+  )
 
   const displayedImage = useMemo<TDisplayedImage>(() => {
     const variantSurface = pickedProduct.variantSurfaces.find(
@@ -94,7 +130,7 @@ export const LivePreview = ({
   }, [])
 
   return (
-    <div className="w-full smd:w-full min-h-full h-full relative">
+    <div className="w-full smd:w-full min-h-full h-full relative overflow-hidden">
       {createPortal(
         <div className="bg-red-600 h-12 w-12 fixed top-0 left-0 z-1000">
           <div>oke</div>
@@ -112,10 +148,16 @@ export const LivePreview = ({
         />
       </div>
       <div
-        ref={printAreaContainerRef}
+        ref={(node) => {
+          printAreaContainerRef.current = node
+          refForZoom.current = node
+        }}
         className="NAME-print-area-container w-full h-full overflow-hidden bg-gray-100 border z-50 border-gray-400/30 relative"
         style={{
           backgroundColor: adjustNearF3F4F6(pickedVariant?.color.value || '#ffffff'),
+          backgroundSize: 'cover',
+          transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+          transformOrigin: '0 0',
         }}
       >
         <div

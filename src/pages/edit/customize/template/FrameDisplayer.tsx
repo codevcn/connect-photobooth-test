@@ -52,7 +52,6 @@ export const FramesDisplayer = ({
   scrollable = true,
   printedImages,
 }: TFramesDisplayerProps) => {
-  console.log('>>> [fff] template in dis:', template)
   const { type } = template
   const mockupId = useSearchParams()[0].get('mockupId')
   const pickedProductId = useProductUIDataStore((s) => s.pickedProduct?.id)
@@ -75,13 +74,6 @@ export const FramesDisplayer = ({
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search)
-    console.log('>>> [fff] me lg:', {
-      pickedProductId,
-      template: template,
-      mockupId: searchParams.get('mockupId'),
-      restoredOffsetY: restoredOffsetYRef.current,
-      hasRestored: hasRestoredRef.current,
-    })
     if (searchParams.get('mockupId') && !hasRestoredRef.current) {
       restoredOffsetYRef.current = template.initialVisualState?.offsetY || 0
       restoreOffsetY()
@@ -175,7 +167,7 @@ export const FramesDisplayer = ({
       })
     }
 
-    const handleUp = () => {
+    const handleUp = (e: Event) => {
       if (!dragging) return
       setDragging(false)
     }

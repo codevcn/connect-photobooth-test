@@ -100,12 +100,12 @@ export const LivePreview = ({
       onDragStart={(e) => e.preventDefault()}
       className="smd:w-full overflow-hidden w-full min-h-full h-full relative touch-none"
     >
-      {createPortal(
+      {/* {createPortal(
         <div className="bg-blue-600 h-12 w-12 fixed top-0 left-0 z-1000">
           <div>oke</div>
         </div>,
         document.body
-      )}
+      )} */}
       <AddToCartHandler
         checkIfAnyElementOutOfBounds={checkIfAnyElementOutOfBounds}
         printAreaContainerRef={printAreaContainerRef}

@@ -17,11 +17,11 @@ export const useZoomEditBackground = (minZoom = 0.5, maxZoom = 3) => {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const containerRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    setTimeout(() => {
-      setScale(2)
-    }, 3000)
-  }, [])
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setScale(2)
+  //   }, 3000)
+  // }, [])
 
   // State cho pinch zoom
   const [isPinching, setIsPinching] = useState(false)

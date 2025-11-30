@@ -1,9 +1,9 @@
 import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 import { labelToSurfaceType } from '@/utils/helpers'
-import { TClientProductVariant, TPrintAreaInfo } from '@/utils/types/global'
+import { TClientProductVariant, TPrintSurfaceInfo } from '@/utils/types/global'
 
 type TPrintSurfaceProps = {
-  printSurfaces: TPrintAreaInfo[]
+  printSurfaces: TPrintSurfaceInfo[]
   pickedVariant: TClientProductVariant
 }
 
@@ -11,10 +11,10 @@ export const PrintSurface = ({ printSurfaces, pickedVariant }: TPrintSurfaceProp
   const pickedSurface = useProductUIDataStore((s) => s.pickedSurface)
 
   const handlePickSurface = (
-    surfaceId: TPrintAreaInfo['id'],
+    surfaceId: TPrintSurfaceInfo['id'],
     variantId: TClientProductVariant['id']
   ) => {
-    useProductUIDataStore.getState().handlePickVariantSurface(variantId, surfaceId)
+    useProductUIDataStore.getState().handlePickSurface(variantId, surfaceId)
   }
 
   return (
@@ -33,7 +33,7 @@ export const PrintSurface = ({ printSurfaces, pickedVariant }: TPrintSurfaceProp
                   : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
               }`}
             >
-              {labelToSurfaceType(surface.surfaceType)}
+              {labelToSurfaceType(surface.code)}
             </button>
           ))}
         </div>

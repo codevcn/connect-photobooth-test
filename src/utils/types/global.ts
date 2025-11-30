@@ -22,36 +22,6 @@ export type TAttributeOption = {
   title?: string
 }
 
-export type TPrintAreaInfo = {
-  // productImageId: string
-  id: number
-  area: {
-    printX: number // pixel position x
-    printY: number // pixel position y
-    printW: number // pixel width
-    printH: number // pixel height
-    widthRealPx: number // real width of product image (for exporting)
-    heightRealPx: number // real height of product image (for exporting)
-  }
-  surfaceType: TSurfaceType
-  imageUrl: string
-}
-
-export type TProductVariantSurface = {
-  variantId: number
-  surfaceId: number
-  imageURL: string
-  transform?: {
-    x_px?: number
-    y_px?: number
-    scale?: number
-    width_px?: number
-    height_px?: number
-    width_real_px?: number
-    height_real_px?: number
-  }
-}
-
 export type TMergedAttributesColorHexGroup = {
   color: string
   hex: string
@@ -82,6 +52,47 @@ export type TMergedAttributes = {
   groups: TMergedAttributesGroups
 }
 
+export type TProductVariantSurface = {
+  variantId: number
+  surfaceId: number
+  imageURL: string
+  transform?: {
+    x_px?: number
+    y_px?: number
+    width_px?: number
+    height_px?: number
+    width_real_px?: number
+    height_real_px?: number
+  }
+}
+
+export type TPrintAreaInfo = {
+  id: number // product surface id
+  variantId: number
+  area: {
+    printX: number // pixel position x
+    printY: number // pixel position y
+    printW: number // pixel width
+    printH: number // pixel height
+    widthRealPx: number // real width of product image (for exporting)
+    heightRealPx: number // real height of product image (for exporting)
+    scale: number
+  }
+  surfaceType: TSurfaceType
+  imageUrl: string
+}
+
+export type TPrintSurfaceInfo = {
+  id: number
+  productId: number
+  code: TSurfaceType
+  displayName: string
+  previewImageUrl: string
+  orderIndex: number
+  createdAt: string
+  updatedAt: string
+}
+
 export type TBaseProduct = {
   id: number
   url: string
@@ -91,9 +102,9 @@ export type TBaseProduct = {
   detailImages: string[]
   inNewLine: boolean
   printAreaList: TPrintAreaInfo[] // surfaces
-  variantSurfaces: TProductVariantSurface[]
   mergedAttributes: TMergedAttributes // NEW: Merged attributes from all variants
   slug: string
+  printSurfaces: TPrintSurfaceInfo[]
 }
 
 export type TProductCategory =

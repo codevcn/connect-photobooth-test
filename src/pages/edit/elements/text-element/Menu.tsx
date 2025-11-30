@@ -224,9 +224,9 @@ export const TextElementMenu = ({ elementId, onClose }: TPrintedImageMenuProps) 
   return (
     <div
       ref={menuRef}
-      className="NAME-menu-section NAME-menu-text-element STYLE-hide-scrollbar smd:text-base text-sm w-full mt-2"
+      className="NAME-menu-section NAME-menu-text-element STYLE-hide-scrollbar smd:text-base smd:px-0 smd:mt-2 px-2 text-sm w-full"
     >
-      <h3 className="text-xs smd:text-sm mt-3 mb-1 font-bold">Tùy chỉnh</h3>
+      <h3 className="text-xs smd:text-sm smd:mt-3 mb-1 font-bold">Tùy chỉnh văn bản</h3>
       <div
         ref={menuRef}
         className="sm:grid-cols-2 2xl:grid-cols-3 spmd:gap-2 sm:grid-rows-2 sms:grid-flow-row grid-rows-3 grid-flow-col gap-1 grid rounded-md text-white"

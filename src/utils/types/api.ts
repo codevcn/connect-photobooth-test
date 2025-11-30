@@ -81,6 +81,7 @@ export type TPrintAreas = {
   y_px: number
   width_real_px: number
   height_real_px: number
+  scale: number
 }
 export type TOrderResponse = {
   order: TOrder

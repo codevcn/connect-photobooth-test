@@ -11,7 +11,7 @@ import { useTemplateStore } from './template.store'
 type TProductUIDataStore = {
   pickedProduct: TBaseProduct | null
   pickedVariant: TClientProductVariant | null
-  pickedSurface: TBaseProduct['printAreaList'][number] | null
+  pickedSurface: TBaseProduct['printAreaList'][number] | null // print area info
   isAddingToCart: boolean
   cartCount: number
   productsAttachedData: TProductAttatchedData[]
@@ -26,7 +26,7 @@ type TProductUIDataStore = {
   getProductAttachedData: (productId: TBaseProduct['id']) => TProductAttatchedData | undefined
   handlePickProduct: (prod: TBaseProduct, initialTemplate?: TPrintTemplate) => void
   handlePickVariant: (variant: TClientProductVariant) => void
-  handlePickVariantSurface: (
+  handlePickSurface: (
     variantId: TClientProductVariant['id'],
     surfaceId: TPrintAreaInfo['id']
   ) => void
@@ -96,7 +96,7 @@ export const useProductUIDataStore = create<TProductUIDataStore>((set, get) => (
     set({ cartCount: count })
   },
 
-  handlePickVariantSurface: (variantId, surfaceId) => {
+  handlePickSurface: (variantId, surfaceId) => {
     const pickedProduct = get().pickedProduct
     if (!pickedProduct) return
     const variant = pickedProduct.variants.find((v) => v.id === variantId)
@@ -140,22 +140,23 @@ export const useProductUIDataStore = create<TProductUIDataStore>((set, get) => (
     }
 
     // Tìm mockup tương ứng với variant + surface để lấy dynamic transform
-    const mockup = pickedProduct.variantSurfaces.find(
-      (vs) => vs.variantId === variant.id && vs.surfaceId === pickedSurface.id
+    const mockup = pickedProduct.printAreaList.find(
+      (vs) => vs.variantId === variant.id && vs.id === pickedSurface.id
     )
 
     // Nếu có transform động, cập nhật print area
-    if (mockup && mockup.transform && Object.keys(mockup.transform).length > 0) {
-      const { transform } = mockup
+    if (mockup && mockup.area && Object.keys(mockup.area).length > 0) {
+      const { area } = mockup
       const updatedSurface: TPrintAreaInfo = {
         ...pickedSurface,
         area: {
-          printX: transform.x_px ?? pickedSurface.area.printX,
-          printY: transform.y_px ?? pickedSurface.area.printY,
-          printW: transform.width_px ?? pickedSurface.area.printW,
-          printH: transform.height_px ?? pickedSurface.area.printH,
-          widthRealPx: transform.width_real_px ?? pickedSurface.area.widthRealPx,
-          heightRealPx: transform.height_real_px ?? pickedSurface.area.heightRealPx,
+          printX: area.printX || pickedSurface.area.printX,
+          printY: area.printY || pickedSurface.area.printY,
+          printW: area.printW || pickedSurface.area.printW,
+          printH: area.printH || pickedSurface.area.printH,
+          widthRealPx: area.widthRealPx || pickedSurface.area.widthRealPx,
+          heightRealPx: area.heightRealPx || pickedSurface.area.heightRealPx,
+          scale: area.scale || pickedSurface.area.scale,
         },
       }
       set({ pickedVariant: variant, pickedSurface: updatedSurface })

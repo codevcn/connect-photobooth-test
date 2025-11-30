@@ -60,7 +60,7 @@ export const FramesDisplayer = ({
   const pickedProductId = useProductUIDataStore((s) => s.pickedProduct?.id)
   const restoredOffsetYRef = useRef(0)
   const hasRestoredRef = useRef(false)
-
+  console.log('>>> [63] run this 63')
   const restoreOffsetY = () => {
     requestAnimationFrame(() => {
       console.log('>>> [fff] res gg:', restoredOffsetYRef.current)

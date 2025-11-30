@@ -1,6 +1,12 @@
 import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 import { createInitialConstants } from './contants'
-import { TImgMimeType, TPrintAreaShapeType, TSurfaceType, TTextFont } from './types/global'
+import {
+  TImgMimeType,
+  TPrintAreaShapeType,
+  TPrintSurfaceInfo,
+  TSurfaceType,
+  TTextFont,
+} from './types/global'
 
 export const getNaturalSizeOfImage = (
   imgURL: string,
@@ -106,7 +112,9 @@ export const exitFullScreen = () => {
 }
 
 export const roundZooming = (zoomValue: number): number => {
-  return parseFloat(zoomValue.toFixed(createInitialConstants<number>('ELEMENT_ROUND_ZOOMING_FIXED')))
+  return parseFloat(
+    zoomValue.toFixed(createInitialConstants<number>('ELEMENT_ROUND_ZOOMING_FIXED'))
+  )
 }
 
 export const typeToObject = <Type>(objectInput: Type): Type => objectInput
@@ -130,7 +138,7 @@ export const canvasToBlob = (
   }, type)
 }
 
-export const labelToSurfaceType = (surfaceType: TSurfaceType): string => {
+export const labelToSurfaceType = (surfaceType: TPrintSurfaceInfo['code']): string => {
   switch (surfaceType) {
     case 'front':
       return 'Mặt trước'

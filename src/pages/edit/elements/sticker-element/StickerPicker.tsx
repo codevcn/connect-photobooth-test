@@ -300,11 +300,13 @@ export const StickerMenuWrapper = () => {
   }, [elementId, elementType, rootElement])
 
   return (
-    <>
-      {elementType === 'sticker' && rootElement && elementId && (
+    elementType === 'sticker' &&
+    rootElement &&
+    elementId && (
+      <div className="smd:block hidden w-full">
         <StickerElementMenu elementId={elementId} onClose={cancelSelectingElement} />
-      )}
-    </>
+      </div>
+    )
   )
 }
 
@@ -315,11 +317,11 @@ export const StickerPicker = () => {
 
   const handleSelectElement = () => {
     // nếu không phải frame và màn hình đang có kích thước nhỏ hơn smd thì ẩn container
-    if (elementType && elementType !== 'sticker' && window.innerWidth < 662) {
-      containerRef.current?.classList.add('hidden')
-    } else {
-      containerRef.current?.classList.remove('hidden')
-    }
+    // if (elementType && elementType !== 'sticker' && window.innerWidth < 662) {
+    //   containerRef.current?.classList.add('hidden')
+    // } else {
+    //   containerRef.current?.classList.remove('hidden')
+    // }
   }
 
   useEffect(() => {
@@ -327,17 +329,17 @@ export const StickerPicker = () => {
   }, [elementType])
 
   useEffect(() => {
-    const displayContainerOnResize = () => {
-      if (window.innerWidth >= 662) {
-        containerRef.current?.classList.remove('hidden')
-      } else {
-        handleSelectElement()
-      }
-    }
-    window.addEventListener('resize', displayContainerOnResize)
-    return () => {
-      window.removeEventListener('resize', displayContainerOnResize)
-    }
+    // const displayContainerOnResize = () => {
+    //   if (window.innerWidth >= 662) {
+    //     containerRef.current?.classList.remove('hidden')
+    //   } else {
+    //     handleSelectElement()
+    //   }
+    // }
+    // window.addEventListener('resize', displayContainerOnResize)
+    // return () => {
+    //   window.removeEventListener('resize', displayContainerOnResize)
+    // }
   }, [elementType])
 
   return (

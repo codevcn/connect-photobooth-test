@@ -154,8 +154,8 @@ export const StickerElementMenu = ({ elementId, onClose }: TStickerElementMenu) 
   }, [])
 
   return (
-    <div className="NAME-menu-section NAME-menu-sticker-element STYLE-hide-scrollbar smd:text-base text-sm w-full mt-2">
-      <h3 className="text-xs smd:text-sm mt-3 mb-1 font-bold">Tùy chỉnh</h3>
+    <div className="NAME-menu-section NAME-menu-sticker-element STYLE-hide-scrollbar smd:text-base smd:px-0 smd:mt-2 px-2 text-sm w-full">
+      <h3 className="text-xs smd:text-sm smd:mt-3 mb-1 font-bold">Tùy chỉnh nhãn dán</h3>
       <div
         ref={menuRef}
         className="smd:grid-cols-2 2xl:grid-cols-3 smd:gap-2 smd:grid-rows-1 smd:grid-flow-row grid-flow-col grid-rows-2 gap-1 grid rounded-md text-white"

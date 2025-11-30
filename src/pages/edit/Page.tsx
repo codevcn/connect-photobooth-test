@@ -20,6 +20,8 @@ import { useSearchParams } from 'react-router-dom'
 import { useProductStore } from '@/stores/product/product.store'
 import { LocalStorageHelper } from '@/utils/localstorage'
 import { TemplateFrameMenu } from './customize/template/TemplateFrameMenu'
+import { StickerElementMenu } from './elements/sticker-element/Menu'
+import { TextElementMenu } from './elements/text-element/Menu'
 
 const TemplateFrameMenuResponsive = () => {
   const selectedElement = useEditedElementStore((s) => s.selectedElement)
@@ -27,15 +29,21 @@ const TemplateFrameMenuResponsive = () => {
   const cancelSelectingElement = useEditedElementStore((s) => s.cancelSelectingElement)
 
   return (
-    <div className="smd:hidden block">
-      {elementId && elementType === 'template-frame' && elementURL && (
-        <TemplateFrameMenu
-          frameId={elementId}
-          onClose={cancelSelectingElement}
-          printedImageURL={elementURL}
-        />
-      )}
-    </div>
+    elementId && (
+      <div className="smd:hidden block">
+        {elementType === 'template-frame' && elementURL ? (
+          <TemplateFrameMenu
+            frameId={elementId}
+            onClose={cancelSelectingElement}
+            printedImageURL={elementURL}
+          />
+        ) : elementType === 'sticker' ? (
+          <StickerElementMenu elementId={elementId} onClose={cancelSelectingElement} />
+        ) : (
+          <TextElementMenu elementId={elementId} onClose={cancelSelectingElement} />
+        )}
+      </div>
+    )
   )
 }
 
@@ -190,7 +198,7 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
           <LivePreview
             pickedProduct={pickedProduct}
             editedVariantId={pickedVariant.id}
-            editedPrintSurfaceId={pickedSurface.id}
+            pickedSurfaceId={pickedSurface.id}
             printedImages={printedImages}
           />
         ) : (

@@ -10,6 +10,7 @@ import {
   TMergedAttributesUniqueString,
   TMergedAttributesGroups,
   TMergedAttributesUniqueColors,
+  TPrintSurfaceInfo,
 } from '@/utils/types/global'
 
 /**
@@ -26,8 +27,7 @@ export class ProductAdapter {
     if (apiProduct.surfaces.length === 0) return null
 
     const clientVariants = this.toClientVariants(apiProduct)
-    console.log('>>> [api product]:', apiProduct)
-    console.log('>>> [client kkk]:', buildProductAttributes(apiProduct.variants, apiProduct.id))
+    console.log('>>> to print area list:', this.toPrintAreaList(apiProduct))
     return {
       id: apiProduct.id,
       url: apiProduct.base_image_url,
@@ -37,10 +37,24 @@ export class ProductAdapter {
       variants: clientVariants,
       inNewLine: false,
       printAreaList: this.toPrintAreaList(apiProduct),
-      variantSurfaces: this.toMockups(apiProduct.mockups),
+      // variantSurfaces: this.toMockups(apiProduct.mockups),
+      printSurfaces: this.toPrintSurfaces(apiProduct),
       mergedAttributes: buildProductAttributes(apiProduct.variants, apiProduct.id),
       slug: apiProduct.slug,
     }
+  }
+
+  static toPrintSurfaces(apiProduct: TProduct): TPrintSurfaceInfo[] {
+    return apiProduct.surfaces.map((surface) => ({
+      id: surface.id,
+      productId: surface.product_id,
+      code: surface.code,
+      displayName: surface.display_name,
+      previewImageUrl: surface.preview_image_url,
+      orderIndex: surface.order_index,
+      createdAt: surface.created_at,
+      updatedAt: surface.updated_at,
+    }))
   }
 
   /**
@@ -103,38 +117,45 @@ export class ProductAdapter {
    */
   private static toPrintAreaList(apiProduct: TProduct): TPrintAreaInfo[] {
     // Sort surfaces với 'front' đầu tiên
-    const sortedSurfaces = [...apiProduct.surfaces].sort((a, b) =>
-      a.code === 'front' ? -1 : b.code === 'front' ? 1 : 0
-    )
-
-    const printAreas: TPrintAreaInfo[] = []
-    for (const surface of sortedSurfaces) {
-      if (surface.code === 'front' || surface.code === 'back') {
-        printAreas.push(this.toPrintAreaInfo(surface, apiProduct.base_image_url))
-      }
+    // const sortedSurfaces = [...apiProduct.surfaces].sort((a, b) =>
+    //   a.code === 'front' ? -1 : b.code === 'front' ? 1 : 0
+    // )
+    const sortedSurfaces: TPrintAreaInfo[] = []
+    for (const mockup of apiProduct.mockups) {
+      const surface = apiProduct.surfaces.find((s) => s.id === mockup.surface_id)
+      if (!surface) continue
+      sortedSurfaces.push(
+        this.toPrintAreaInfo(mockup, surface, apiProduct.base_image_url, mockup.variant_id)
+      )
     }
-    return printAreas
+    return sortedSurfaces
   }
 
   /**
    * Convert surface sang TPrintAreaInfo
    */
   private static toPrintAreaInfo(
+    mockup: TProductMockup,
     surface: TProductSurface,
-    fallbackImageUrl: string
+    fallbackImageUrl: string,
+    variantId: number
   ): TPrintAreaInfo {
+    const transform = mockup.transform_json
+    const surfaceArea = surface.print_areas
     return {
-      id: surface.id,
+      id: mockup.surface_id,
+      variantId,
       area: {
-        printX: surface.print_areas.x_px,
-        printY: surface.print_areas.y_px,
-        printW: surface.print_areas.width_px,
-        printH: surface.print_areas.height_px,
-        widthRealPx: surface.print_areas.width_real_px,
-        heightRealPx: surface.print_areas.height_real_px,
+        printX: transform.x_px || surfaceArea.x_px,
+        printY: transform.y_px || surfaceArea.y_px,
+        printW: transform.width_px || surfaceArea.width_px,
+        printH: transform.height_px || surfaceArea.height_px,
+        widthRealPx: transform.width_real_px || surfaceArea.width_real_px,
+        heightRealPx: transform.height_real_px || surfaceArea.height_real_px,
+        scale: transform.scale || surfaceArea.scale,
       },
-      surfaceType: surface.code as TSurfaceType,
-      imageUrl: surface.preview_image_url || fallbackImageUrl,
+      surfaceType: surface.code,
+      imageUrl: mockup.mockup_url || fallbackImageUrl,
     }
   }
 

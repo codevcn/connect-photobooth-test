@@ -173,7 +173,8 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
       })
     }
   }
-
+  console.log('>>> [pi] picked Product:', pickedProduct)
+  console.log('>>> [pi] picked Variant:', pickedVariant)
   return (
     <div className="smd:order-1 smd:mt-0 mt-4 order-2 w-full">
       <div className="pl-1 pt-2">
@@ -233,7 +234,7 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
                 {mergedAttributes.uniqueMaterialTitles[0]}
               </h3>
               <div className="flex flex-wrap gap-2">
-                {mergedAttributes.uniqueMaterials.map((material: any) => {
+                {mergedAttributes.uniqueMaterials.map((material) => {
                   const isSelected = selectedAttributes.material === material
                   return (
                     <button
@@ -261,7 +262,7 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
                 {mergedAttributes.uniqueScentTitles[0]}
               </h3>
               <div className="flex flex-wrap gap-2">
-                {mergedAttributes.uniqueScents.map((scent: any) => {
+                {mergedAttributes.uniqueScents.map((scent) => {
                   const isSelected = selectedAttributes.scent === scent
                   const isDisabled =
                     !mergedAttributes.groups?.[selectedAttributes.material ?? 'null']?.[
@@ -296,7 +297,7 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
                 {mergedAttributes.uniqueColorTitles[0]}
               </h3>
               <div className="flex flex-wrap gap-3">
-                {Object.keys(mergedAttributes.uniqueColors).map((color: any) => {
+                {Object.keys(mergedAttributes.uniqueColors).map((color) => {
                   const isSelected = selectedAttributes.color === color
                   const material = selectedAttributes.material ?? 'null'
                   const scent = selectedAttributes.scent ?? 'null'
@@ -427,7 +428,7 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
           </div>
         )}
 
-        <PrintSurface printSurfaces={pickedProduct.printAreaList} pickedVariant={pickedVariant} />
+        <PrintSurface printSurfaces={pickedProduct.printSurfaces} pickedVariant={pickedVariant} />
       </div>
 
       {showSizeChart && firstProductImageURL && firstProductImageURL !== hintForSizeChart && (

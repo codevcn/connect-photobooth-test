@@ -327,7 +327,7 @@ export const TemplateFrameMenu = ({ frameId, onClose, printedImageURL }: Printed
       ref={menuRef}
       className="NAME-menu-section NAME-menu-template-frame STYLE-hide-scrollbar smd:text-sm smd:mt-2 smd:px-0 px-2 text-sm w-full"
     >
-      <h3 className="smd:text-sm smd:mt-3 text-xs mb-1 font-bold">Tùy chỉnh</h3>
+      <h3 className="smd:text-sm smd:mt-3 text-xs mb-1 font-bold">Tùy chỉnh ảnh photobooth</h3>
       <div className="s2xl:grid-cols-3 smd:grid-cols-2 sms:grid-cols-4 grid-cols-2 spmd:gap-2 gap-1 grid rounded-md">
         <div className="NAME-form-group NAME-form-crop h-8 smd:h-9 mobile-touch cursor-pointer border-2 border-main-cl text-white hover:bg-white hover:text-main-cl flex items-center justify-center bg-main-cl rounded px-1 shadow">
           <ChangePrintedImage frameId={frameId} />

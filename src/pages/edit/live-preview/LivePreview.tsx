@@ -23,19 +23,20 @@ type TDisplayedImage = {
 type TLivePreviewProps = {
   pickedProduct: TBaseProduct
   editedVariantId: TBaseProduct['variants'][number]['id']
-  editedPrintSurfaceId: TBaseProduct['printAreaList'][number]['id']
+  pickedSurfaceId: TBaseProduct['printAreaList'][number]['id']
   printedImages: TPrintedImage[]
 }
 
 export const LivePreview = ({
   pickedProduct,
   editedVariantId,
-  editedPrintSurfaceId,
+  pickedSurfaceId,
   printedImages,
 }: TLivePreviewProps) => {
   const printAreaInfo = useMemo(() => {
-    return pickedProduct.printAreaList.find((printArea) => printArea.id === editedPrintSurfaceId)!
-  }, [pickedProduct.id, pickedProduct.printAreaList, editedPrintSurfaceId])
+    return pickedProduct.printAreaList.find((printArea) => printArea.id === pickedSurfaceId)!
+  }, [pickedProduct.id, pickedProduct.printAreaList, pickedSurfaceId])
+  console.log('>>> [disimg] printAreaInfo:', { printAreaInfo, lis: pickedProduct.printAreaList })
   const { containerRef, scale, position, handlers } = useZoomEditBackground(0.3, 5)
 
   const { printAreaRef, printAreaContainerRef, checkIfAnyElementOutOfBounds, isOutOfBounds } =
@@ -50,18 +51,18 @@ export const LivePreview = ({
     })
 
   const displayedImage = useMemo<TDisplayedImage>(() => {
-    const variantSurface = pickedProduct.variantSurfaces.find(
+    const variantSurface = pickedProduct.printAreaList.find(
       (variantSurface) =>
-        variantSurface.variantId === editedVariantId &&
-        variantSurface.surfaceId === editedPrintSurfaceId
+        variantSurface.variantId === editedVariantId && variantSurface.id === pickedSurfaceId
     )
     return {
-      surfaceId: editedPrintSurfaceId,
+      surfaceId: pickedSurfaceId,
       variantId: editedVariantId,
-      imageURL: variantSurface?.imageURL || pickedProduct.url,
+      imageURL: variantSurface?.imageUrl || pickedProduct.url,
       altText: pickedProduct.name,
     }
-  }, [pickedProduct, editedVariantId, editedPrintSurfaceId])
+  }, [pickedProduct, editedVariantId, pickedSurfaceId])
+  console.log('>>> [disimg] displayedImage:', displayedImage)
 
   const imgURLRef = useRef<string>(displayedImage.imageURL)
 

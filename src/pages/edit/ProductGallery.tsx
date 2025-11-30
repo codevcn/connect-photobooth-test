@@ -31,7 +31,6 @@ const Product = ({
 
   return (
     <div
-      key={product.id}
       ref={printAreaContainerRef}
       data-product-id={product.id}
       data-is-picked={isPicked}

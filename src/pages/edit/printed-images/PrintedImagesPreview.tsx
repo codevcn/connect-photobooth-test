@@ -1,28 +1,137 @@
 import { TPrintedImage } from '@/utils/types/global'
-import { useEffect, useMemo, useRef } from 'react'
-import { PrintedImagesModal } from './PrintedImagesModal'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { TemplateFrameMenu } from '../customize/template/TemplateFrameMenu'
 import { useEditedElementStore } from '@/stores/element/element.store'
+import { generateUniqueId, getNaturalSizeOfImage } from '@/utils/helpers'
+import { createInitialConstants } from '@/utils/contants'
+import { PrintedImagesModal } from './PrintedImagesModal'
+
+type ImageProps = {
+  img: TPrintedImage
+  imgsContainerRef: React.RefObject<HTMLDivElement | null>
+  onClickImage: (printedImg: TPrintedImage) => void
+}
+
+const Image = ({ img, imgsContainerRef, onClickImage }: ImageProps) => {
+  const { url, id } = img
+
+  const handleClickImage = () => {
+    onClickImage({ ...img, id, url })
+  }
+
+  useEffect(() => {
+    getNaturalSizeOfImage(
+      url,
+      (width, height) => {
+        const imgEle = imgsContainerRef.current?.querySelector<HTMLDivElement>(
+          `.NAME-printed-image-box[data-img-box-id='${id}'] img`
+        )
+        if (imgEle) {
+          imgEle.style.cssText = `width: ${width}px; aspect-ratio: ${width} / ${height};`
+        }
+      },
+      (err) => {}
+    )
+  }, [url])
+
+  return (
+    <div
+      onClick={handleClickImage}
+      className="NAME-printed-image-box cursor-pointer relative w-fit h-fit rounded-xl overflow-hidden border-2 border-border hover:border-primary transition-colors group"
+      data-img-box-id={id}
+    >
+      <img
+        src={url || '/images/placeholder.svg'}
+        alt={`Printed Image`}
+        className="max-w-full group-hover:scale-105 transition-transform duration-200 object-contain"
+      />
+    </div>
+  )
+}
+
+type PrintedImageProps = {
+  printedImage: TPrintedImage
+  onClose: () => void
+}
+
+const PrintedImagePreviewModal = ({ printedImage, onClose }: PrintedImageProps) => {
+  const imgsContainerRef = useRef<HTMLDivElement>(null)
+
+  const handleAddImageToPrintArea = (printedImg: TPrintedImage) => {
+    useEditedElementStore.getState().addPrintedImageElements([
+      {
+        id: generateUniqueId(),
+        path: printedImg.url,
+        position: {
+          x: createInitialConstants<number>('ELEMENT_X'),
+          y: createInitialConstants<number>('ELEMENT_Y'),
+        },
+        angle: createInitialConstants<number>('ELEMENT_ROTATION'),
+        scale: createInitialConstants<number>('ELEMENT_ZOOM'),
+        zindex: createInitialConstants<number>('ELEMENT_ZINDEX'),
+        mountType: 'from-new',
+      },
+    ])
+    onClose()
+  }
+
+  return (
+    <div className="NAME-printed-images-modal fixed inset-0 z-999 flex items-center justify-center">
+      <div onClick={onClose} className="bg-black/70 absolute inset-0 z-10"></div>
+      <div className="relative z-20 bg-white w-full max-w-[90vw] rounded-lg max-h-[90vh] flex flex-col transition duration-300 ease-in-out">
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-2 border-b border-b-gray-200 shadow">
+          <h2 className="text-lg font-bold">Ảnh của bạn</h2>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors cursor-pointer mobile-touch"
+            aria-label="Close"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-x-icon lucide-x"
+            >
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Image Grid */}
+        <div className="flex-1 overflow-y-auto p-3">
+          <p className="text-gray-700 text-sm text-center w-full mb-2 font-medium">
+            Nhấn vào ảnh để thêm vào khu vực in
+          </p>
+          <Image
+            img={printedImage}
+            imgsContainerRef={imgsContainerRef}
+            onClickImage={handleAddImageToPrintArea}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 type PrintedImageForTemplateProps = {
   printedImages: TPrintedImage[]
 }
 
-const PrintedImageForTemplate = ({ printedImages }: PrintedImageForTemplateProps) => {
+const PrintedImagesForTemplate = ({ printedImages }: PrintedImageForTemplateProps) => {
   const cancelSelectingElement = useEditedElementStore((s) => s.cancelSelectingElement)
   const selectedElement = useEditedElementStore((s) => s.selectedElement)
   const { elementId, elementType, elementURL } = selectedElement || {}
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  const displayedImage = useMemo<TPrintedImage | null>(() => {
-    return printedImages.length > 0 ? printedImages[0] : null
-  }, [printedImages])
-
-  const showPrintedImagesModal = () => {
-    eventEmitter.emit(EInternalEvents.HIDE_SHOW_PRINTED_IMAGES_MODAL, true)
-  }
+  // const containerRef = useRef<HTMLDivElement>(null)
+  const [pickedImage, setPickedImage] = useState<TPrintedImage>()
 
   const scrollToSelectedElement = () => {
     if (elementType !== 'template-frame') return
@@ -73,22 +182,28 @@ const PrintedImageForTemplate = ({ printedImages }: PrintedImageForTemplateProps
       <h3 className="smd:text-base text-xs mb-1 font-bold text-gray-800">
         Chọn ảnh <span className="smd:inline hidden">chụp photobooth</span>
       </h3>
-      <div className="flex justify-center min-w-[50px] rounded text-main-cl w-fit active:scale-90 transition relative">
-        <div onClick={showPrintedImagesModal} className="border-border rounded-md cursor-pointer">
-          {displayedImage && (
-            <div
-              key={displayedImage.id}
-              className="h-10 smd:h-[50px] flex items-center overflow-hidden rounded"
-            >
+      <div className="flex flex-wrap gap-1 items-center overflow-x-auto gallery-scroll w-full">
+        {printedImages.length > 0 &&
+          printedImages.map((printedImage, index) => (
+            <div key={printedImage.id} onClick={() => setPickedImage(printedImage)}>
               <img
-                src={displayedImage.url}
-                alt="Printed image"
-                className={`h-max w-max max-h-[50px] max-w-20 my-auto object-contain rounded`}
+                className={`${
+                  index === 0 ? 'aspect-video' : 'aspect-square'
+                } h-12 border border-gray-300 object-contain mobile-touch`}
+                src={printedImage.url}
+                alt="Ảnh chụp photobooth"
               />
             </div>
+          ))}
+
+        {pickedImage &&
+          createPortal(
+            <PrintedImagePreviewModal
+              onClose={() => setPickedImage(undefined)}
+              printedImage={pickedImage}
+            />,
+            document.body
           )}
-        </div>
-        {createPortal(<PrintedImagesModal printedImages={printedImages} />, document.body)}
       </div>
 
       {elementId && elementType === 'template-frame' && elementURL && (
@@ -111,7 +226,8 @@ type TPrintedImagesPreviewProps = {
 export const PrintedImagesPreview = ({ printedImages }: TPrintedImagesPreviewProps) => {
   return (
     <div className="smd:mt-6 col-span-2 mt-2 flex-1 flex gap-2 justify-between">
-      <PrintedImageForTemplate printedImages={printedImages} />
+      <PrintedImagesForTemplate printedImages={printedImages} />
+      <PrintedImagesModal printedImages={printedImages} />
     </div>
   )
 }

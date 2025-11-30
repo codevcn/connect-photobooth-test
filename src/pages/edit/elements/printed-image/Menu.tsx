@@ -237,7 +237,7 @@ export const PrintedImageElementMenu = ({ elementId, onClose }: TPrintedImageEle
           <div className="flex grow">
             <button
               onClick={() => onClickButton('zindex-up')}
-              className="bg-white border-2 grow text-main-cl border-main-cl rounded px-1.5 flex items-center justify-center"
+              className="bg-white border-2 grow text-main-cl border-main-cl rounded px-1.5 flex items-center justify-center mobile-touch"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -255,7 +255,7 @@ export const PrintedImageElementMenu = ({ elementId, onClose }: TPrintedImageEle
             </button>
             <button
               onClick={() => onClickButton('zindex-down')}
-              className="bg-white border-2 grow text-main-cl border-main-cl rounded px-1.5 py-0.5 flex items-center justify-center"
+              className="bg-white border-2 grow text-main-cl border-main-cl rounded px-1.5 py-0.5 flex items-center justify-center mobile-touch"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

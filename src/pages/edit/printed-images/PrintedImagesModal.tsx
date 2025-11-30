@@ -1,12 +1,9 @@
 import { useTemplateStore } from '@/stores/ui/template.store'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
-import { generateUniqueId, getNaturalSizeOfImage } from '@/utils/helpers'
+import { getNaturalSizeOfImage } from '@/utils/helpers'
 import { TPrintedImage, TTemplateFrame } from '@/utils/types/global'
 import { useEffect, useRef, useState } from 'react'
 import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
-import { useEditModeStore } from '@/stores/ui/edit-mode.store'
-import { useEditedElementStore } from '@/stores/element/element.store'
-import { createInitialConstants } from '@/utils/contants'
 
 type ImageProps = {
   img: TPrintedImage
@@ -65,7 +62,6 @@ export const PrintedImagesModal = ({ printedImages }: PrintedImagesProps) => {
     pickedFrameId: undefined,
   })
   const [showPrintedImagesModal, setShowPrintedImagesModal] = useState(false)
-  const editMode = useEditModeStore((s) => s.editMode)
 
   const handleAddPrintedImageToFrame = (printedImg: TPrintedImage) => {
     const pickedPrintSurface = useProductUIDataStore.getState().pickedSurface
@@ -84,30 +80,8 @@ export const PrintedImagesModal = ({ printedImages }: PrintedImagesProps) => {
     setShowPrintedImagesModal(show)
   }
 
-  const handleAddImageToPrintArea = (printedImg: TPrintedImage) => {
-    useEditedElementStore.getState().addPrintedImageElements([
-      {
-        id: generateUniqueId(),
-        path: printedImg.url,
-        position: {
-          x: createInitialConstants<number>('ELEMENT_X'),
-          y: createInitialConstants<number>('ELEMENT_Y'),
-        },
-        angle: createInitialConstants<number>('ELEMENT_ROTATION'),
-        scale: createInitialConstants<number>('ELEMENT_ZOOM'),
-        zindex: createInitialConstants<number>('ELEMENT_ZINDEX'),
-        mountType: 'from-new',
-      },
-    ])
-    setShowPrintedImagesModal(false)
-  }
-
   const handlePickPrintedImage = (printedImg: TPrintedImage) => {
-    if (editMode === 'with-template') {
-      handleAddPrintedImageToFrame(printedImg)
-    } else {
-      handleAddImageToPrintArea(printedImg)
-    }
+    handleAddPrintedImageToFrame(printedImg)
   }
 
   useEffect(() => {

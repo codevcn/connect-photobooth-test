@@ -345,7 +345,7 @@ export const TextElementMenu = ({ elementId, onClose }: TPrintedImageMenuProps) 
             />
           </div>
         </div>
-        <div className="NAME-form-group NAME-form-zindex h-8 smd:h-9 flex items-center justify-between bg-main-cl rounded px-1 shadow">
+        <div className="NAME-form-group NAME-form-zindex h-8 smd:h-9 flex items-center justify-between bg-main-cl rounded px-1 shadow mobile-touch">
           <div className="mr-0.5">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -364,7 +364,7 @@ export const TextElementMenu = ({ elementId, onClose }: TPrintedImageMenuProps) 
           <div className="flex grow flex-wrap">
             <button
               onClick={() => onClickButton('zindex-up')}
-              className="bg-white border-2 grow text-main-cl border-main-cl rounded px-1.5 py-0.5 flex gap-0.5 items-center justify-center"
+              className="bg-white border-2 grow text-main-cl border-main-cl rounded px-1.5 py-0.5 flex gap-0.5 items-center justify-center mobile-touch"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

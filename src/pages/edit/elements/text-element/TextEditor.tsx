@@ -47,9 +47,9 @@ const EditorModal = ({ onClose }: TEditorModalProps) => {
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-99 animate-pop-in p-4">
+    <div className="fixed inset-0 flex items-center justify-center z-99 animate-pop-in p-2">
       <div onClick={onClose} className="bg-black/50 absolute inset-0 z-10"></div>
-      <div className="bg-white w-full rounded-xl p-4 shadow-2xl relative z-20">
+      <div className="bg-white w-full rounded-xl p-3 shadow-2xl relative z-20">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-xl font-bold text-gray-800">Thêm chữ</h3>
           <button onClick={onClose} className="p-2 active:bg-gray-100 rounded-full touch-target">

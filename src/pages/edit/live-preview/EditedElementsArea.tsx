@@ -18,7 +18,6 @@ export const EditedElementsArea = ({
   const selectedElement = useEditedElementStore((s) => s.selectedElement)
   const selectElement = useEditedElementStore((s) => s.selectElement)
   const mockupId = useSearchParams()[0].get('mockupId')
-  console.log('>>> [now] mockup id:', { mockupId, stickerElements, textElements })
 
   return (
     <>

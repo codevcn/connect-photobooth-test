@@ -1,4 +1,4 @@
-import { getInitialContants } from '@/utils/contants'
+import { createInitialConstants } from '@/utils/contants'
 import { TElementLayerState } from '@/utils/types/global'
 import { create } from 'zustand'
 
@@ -58,7 +58,7 @@ export const useElementLayerStore = create<TUseElementLayerStore>((set) => ({
       return {
         elementLayers: updatedLayers.map((layer, idx) => ({
           ...layer,
-          index: (idx + 1) * getInitialContants<number>('ELEMENT_ZINDEX_STEP') + 1,
+          index: (idx + 1) * createInitialConstants<number>('ELEMENT_ZINDEX_STEP') + 1,
         })),
       }
     })

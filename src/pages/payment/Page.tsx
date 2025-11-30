@@ -16,6 +16,7 @@ import { VoucherSection } from '@/pages/payment/Voucher'
 import { ProductList } from '@/pages/payment/ProductList'
 import { useProductStore } from '@/stores/product/product.store'
 import { toast } from 'react-toastify'
+import { createInitialConstants } from '@/utils/contants'
 
 interface IPaymentModalProps {
   imgSrc?: string
@@ -142,10 +143,39 @@ const PaymentPage = () => {
               productId: product.productId,
               productVariantId: productVariant.id,
               name: product.productName,
-              size: productVariant.attributes.size || 'S',
-              color: {
-                title: productVariant.attributes.color || 'Black',
-                value: productVariant.attributes.color || 'Black',
+              variantAttributesInfo: {
+                material: productVariant.attributes.material
+                  ? {
+                      title:
+                        productVariant.attributes.materialTitle ||
+                        createInitialConstants<string>('MATERIAL_DEFAULT_TITLE'),
+                      value: productVariant.attributes.material,
+                    }
+                  : undefined,
+                scent: productVariant.attributes.scent
+                  ? {
+                      title:
+                        productVariant.attributes.scentTitle ||
+                        createInitialConstants<string>('SCENT_DEFAULT_TITLE'),
+                      value: productVariant.attributes.scent,
+                    }
+                  : undefined,
+                color: productVariant.attributes.color
+                  ? {
+                      title:
+                        productVariant.attributes.colorTitle ||
+                        createInitialConstants<string>('COLOR_DEFAULT_TITLE'),
+                      value: productVariant.attributes.color,
+                    }
+                  : undefined,
+                size: productVariant.attributes.size
+                  ? {
+                      title:
+                        productVariant.attributes.sizeTitle ||
+                        createInitialConstants<string>('SIZE_DEFAULT_TITLE'),
+                      value: productVariant.attributes.size,
+                    }
+                  : undefined,
               },
               quantity: mockupData.quantity,
               originalPrice: productVariant.priceAmountOneSide,

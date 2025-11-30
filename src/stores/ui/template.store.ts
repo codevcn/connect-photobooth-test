@@ -6,7 +6,7 @@ import {
   TSizeInfo,
   TPrintAreaInfo,
 } from '@/utils/types/global'
-import { getInitialContants } from '@/utils/contants'
+import { createInitialConstants } from '@/utils/contants'
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 import { hardCodedPrintTemplates } from '@/configs/print-template/templates-data'
@@ -145,7 +145,7 @@ export const useTemplateStore = create(
       if (frameId) {
         // Thêm vào frame cụ thể
         for (const template of templates) {
-          let frameIndex: number = getInitialContants<number>('PLACED_IMG_FRAME_INDEX')
+          let frameIndex: number = createInitialConstants<number>('PLACED_IMG_FRAME_INDEX')
           for (const frame of template.frames) {
             if (frame.id === frameId) {
               console.log('>>> [ddd] frame:', frame)

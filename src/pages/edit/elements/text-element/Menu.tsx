@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ColorPickerModal } from './ColorPicker'
 import { TextFontPicker } from './FontPicker'
 import { useEditedElementStore } from '@/stores/element/element.store'
-import { getInitialContants } from '@/utils/contants'
+import { createInitialConstants } from '@/utils/contants'
 
 type TPropertyType = 'font-size' | 'angle' | 'posXY' | 'zindex-up' | 'zindex-down'
 
@@ -195,7 +195,7 @@ export const TextElementMenu = ({ elementId, onClose }: TPrintedImageMenuProps) 
         undefined,
         undefined,
         undefined,
-        -getInitialContants<number>('ELEMENT_ZINDEX_STEP')
+        -createInitialConstants<number>('ELEMENT_ZINDEX_STEP')
       )
     } else if (type === 'zindex-up') {
       handleChangeProperties(
@@ -203,7 +203,7 @@ export const TextElementMenu = ({ elementId, onClose }: TPrintedImageMenuProps) 
         undefined,
         undefined,
         undefined,
-        getInitialContants<number>('ELEMENT_ZINDEX_STEP')
+        createInitialConstants<number>('ELEMENT_ZINDEX_STEP')
       )
     }
   }

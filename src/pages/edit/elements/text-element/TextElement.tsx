@@ -36,7 +36,7 @@ export const TextElement = ({
     forDrag: { ref: refForDrag },
     state: { position, angle, zindex, fontSize, textColor, content, fontFamily, fontWeight },
     handleSetElementState,
-  } = useTextElementControl(id, rootRef, printAreaContainerRef, elementContainerRef, {
+  } = useTextElementControl(id, rootRef, elementContainerRef, printAreaContainerRef, {
     maxFontSize: MAX_TEXT_FONT_SIZE,
     minFontSize: MIN_TEXT_FONT_SIZE,
     position: element.position,

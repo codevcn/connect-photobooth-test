@@ -24,8 +24,12 @@ type TInitialContentsType =
   | 'MOCK_TEMPLATE_HEIGHT_BY_TEMPLATE_TYPE'
   | 'EDIT_BACKGROUND_MIN_ZOOM'
   | 'EDIT_BACKGROUND_MAX_ZOOM'
+  | 'MATERIAL_DEFAULT_TITLE'
+  | 'SCENT_DEFAULT_TITLE'
+  | 'COLOR_DEFAULT_TITLE'
+  | 'SIZE_DEFAULT_TITLE'
 
-export const getInitialContants = <R>(type: TInitialContentsType): R => {
+export const createInitialConstants = <R>(type: TInitialContentsType): R => {
   switch (type) {
     case 'ELEMENT_ZINDEX_STEP':
       return 10 as R
@@ -77,6 +81,14 @@ export const getInitialContants = <R>(type: TInitialContentsType): R => {
       return 0.5 as R
     case 'EDIT_BACKGROUND_MAX_ZOOM':
       return 8 as R
+    case 'MATERIAL_DEFAULT_TITLE':
+      return 'Chất liệu' as R
+    case 'SCENT_DEFAULT_TITLE':
+      return 'Mùi hương' as R
+    case 'COLOR_DEFAULT_TITLE':
+      return 'Màu sắc' as R
+    case 'SIZE_DEFAULT_TITLE':
+      return 'Kích thước' as R
     default:
       return null as R
   }
@@ -90,7 +102,7 @@ type TCommonContentsType =
   | 'FIXED_COUNTDOWN_PAYMENT_SECONDS'
   | 'ANIMATION_DURATION_PRINT_AREA_BOUNDS_CHANGE'
 
-export const getCommonContants = <R>(type: TCommonContentsType): R => {
+export const createCommonConstants = <R>(type: TCommonContentsType): R => {
   switch (type) {
     case 'MAX_HEIGHT_CROP_DISPLAY':
       return 250 as R

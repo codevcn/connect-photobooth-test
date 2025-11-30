@@ -219,10 +219,10 @@ export const usePrintArea = (
       if (editContainer) {
         for (const element of editableElements) {
           const rect = element.getBoundingClientRect()
-          console.log('>>> [uuu] rect:', rect)
+          // console.log('>>> [uuu] rect:', rect)
 
           const containerRect = editContainer.getBoundingClientRect()
-          console.log('>>> [uuu] container rect:', containerRect)
+          // console.log('>>> [uuu] container rect:', containerRect)
 
           // Chuyển đổi tọa độ element về tọa độ tương đối với container
           const relativeRect = {
@@ -278,7 +278,7 @@ export const usePrintArea = (
       // Nếu ảnh đã load xong
       if (imageElement.complete && imageElement.naturalWidth > 0) {
         // Delay nhỏ để đảm bảo DOM đã render xong
-        const timeoutId = setTimeout(updatePrintAreaWhenImageLoaded, 50)
+        const timeoutId = setTimeout(updatePrintAreaWhenImageLoaded, 100)
         return () => clearTimeout(timeoutId)
       } else {
         // Nếu ảnh chưa load, đợi event load

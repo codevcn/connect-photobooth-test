@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useMemo } from 'react'
 import { type Crop } from 'react-image-crop'
 import { TUserInputImage } from '@/utils/types/global'
-import { getCommonContants } from '@/utils/contants'
+import { createCommonConstants } from '@/utils/contants'
 
 type UseCropImageOptions = {
   imageData?: TUserInputImage
@@ -24,8 +24,8 @@ export const useImageCrop = ({ imageData, onCropComplete }: UseCropImageOptions 
 
   const [minCropSizeWidth, minCropSizeHeight] = useMemo<[number, number]>(() => {
     return [
-      getCommonContants<number>('MIN_CROP_SIZE_WIDTH'),
-      getCommonContants<number>('MIN_CROP_SIZE_HEIGHT'),
+      createCommonConstants<number>('MIN_CROP_SIZE_WIDTH'),
+      createCommonConstants<number>('MIN_CROP_SIZE_HEIGHT'),
     ]
   }, [])
 

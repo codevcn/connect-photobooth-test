@@ -1,4 +1,4 @@
-import { getInitialContants } from '@/utils/contants'
+import { createInitialConstants } from '@/utils/contants'
 import { TPosition } from '@/utils/types/global'
 import { useRef, useEffect, SetStateAction } from 'react'
 
@@ -29,8 +29,8 @@ export function useUniversalZoomForEditBackground(
   currentPosition: TPosition
 ): TUseUniversalZoomReturn {
   const {
-    minScale = getInitialContants<number>('EDIT_BACKGROUND_MIN_ZOOM'),
-    maxScale = getInitialContants<number>('EDIT_BACKGROUND_MAX_ZOOM'),
+    minScale = createInitialConstants<number>('EDIT_BACKGROUND_MIN_ZOOM'),
+    maxScale = createInitialConstants<number>('EDIT_BACKGROUND_MAX_ZOOM'),
     enablePan = true,
     enableZoom = true,
     enableWheelZoom = true,

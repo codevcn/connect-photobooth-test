@@ -8,7 +8,7 @@ import type React from 'react'
 import { styleToFramesDisplayerByTemplateType } from '@/configs/print-template/templates-helpers'
 import { TemplateFrame } from '../customize/template/TemplateFrame'
 import { FramesDisplayer } from '../customize/template/FrameDisplayer'
-import { getCommonContants } from '@/utils/contants'
+import { createCommonConstants } from '@/utils/contants'
 
 type TFramesDisplayerProps = {
   template: TPrintTemplate
@@ -183,7 +183,7 @@ export const PrintAreaOverlay = ({
             : 'rgba(96, 165, 250, 0.1)'
           : 'transparent',
         animationDuration:
-          getCommonContants<number>('ANIMATION_DURATION_PRINT_AREA_BOUNDS_CHANGE') + 'ms',
+          createCommonConstants<number>('ANIMATION_DURATION_PRINT_AREA_BOUNDS_CHANGE') + 'ms',
       }}
       data-is-out-of-bounds={isOutOfBounds}
     >

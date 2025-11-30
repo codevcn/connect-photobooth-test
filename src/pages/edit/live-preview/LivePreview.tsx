@@ -9,8 +9,9 @@ import { adjustNearF3F4F6, getFinalColorValue } from '@/utils/helpers'
 import { SectionLoading } from '@/components/custom/Loading'
 import { createPortal } from 'react-dom'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
-import { getCommonContants } from '@/utils/contants'
+import { createCommonConstants } from '@/utils/contants'
 import { useZoomEditBackground } from '@/hooks/use-zoom-edit-background'
+import { tempObject } from '@/stores/temp/temp.store'
 
 type TDisplayedImage = {
   surfaceId: TBaseProduct['printAreaList'][number]['id']
@@ -39,9 +40,12 @@ export const LivePreview = ({
 
   const { printAreaRef, printAreaContainerRef, checkIfAnyElementOutOfBounds, isOutOfBounds } =
     usePrintArea(printAreaInfo, () => {
-      setTimeout(() => {
-        eventEmitter.emit(EInternalEvents.ELEMENTS_OUT_OF_BOUNDS_CHANGED)
-      }, getCommonContants<number>('ANIMATION_DURATION_PRINT_AREA_BOUNDS_CHANGE') + 100)
+      if (!tempObject.firstBackFromCartEdit_allowedPrintAreaChange) {
+        setTimeout(() => {
+          eventEmitter.emit(EInternalEvents.ELEMENTS_OUT_OF_BOUNDS_CHANGED)
+        }, createCommonConstants<number>('ANIMATION_DURATION_PRINT_AREA_BOUNDS_CHANGE') + 100)
+      }
+      tempObject.firstBackFromCartEdit_allowedPrintAreaChange = false
       adjustSizeOfPlacedImageOnPlaced()
     })
 
@@ -95,17 +99,17 @@ export const LivePreview = ({
 
   return (
     <div
-      ref={containerRef}
-      {...handlers}
+      // ref={containerRef}
+      // {...handlers}
       onDragStart={(e) => e.preventDefault()}
       className="smd:w-full overflow-hidden w-full min-h-full h-full relative touch-none"
     >
-      {/* {createPortal(
+      {createPortal(
         <div className="bg-blue-600 h-12 w-12 fixed top-0 left-0 z-1000">
           <div>oke</div>
         </div>,
         document.body
-      )} */}
+      )}
       <AddToCartHandler
         checkIfAnyElementOutOfBounds={checkIfAnyElementOutOfBounds}
         printAreaContainerRef={printAreaContainerRef}

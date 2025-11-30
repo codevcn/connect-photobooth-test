@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import QRCode from 'qrcode'
-import { getInitialContants } from '@/utils/contants'
+import { createInitialConstants } from '@/utils/contants'
 import { formatNumberWithCommas, formatTime } from '@/utils/helpers'
 import { TEndOfPaymentData, TPaymentType } from '@/utils/types/global'
 import { paymentService } from '@/services/payment.service'
@@ -29,11 +29,11 @@ const QRCanvas = ({ value, size = 200 }: TQRCanvasProps) => {
 const getColorByPaymentMethod = (method: TPaymentType): string => {
   switch (method) {
     case 'momo':
-      return getInitialContants<string>('PAYMENT_MOMO_COLOR')
+      return createInitialConstants<string>('PAYMENT_MOMO_COLOR')
     case 'zalo':
-      return getInitialContants<string>('PAYMENT_ZALO_COLOR')
+      return createInitialConstants<string>('PAYMENT_ZALO_COLOR')
     default:
-      return getInitialContants<string>('PAYMENT_COD_COLOR')
+      return createInitialConstants<string>('PAYMENT_COD_COLOR')
   }
 }
 

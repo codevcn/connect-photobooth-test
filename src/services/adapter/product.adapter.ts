@@ -6,11 +6,10 @@ import {
   TProductVariantSurface,
   TSurfaceType,
   TProductCategory,
-  TProductAttributes,
-  TColorAttribute,
-  TMaterialAttribute,
-  TScentAttribute,
-  TSizeAttribute,
+  TMergedAttributes,
+  TMergedAttributesUniqueString,
+  TMergedAttributesGroups,
+  TMergedAttributesUniqueColors,
 } from '@/utils/types/global'
 
 /**
@@ -27,7 +26,8 @@ export class ProductAdapter {
     if (apiProduct.surfaces.length === 0) return null
 
     const clientVariants = this.toClientVariants(apiProduct)
-
+    console.log('>>> [api product]:', apiProduct)
+    console.log('>>> [client kkk]:', buildProductAttributes(apiProduct.variants, apiProduct.id))
     return {
       id: apiProduct.id,
       url: apiProduct.base_image_url,
@@ -38,7 +38,7 @@ export class ProductAdapter {
       inNewLine: false,
       printAreaList: this.toPrintAreaList(apiProduct),
       variantSurfaces: this.toMockups(apiProduct.mockups),
-      mergedAttributes: buildProductAttributes(apiProduct.variants),
+      mergedAttributes: buildProductAttributes(apiProduct.variants, apiProduct.id),
       slug: apiProduct.slug,
     }
   }
@@ -75,11 +75,20 @@ export class ProductAdapter {
     category?: TProductCategory
   ): TClientProductVariant {
     const attrs = variant.attributes_json || {}
-
     return {
       id: variant.id,
       name: product.name,
-      attributes: attrs,
+      attributes: {
+        material: attrs.material || undefined,
+        materialTitle: attrs.materialTitle || undefined,
+        scent: attrs.scent || undefined,
+        scentTitle: attrs.scentTitle || undefined,
+        color: attrs.color || undefined,
+        colorTitle: attrs.colorTitle || undefined,
+        hex: attrs.hex || undefined,
+        size: attrs.size || undefined,
+        sizeTitle: attrs.sizeTitle || undefined,
+      },
       priceAmountOneSide: parseFloat(variant.price_amount_oneside),
       priceAmountBothSide: variant.price_amount_bothside
         ? parseFloat(variant.price_amount_bothside)
@@ -152,239 +161,66 @@ export class ProductAdapter {
 }
 
 /**
- * Helper: Tìm hoặc tạo color trong material (khi không có scent)
- */
-function getOrCreateColorInMaterial(
-  material: TMaterialAttribute,
-  colorValue: string,
-  colorTitle?: string | null,
-  hex?: string | null
-): TColorAttribute {
-  if (!material.colors) material.colors = []
-  let color = material.colors.find((c) => c.value === colorValue)
-  if (!color) {
-    color = {
-      value: colorValue,
-      displayValue: colorTitle ?? colorValue,
-      title: colorTitle ?? colorValue,
-      hex: hex ?? undefined,
-      displayType: hex ? 'swatch' : 'label',
-      sizes: [],
-    }
-    material.colors.push(color)
-  }
-  return color
-}
-
-/**
- * Helper: Thêm size vào material nếu chưa tồn tại
- */
-function addSizeToMaterial(
-  material: TMaterialAttribute,
-  sizeValue: string,
-  sizeTitle?: string | null
-): void {
-  if (!material.sizes) material.sizes = []
-  const exists = material.sizes.some((s) => s.value === sizeValue)
-  if (!exists) {
-    material.sizes.push({
-      value: sizeValue,
-      displayValue: sizeTitle ?? sizeValue,
-      title: sizeTitle ?? sizeValue,
-    })
-  }
-}
-
-/**
- * Helper: Tìm hoặc tạo scent trong material
- */
-function getOrCreateScent(
-  material: TMaterialAttribute,
-  scentValue: string,
-  scentTitle?: string | null
-): TScentAttribute {
-  let scent = material.scents!.find((s) => s.value === scentValue)
-  if (!scent) {
-    scent = {
-      value: scentValue,
-      displayValue: scentTitle ?? scentValue,
-      title: scentTitle ?? scentValue,
-      colors: [],
-    }
-    material.scents!.push(scent)
-  }
-  return scent
-}
-
-/**
- * Helper: Tìm hoặc tạo color trong scent
- */
-function getOrCreateColor(
-  scent: TScentAttribute,
-  colorValue: string,
-  colorTitle?: string | null,
-  hex?: string | null
-): TColorAttribute {
-  let color = scent.colors!.find((c) => c.value === colorValue)
-  if (!color) {
-    color = {
-      value: colorValue,
-      displayValue: colorTitle ?? colorValue,
-      title: colorTitle ?? colorValue,
-      hex: hex ?? undefined,
-      displayType: hex ? 'swatch' : 'label',
-      sizes: [],
-    }
-    scent.colors!.push(color)
-  }
-  return color
-}
-
-/**
- * Helper: Thêm size vào color nếu chưa tồn tại
- */
-function addSizeToColor(
-  color: TColorAttribute,
-  sizeValue: string,
-  sizeTitle?: string | null
-): void {
-  const exists = color.sizes!.some((s) => s.value === sizeValue)
-  if (!exists) {
-    color.sizes!.push({
-      value: sizeValue,
-      displayValue: sizeTitle ?? sizeValue,
-      title: sizeTitle ?? sizeValue,
-    })
-  }
-}
-
-/**
- * Helper: Thêm size vào scent nếu chưa tồn tại
- */
-function addSizeToScent(
-  scent: TScentAttribute,
-  sizeValue: string,
-  sizeTitle?: string | null
-): void {
-  if (!scent.sizes) scent.sizes = []
-  const exists = scent.sizes.some((s) => s.value === sizeValue)
-  if (!exists) {
-    scent.sizes.push({
-      value: sizeValue,
-      displayValue: sizeTitle ?? sizeValue,
-      title: sizeTitle ?? sizeValue,
-    })
-  }
-}
-
-/**
- * Helper: Xử lý variant có scent
- */
-function processVariantWithScent(
-  material: TMaterialAttribute,
-  attrs: TProductVariant['attributes_json']
-): void {
-  const { scent, scentTitle, color, colorTitle, hex, size, sizeTitle } = attrs
-
-  const scentObj = getOrCreateScent(material, scent!, scentTitle)
-
-  if (color !== null && color !== undefined) {
-    // Case: material + scent + color [+ size]
-    const colorObj = getOrCreateColor(scentObj, color, colorTitle, hex)
-    if (size) {
-      addSizeToColor(colorObj, size, sizeTitle)
-    }
-  } else if (size) {
-    // Case: material + scent + size (NO COLOR)
-    addSizeToScent(scentObj, size, sizeTitle)
-  }
-}
-
-/**
- * Helper: Xử lý variant không có scent
- */
-function processVariantWithoutScent(
-  material: TMaterialAttribute,
-  attrs: TProductVariant['attributes_json']
-): void {
-  const { color, colorTitle, hex, size, sizeTitle } = attrs
-
-  if (color !== null && color !== undefined) {
-    // Case: material + color [+ size] (NO SCENT)
-    const colorObj = getOrCreateColorInMaterial(material, color, colorTitle, hex)
-    if (size) {
-      addSizeToColor(colorObj, size, sizeTitle)
-    }
-  } else if (size) {
-    // Case: material + size (NO SCENT, NO COLOR)
-    addSizeToMaterial(material, size, sizeTitle)
-  }
-}
-
-/**
- * Helper: Track titles từ variants
- */
-function trackTitles(
-  attrs: TProductVariant['attributes_json'],
-  titles: {
-    material: string | null
-    scent: string | null
-    color: string | null
-    size: string | null
-  }
-): void {
-  if (!titles.material && attrs.materialTitle) titles.material = attrs.materialTitle
-  if (!titles.scent && attrs.scentTitle) titles.scent = attrs.scentTitle
-  if (!titles.color && attrs.colorTitle) titles.color = attrs.colorTitle
-  if (!titles.size && attrs.sizeTitle) titles.size = attrs.sizeTitle
-}
-
-/**
  * Build hierarchical product attributes từ variants
  * Hierarchy: material → scent → color → size
+ * Nếu không có material thì scent sẽ là phân cấp cao nhất, tương tự với các cấp khác
  */
-function buildProductAttributes(variants: TProductVariant[]): TProductAttributes {
-  const materialsMap = new Map<string, TMaterialAttribute>()
-  const titles = { material: null, scent: null, color: null, size: null } as {
-    material: string | null
-    scent: string | null
-    color: string | null
-    size: string | null
-  }
-
+// material -> scent -> color + hex -> sizes
+function buildProductAttributes(variants: TProductVariant[], productId: number): TMergedAttributes {
+  const groups: TMergedAttributesGroups = {}
+  const uniqueMaterials: TMergedAttributesUniqueString = new Set()
+  const uniqueScents: TMergedAttributesUniqueString = new Set()
+  const uniqueColors: TMergedAttributesUniqueColors = {}
+  const uniqueSizes: TMergedAttributesUniqueString = new Set()
+  const uniqueMaterialTitles: TMergedAttributesUniqueString = new Set()
+  const uniqueScentTitles: TMergedAttributesUniqueString = new Set()
+  const uniqueColorTitles: TMergedAttributesUniqueString = new Set()
+  const uniqueSizeTitles: TMergedAttributesUniqueString = new Set()
   for (const variant of variants) {
-    const attrs = variant.attributes_json
-    if (!attrs.material) continue
+    const attrs = variant.attributes_json || {}
+    const material = attrs.material || 'null'
+    const scent = attrs.scent || 'null'
+    const color = attrs.color || 'null'
+    const hex = attrs.hex || 'null'
+    const size = attrs.size || 'null'
+    const colorKey = `${color}`
+    uniqueMaterials.add(material)
+    uniqueMaterialTitles.add(attrs.materialTitle || 'Chất liệu')
+    uniqueColors[color] = uniqueColors[color] || hex
+    uniqueColorTitles.add(attrs.colorTitle || 'Màu sắc')
+    uniqueSizes.add(size)
+    uniqueSizeTitles.add(attrs.sizeTitle || 'Kích thước')
+    uniqueScents.add(scent)
+    uniqueScentTitles.add(attrs.scentTitle || 'Mùi hương')
 
-    trackTitles(attrs, titles)
-
-    // Get or create material
-    if (!materialsMap.has(attrs.material)) {
-      materialsMap.set(attrs.material, {
-        value: attrs.material,
-        displayValue: attrs.materialTitle ?? attrs.material,
-        title: attrs.materialTitle ?? attrs.material,
-        scents: [],
-      })
+    if (!groups[material]) {
+      groups[material] = {}
     }
-
-    const material = materialsMap.get(attrs.material)!
-
-    // Process variant based on scent presence
-    if (attrs.scent) {
-      processVariantWithScent(material, attrs)
-    } else {
-      processVariantWithoutScent(material, attrs)
+    if (!groups[material][scent]) {
+      groups[material][scent] = {}
+    }
+    if (!groups[material][scent][colorKey]) {
+      groups[material][scent][colorKey] = {
+        color,
+        hex,
+        sizes: null,
+      }
+    }
+    groups[material][scent][colorKey].sizes = groups[material][scent][colorKey].sizes || []
+    if (size !== 'null' && !groups[material][scent][colorKey].sizes!.includes(size)) {
+      groups[material][scent][colorKey].sizes!.push(size)
     }
   }
 
   return {
-    materials: {
-      title: titles.material || 'Chất liệu',
-      options: Array.from(materialsMap.values()),
-    },
-    scents: titles.scent ? { title: titles.scent, options: [] } : undefined,
-    colors: titles.color ? { title: titles.color, options: [] } : undefined,
-    sizes: titles.size ? { title: titles.size, options: [] } : undefined,
+    uniqueMaterials: Array.from(uniqueMaterials),
+    uniqueMaterialTitles: Array.from(uniqueMaterialTitles),
+    uniqueScents: Array.from(uniqueScents),
+    uniqueScentTitles: Array.from(uniqueScentTitles),
+    uniqueColors: uniqueColors,
+    uniqueColorTitles: Array.from(uniqueColorTitles),
+    uniqueSizes: Array.from(uniqueSizes),
+    uniqueSizeTitles: Array.from(uniqueSizeTitles),
+    groups,
   }
 }

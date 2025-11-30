@@ -15,7 +15,7 @@ class ProductService {
     }
 
     const apiProducts = response.data.data
-    console.log('>>> api products:', apiProducts)
+    console.log('>>> [ser] api products:', apiProducts)
 
     // Sử dụng ProductAdapter để convert
     const clientProducts = ProductAdapter.toClientProducts(apiProducts)
@@ -31,11 +31,11 @@ class ProductService {
   }
 
   async preSendMockupImage(image: Blob, filename: string): Promise<TPreSentMockupImageRes> {
-    console.log('>>> image:', { image, filename })
+    console.log('>>> [ser] image:', { image, filename })
     const formData = new FormData()
     formData.append('file', image, filename)
     const response = await postPreSendMockupImage(formData)
-    console.log('>>> res:', response)
+    console.log('>>> [ser] res:', response)
     if (!response.success || !response.data?.data) {
       throw new Error(response.error || 'Không thể gửi mockup image đến server')
     }

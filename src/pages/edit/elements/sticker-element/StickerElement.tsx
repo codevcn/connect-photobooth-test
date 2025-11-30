@@ -1,11 +1,10 @@
-import { TElementRelativeProps, TElementMountType, TStickerVisualState } from '@/utils/types/global'
-import { useCallback, useEffect, useRef } from 'react'
+import { TElementMountType, TStickerVisualState } from '@/utils/types/global'
+import { useEffect, useRef } from 'react'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { useElementControl } from '@/hooks/element/use-element-control'
 import { getNaturalSizeOfImage, typeToObject } from '@/utils/helpers'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
 import { captureCurrentElementPosition } from '../../helpers'
-import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 
 const MAX_ZOOM: number = 4
 const MIN_ZOOM: number = 0.2
@@ -42,7 +41,7 @@ export const StickerElement = ({
     forDrag: { ref: refForDrag },
     state: { position, angle, scale, zindex },
     handleSetElementState,
-  } = useElementControl(id, {
+  } = useElementControl(id, rootRef, elementContainerRef, printAreaContainerRef, {
     maxZoom: MAX_ZOOM,
     minZoom: MIN_ZOOM,
     angle: element.angle,

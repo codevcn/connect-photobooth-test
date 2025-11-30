@@ -1,5 +1,5 @@
 import { useEditedElementStore } from '@/stores/element/element.store'
-import { getInitialContants } from '@/utils/contants'
+import { createInitialConstants } from '@/utils/contants'
 import { useEffect, useRef, useState } from 'react'
 import { TextElementMenu } from './Menu'
 import { generateUniqueId } from '@/utils/helpers'
@@ -17,16 +17,16 @@ const EditorModal = ({ onClose }: TEditorModalProps) => {
         {
           id: generateUniqueId(),
           content: text,
-          angle: getInitialContants<number>('ELEMENT_ROTATION'),
+          angle: createInitialConstants<number>('ELEMENT_ROTATION'),
           position: {
-            x: getInitialContants<number>('ELEMENT_X'),
-            y: getInitialContants<number>('ELEMENT_Y'),
+            x: createInitialConstants<number>('ELEMENT_X'),
+            y: createInitialConstants<number>('ELEMENT_Y'),
           },
-          fontSize: getInitialContants<number>('ELEMENT_TEXT_FONT_SIZE'),
-          textColor: getInitialContants<string>('ELEMENT_TEXT_COLOR'),
-          fontFamily: getInitialContants<string>('ELEMENT_TEXT_FONT_FAMILY'),
-          fontWeight: getInitialContants<number>('ELEMENT_TEXT_FONT_WEIGHT'),
-          zindex: getInitialContants<number>('ELEMENT_ZINDEX'),
+          fontSize: createInitialConstants<number>('ELEMENT_TEXT_FONT_SIZE'),
+          textColor: createInitialConstants<string>('ELEMENT_TEXT_COLOR'),
+          fontFamily: createInitialConstants<string>('ELEMENT_TEXT_FONT_FAMILY'),
+          fontWeight: createInitialConstants<number>('ELEMENT_TEXT_FONT_WEIGHT'),
+          zindex: createInitialConstants<number>('ELEMENT_ZINDEX'),
           mountType: 'from-new',
         },
       ])

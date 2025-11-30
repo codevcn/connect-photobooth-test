@@ -17,7 +17,7 @@ const PageWrapper = () => {
   const fetchProducts = async () => {
     try {
       const data = await productService.fetchProductsByPage(1, 20)
-      console.log('>>> service fetch products by page:', data)
+      console.log('>>> [ser] service fetch products by page:', data)
       setProducts(data)
       setFetched(true)
     } catch (error) {

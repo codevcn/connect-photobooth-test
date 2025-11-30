@@ -1,16 +1,8 @@
 import { Modal } from '@/components/custom/common/Modal'
 import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 import { formatNumberWithCommas, friendlyCurrency, getContrastColor } from '@/utils/helpers'
-import {
-  TBaseProduct,
-  TClientProductVariant,
-  TColorAttribute,
-  TMaterialAttribute,
-  TScentAttribute,
-  TSizeAttribute,
-  TProductAttributes,
-} from '@/utils/types/global'
-import { useMemo, useState } from 'react'
+import { TBaseProduct, TClientProductVariant } from '@/utils/types/global'
+import { useEffect, useState } from 'react'
 import { PrintSurface } from '../print-surface/PrintSurface'
 
 type TProductImagePreviewProps = {
@@ -85,264 +77,103 @@ type TProductDetailsProps = {
  */
 const findVariantByAttributes = (
   variants: TClientProductVariant[],
-  selectedAttrs: Record<string, string>
-): TClientProductVariant | null => {
-  return (
-    variants.find((variant) => {
-      const attrs = variant.attributes
-      return (
-        (!selectedAttrs.material || attrs.material === selectedAttrs.material) &&
-        (!selectedAttrs.scent || attrs.scent === selectedAttrs.scent) &&
-        (!selectedAttrs.color || attrs.color === selectedAttrs.color) &&
-        (!selectedAttrs.size || attrs.size?.toUpperCase() === selectedAttrs.size?.toUpperCase())
-      )
-    }) || null
-  )
-}
-
-type TDisplayedScent = TScentAttribute & {
-  isDisplayed: boolean
-}
-
-type TDisplayedColor = TColorAttribute & {
-  isDisplayed: boolean
-}
-
-type TDisplayedSize = TSizeAttribute & {
-  isDisplayed: boolean
-}
-
-/**
- * Helper: Lấy tất cả scents và đánh dấu isDisplayed dựa trên material đã chọn
- */
-const getAllScentsWithDisplayStatus = (
-  mergedAttributes: TProductAttributes,
-  selectedMaterial?: string
-): TDisplayedScent[] => {
-  if (!mergedAttributes.materials) return []
-
-  // Lấy tất cả scents từ tất cả materials
-  const allScents: TDisplayedScent[] = []
-  const scentSet = new Set<string>()
-
-  for (const material of mergedAttributes.materials.options) {
-    if (material.scents) {
-      for (const scent of material.scents) {
-        if (!scentSet.has(scent.value)) {
-          scentSet.add(scent.value)
-          // Kiểm tra scent có thuộc material được chọn không
-          const isDisplayed = selectedMaterial ? material.value === selectedMaterial : true
-          allScents.push({ ...scent, isDisplayed })
-        }
-      }
-    }
-  }
-
-  return allScents
-}
-
-/**
- * Helper: Lấy tất cả colors và đánh dấu isDisplayed dựa trên material và scent đã chọn
- */
-const getAllColorsWithDisplayStatus = (
-  mergedAttributes: TProductAttributes,
-  selectedMaterial?: string,
-  selectedScent?: string
-): TDisplayedColor[] => {
-  if (!mergedAttributes.materials) return []
-
-  // Lấy tất cả colors từ tất cả materials và scents
-  const allColors: TDisplayedColor[] = []
-  const colorSet = new Set<string>()
-
-  for (const material of mergedAttributes.materials.options) {
-    // Colors directly under material (when no scent)
-    if (material.colors) {
-      for (const color of material.colors) {
-        if (!colorSet.has(color.value)) {
-          colorSet.add(color.value)
-          // Kiểm tra color có thuộc material được chọn và không có scent được chọn
-          const isDisplayed =
-            (!selectedMaterial || material.value === selectedMaterial) && !selectedScent // Only show if no scent selected
-          allColors.push({ ...color, isDisplayed })
-        }
-      }
-    }
-
-    // Colors under scents
-    if (material.scents) {
-      for (const scent of material.scents) {
-        if (scent.colors) {
-          for (const color of scent.colors) {
-            if (!colorSet.has(color.value)) {
-              colorSet.add(color.value)
-              // Kiểm tra color có thuộc material và scent được chọn không
-              const isDisplayed =
-                (!selectedMaterial || material.value === selectedMaterial) &&
-                (!selectedScent || scent.value === selectedScent)
-              allColors.push({ ...color, isDisplayed })
-            }
-          }
-        }
-      }
-    }
-  }
-
-  return allColors
-}
-
-/**
- * Helper: Lấy tất cả sizes và đánh dấu isDisplayed dựa trên material, scent và color đã chọn
- */
-const getAllSizesWithDisplayStatus = (
-  mergedAttributes: TProductAttributes,
-  selectedMaterial?: string,
-  selectedScent?: string,
-  selectedColor?: string
-): TDisplayedSize[] => {
-  if (!mergedAttributes.materials) return []
-
-  // Lấy tất cả sizes từ tất cả materials, scents và colors
-  const allSizes: TDisplayedSize[] = []
-  const sizeSet = new Set<string>()
-
-  for (const material of mergedAttributes.materials.options) {
-    // Sizes directly under material (when no scent, no color)
-    if (material.sizes) {
-      for (const size of material.sizes) {
-        if (!sizeSet.has(size.value)) {
-          sizeSet.add(size.value)
-          const isDisplayed =
-            (!selectedMaterial || material.value === selectedMaterial) &&
-            !selectedScent && // Only show if no scent selected
-            !selectedColor // Only show if no color selected
-          allSizes.push({ ...size, isDisplayed })
-        }
-      }
-    }
-
-    // Sizes under colors directly in material (when no scent)
-    if (material.colors) {
-      for (const color of material.colors) {
-        if (color.sizes) {
-          for (const size of color.sizes) {
-            if (!sizeSet.has(size.value)) {
-              sizeSet.add(size.value)
-              const isDisplayed =
-                (!selectedMaterial || material.value === selectedMaterial) &&
-                !selectedScent && // Only show if no scent selected
-                (!selectedColor || color.value === selectedColor)
-              allSizes.push({ ...size, isDisplayed })
-            }
-          }
-        }
-      }
-    }
-
-    // Sizes under scents and colors
-    if (material.scents) {
-      for (const scent of material.scents) {
-        // Sizes directly under scent (when no color)
-        if (scent.sizes) {
-          for (const size of scent.sizes) {
-            if (!sizeSet.has(size.value)) {
-              sizeSet.add(size.value)
-              const isDisplayed =
-                (!selectedMaterial || material.value === selectedMaterial) &&
-                (!selectedScent || scent.value === selectedScent) &&
-                !selectedColor // Only show if no color selected
-              allSizes.push({ ...size, isDisplayed })
-            }
-          }
-        }
-
-        // Sizes under colors
-        if (scent.colors) {
-          for (const color of scent.colors) {
-            if (color.sizes) {
-              for (const size of color.sizes) {
-                if (!sizeSet.has(size.value)) {
-                  sizeSet.add(size.value)
-                  // Kiểm tra size có thuộc material, scent và color được chọn không
-                  const isDisplayed =
-                    (!selectedMaterial || material.value === selectedMaterial) &&
-                    (!selectedScent || scent.value === selectedScent) &&
-                    (!selectedColor || color.value === selectedColor)
-                  allSizes.push({ ...size, isDisplayed })
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  return allSizes
+  selectedAttrs: Record<string, string>,
+  onFound: (variant: TClientProductVariant | null) => void
+): void => {
+  setTimeout(() => {
+    onFound(
+      variants.find((variant) => {
+        const attrs = variant.attributes
+        return (
+          (!selectedAttrs.material || attrs.material === selectedAttrs.material) &&
+          (!selectedAttrs.scent || attrs.scent === selectedAttrs.scent) &&
+          (!selectedAttrs.color || attrs.color === selectedAttrs.color) &&
+          (!selectedAttrs.size || attrs.size?.toUpperCase() === selectedAttrs.size?.toUpperCase())
+        )
+      }) || null
+    )
+  }, 0)
 }
 
 export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetailsProps) => {
   const [showSizeChart, setShowSizeChart] = useState(false)
   const [selectedImageToPreview, setSelectedImageToPreview] = useState<string>()
-  const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>(() => {
+  const handlePickVariant = useProductUIDataStore((s) => s.handlePickVariant)
+
+  const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({})
+
+  const initSelectedAttributesOnPickedVariantChange = () => {
     const attrs: Record<string, string> = {}
     if (pickedVariant.attributes.material) attrs.material = pickedVariant.attributes.material
     if (pickedVariant.attributes.scent) attrs.scent = pickedVariant.attributes.scent
     if (pickedVariant.attributes.color) attrs.color = pickedVariant.attributes.color
     if (pickedVariant.attributes.size) attrs.size = pickedVariant.attributes.size
-    return attrs
-  })
-  const handlePickVariant = useProductUIDataStore((s) => s.handlePickVariant)
+    setSelectedAttributes(attrs)
+  }
+
+  useEffect(() => {
+    initSelectedAttributesOnPickedVariantChange()
+  }, [pickedVariant.id])
 
   const { mergedAttributes } = pickedProduct
-
-  // Get all options with display status based on current selections
-  const availableScents = useMemo(
-    () => getAllScentsWithDisplayStatus(mergedAttributes, selectedAttributes.material),
-    [mergedAttributes, selectedAttributes.material]
-  )
-  const availableColors = useMemo(
-    () =>
-      getAllColorsWithDisplayStatus(
-        mergedAttributes,
-        selectedAttributes.material,
-        selectedAttributes.scent
-      ),
-    [mergedAttributes, selectedAttributes.material, selectedAttributes.scent]
-  )
-  const availableSizes = useMemo(
-    () =>
-      getAllSizesWithDisplayStatus(
-        mergedAttributes,
-        selectedAttributes.material,
-        selectedAttributes.scent,
-        selectedAttributes.color
-      ),
-    [
-      mergedAttributes,
-      selectedAttributes.material,
-      selectedAttributes.scent,
-      selectedAttributes.color,
-    ]
-  )
-
-  // Check if sections should be shown (has at least one option in selected parent)
-  const shouldShowScents = availableScents.some((scent) => scent.isDisplayed)
-  const shouldShowColors = availableColors.some((color) => color.isDisplayed)
-  const shouldShowSizes = availableSizes.some((size) => size.isDisplayed)
 
   const firstProductImageURL = pickedProduct.detailImages[0] || null
 
   const hintForSizeChart: string = 'none'
 
-  console.log('>>> [proddd] picked variant:', {
-    pickedVariant,
-    mergedAttributes,
-    selectedAttributes,
-    availableScents,
-    availableColors,
-    availableSizes,
-  })
+  const pickMaterial = (material: string) => {
+    // Reset dependent attributes when material changes
+    const newAttrs = { material: material }
+    setSelectedAttributes(newAttrs)
+    findVariantByAttributes(pickedProduct.variants, newAttrs, (matchedVariant) => {
+      if (matchedVariant) handlePickVariant(matchedVariant)
+    })
+  }
+
+  const pickScent = (isDisabled: boolean, scent: string) => {
+    if (!isDisabled) {
+      // Reset dependent attributes (color, size) when scent changes
+      const newAttrs = {
+        material: selectedAttributes.material,
+        scent: scent,
+      }
+      setSelectedAttributes(newAttrs)
+      findVariantByAttributes(pickedProduct.variants, newAttrs, (matchedVariant) => {
+        if (matchedVariant) handlePickVariant(matchedVariant)
+      })
+    }
+  }
+
+  const pickColor = (isDisabled: boolean, color: string) => {
+    if (!isDisabled) {
+      // Reset dependent attributes (size) when color changes
+      const newAttrs = {
+        material: selectedAttributes.material,
+        scent: selectedAttributes.scent,
+        color: color,
+      }
+      setSelectedAttributes(newAttrs)
+      findVariantByAttributes(pickedProduct.variants, newAttrs, (matchedVariant) => {
+        if (matchedVariant) handlePickVariant(matchedVariant)
+      })
+    }
+  }
+
+  const pickSize = (isDisabled: boolean, size: string) => {
+    if (!isDisabled) {
+      const newAttrs = {
+        material: selectedAttributes.material,
+        scent: selectedAttributes.scent,
+        color: selectedAttributes.color,
+        size: size,
+      }
+      setSelectedAttributes(newAttrs)
+      findVariantByAttributes(pickedProduct.variants, newAttrs, (matchedVariant) => {
+        if (matchedVariant) handlePickVariant(matchedVariant)
+      })
+    }
+  }
+
   return (
     <div className="smd:order-1 smd:mt-0 mt-4 order-2 w-full">
       <div className="pl-1 pt-2">
@@ -360,7 +191,7 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
         </span>
       </div>
 
-      <div className="p-3 smd:p-4 bg-orange-50 border border-orange-100 rounded-lg space-y-2 my-4">
+      <div className="p-2 smd:p-3 bg-orange-50 border border-orange-100 rounded-lg space-y-2 my-4">
         <div className="flex items-center justify-between gap-2 text-sm">
           <span className="text-gray-800 font-bold">Chăm sóc khách hàng</span>
           <span className="font-semibold text-orange-600 text-end whitespace-nowrap">
@@ -395,181 +226,51 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
         </div>
 
         {/* Material Section */}
-        {mergedAttributes.materials && mergedAttributes.materials.options.length > 0 && (
-          <div className="rounded-lg mt-4">
-            <h3 className="text-slate-800 font-bold text-sm mb-2">Chất liệu</h3>
-            <div className="flex flex-wrap gap-2">
-              {mergedAttributes.materials.options.map((material) => {
-                const isSelected = selectedAttributes.material === material.value
-                return (
-                  <button
-                    key={material.value}
-                    onClick={() => {
-                      // Reset dependent attributes when material changes
-                      const newAttrs = { material: material.value }
-                      setSelectedAttributes(newAttrs)
-                      const matchedVariant = findVariantByAttributes(
-                        pickedProduct.variants,
-                        newAttrs
-                      )
-                      if (matchedVariant) handlePickVariant(matchedVariant)
-                    }}
-                    className={`px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
-                      isSelected
-                        ? 'bg-main-cl border-2 border-main-cl text-white shadow-md'
-                        : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
-                    }`}
-                  >
-                    {material.displayValue}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Scent Section */}
-        {availableScents.length > 0 && shouldShowScents && (
-          <div className="rounded-lg mt-4">
-            <h3 className="text-slate-800 font-bold text-sm mb-2">Mùi hương</h3>
-            <div className="flex flex-wrap gap-2">
-              {availableScents.map((scent: TDisplayedScent) => {
-                const isSelected = selectedAttributes.scent === scent.value
-                const isDisabled = !scent.isDisplayed
-                return (
-                  <button
-                    key={scent.value}
-                    onClick={() => {
-                      if (!isDisabled) {
-                        // Reset dependent attributes (color, size) when scent changes
-                        const newAttrs = {
-                          material: selectedAttributes.material,
-                          scent: scent.value,
-                        }
-                        setSelectedAttributes(newAttrs)
-                        const matchedVariant = findVariantByAttributes(
-                          pickedProduct.variants,
-                          newAttrs
-                        )
-                        if (matchedVariant) handlePickVariant(matchedVariant)
-                      }
-                    }}
-                    disabled={isDisabled}
-                    className={`px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
-                      isDisabled
-                        ? 'bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
-                        : isSelected
-                        ? 'bg-main-cl border-2 border-main-cl text-white shadow-md'
-                        : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
-                    }`}
-                  >
-                    {scent.displayValue}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Color Section */}
-        {availableColors.length > 0 && shouldShowColors && (
-          <div className="rounded-lg mt-4">
-            <h3 className="text-slate-800 font-bold text-sm mb-2">Màu sắc</h3>
-            <div className="flex flex-wrap gap-3">
-              {availableColors.map((color: TDisplayedColor) => {
-                const isSelected = selectedAttributes.color === color.value
-                const isDisabled = !color.isDisplayed
-
-                if (color.displayType === 'swatch' && color.hex) {
-                  // Case 1: Display color swatch with hex
+        {mergedAttributes.uniqueMaterials.length > 0 &&
+          mergedAttributes.uniqueMaterials[0] !== 'null' && (
+            <div className="rounded-lg mt-4">
+              <h3 className="text-slate-800 font-bold text-sm mb-2">
+                {mergedAttributes.uniqueMaterialTitles[0]}
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {mergedAttributes.uniqueMaterials.map((material: any) => {
+                  const isSelected = selectedAttributes.material === material
                   return (
                     <button
-                      key={color.value}
-                      onClick={() => {
-                        if (!isDisabled) {
-                          // Reset dependent attributes (size) when color changes
-                          const newAttrs = {
-                            material: selectedAttributes.material,
-                            scent: selectedAttributes.scent,
-                            color: color.value,
-                          }
-                          setSelectedAttributes(newAttrs)
-                          const matchedVariant = findVariantByAttributes(
-                            pickedProduct.variants,
-                            newAttrs
-                          )
-                          if (matchedVariant) handlePickVariant(matchedVariant)
-                        }
-                      }}
-                      disabled={isDisabled}
-                      className={`flex flex-col items-center rounded-full focus:outline-none transition active:scale-90 ${
-                        isDisabled ? 'opacity-50 cursor-not-allowed' : ''
+                      key={material}
+                      onClick={() => pickMaterial(material)}
+                      className={`px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
+                        isSelected
+                          ? 'bg-main-cl border-2 border-main-cl text-white shadow-md'
+                          : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
                       }`}
-                      title={color.displayValue}
                     >
-                      <div
-                        style={{ backgroundColor: color.hex }}
-                        className={`${
-                          isDisabled
-                            ? 'ring-1 ring-gray-300 ring-offset-2 grayscale'
-                            : isSelected
-                            ? 'ring-2 ring-main-cl ring-offset-2 shadow-lg'
-                            : 'ring-1 ring-gray-300 ring-offset-2 hover:ring-secondary-cl hover:shadow-md'
-                        } h-10 w-10 rounded-full`}
-                      >
-                        {isSelected && !isDisabled && (
-                          <div className="w-full h-full rounded-full flex items-center justify-center">
-                            <svg
-                              className="w-5 h-5 drop-shadow-lg"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                              style={{
-                                color: getContrastColor(color.hex) || '#000',
-                              }}
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </div>
-                        )}
-                      </div>
-                      <div
-                        className={`text-[12px] font-medium rounded-md py-0.5 px-1.5 mt-2 inline-block ${
-                          isDisabled ? 'grayscale' : ''
-                        }`}
-                        style={{
-                          backgroundColor: color.hex,
-                          color: getContrastColor(color.hex) || '#000',
-                        }}
-                      >
-                        {color.displayValue}
-                      </div>
+                      {material}
                     </button>
                   )
-                } else {
-                  // Case 2: Display as label (no hex)
+                })}
+              </div>
+            </div>
+          )}
+
+        {/* Scent Section */}
+        {mergedAttributes.uniqueScents.length > 0 &&
+          mergedAttributes.uniqueScents[0] !== 'null' && (
+            <div className="rounded-lg mt-4">
+              <h3 className="text-slate-800 font-bold text-sm mb-2">
+                {mergedAttributes.uniqueScentTitles[0]}
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {mergedAttributes.uniqueScents.map((scent: any) => {
+                  const isSelected = selectedAttributes.scent === scent
+                  const isDisabled =
+                    !mergedAttributes.groups?.[selectedAttributes.material ?? 'null']?.[
+                      selectedAttributes.scent ?? 'null'
+                    ]
                   return (
                     <button
-                      key={color.value}
-                      onClick={() => {
-                        if (!isDisabled) {
-                          // Reset dependent attributes (size) when color changes
-                          const newAttrs = {
-                            material: selectedAttributes.material,
-                            scent: selectedAttributes.scent,
-                            color: color.value,
-                          }
-                          setSelectedAttributes(newAttrs)
-                          const matchedVariant = findVariantByAttributes(
-                            pickedProduct.variants,
-                            newAttrs
-                          )
-                          if (matchedVariant) handlePickVariant(matchedVariant)
-                        }
-                      }}
+                      key={scent}
+                      onClick={() => pickScent(isDisabled, scent)}
                       disabled={isDisabled}
                       className={`px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
                         isDisabled
@@ -579,20 +280,114 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
                           : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
                       }`}
                     >
-                      {color.displayValue}
+                      {scent}
                     </button>
                   )
-                }
-              })}
+                })}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+
+        {/* Color Section */}
+        {Object.keys(mergedAttributes.uniqueColors).length > 0 &&
+          Object.keys(mergedAttributes.uniqueColors)[0] !== 'null' && (
+            <div className="rounded-lg mt-4">
+              <h3 className="text-slate-800 font-bold text-sm mb-2">
+                {mergedAttributes.uniqueColorTitles[0]}
+              </h3>
+              <div className="flex flex-wrap gap-3">
+                {Object.keys(mergedAttributes.uniqueColors).map((color: any) => {
+                  const isSelected = selectedAttributes.color === color
+                  const material = selectedAttributes.material ?? 'null'
+                  const scent = selectedAttributes.scent ?? 'null'
+                  const isDisabled = !mergedAttributes.groups?.[material]?.[scent]?.[color]
+                  if (mergedAttributes.uniqueColors[color]) {
+                    // Case 1: Display color swatch with hex
+                    return (
+                      <button
+                        key={color}
+                        onClick={() => pickColor(isDisabled, color)}
+                        disabled={isDisabled}
+                        className={`flex flex-col items-center rounded-full focus:outline-none transition active:scale-90 ${
+                          isDisabled ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
+                        title={color}
+                      >
+                        <div
+                          style={{ backgroundColor: mergedAttributes.uniqueColors[color] }}
+                          className={`${
+                            isDisabled
+                              ? 'ring-1 ring-gray-300 ring-offset-2 grayscale'
+                              : isSelected
+                              ? 'ring-2 ring-main-cl ring-offset-2 shadow-lg'
+                              : 'ring-1 ring-gray-300 ring-offset-2 hover:ring-secondary-cl hover:shadow-md'
+                          } h-10 w-10 rounded-full`}
+                        >
+                          {isSelected && !isDisabled && (
+                            <div className="w-full h-full rounded-full flex items-center justify-center">
+                              <svg
+                                className="w-5 h-5 drop-shadow-lg"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                                style={{
+                                  color:
+                                    getContrastColor(mergedAttributes.uniqueColors[color]) ||
+                                    '#000',
+                                }}
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                        <div
+                          className={`text-[12px] font-medium rounded-md py-0.5 px-1.5 mt-2 inline-block ${
+                            isDisabled ? 'grayscale' : ''
+                          }`}
+                          style={{
+                            backgroundColor: mergedAttributes.uniqueColors[color],
+                            color: getContrastColor(mergedAttributes.uniqueColors[color]) || '#000',
+                          }}
+                        >
+                          {color}
+                        </div>
+                      </button>
+                    )
+                  } else {
+                    // Case 2: Display as label (no hex)
+                    return (
+                      <button
+                        key={color}
+                        onClick={() => pickColor(isDisabled, color)}
+                        disabled={isDisabled}
+                        className={`px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
+                          isDisabled
+                            ? 'bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
+                            : isSelected
+                            ? 'bg-main-cl border-2 border-main-cl text-white shadow-md'
+                            : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
+                        }`}
+                      >
+                        {color}
+                      </button>
+                    )
+                  }
+                })}
+              </div>
+            </div>
+          )}
 
         {/* Size Section */}
-        {availableSizes.length > 0 && shouldShowSizes && (
+        {mergedAttributes.uniqueSizes.length > 0 && mergedAttributes.uniqueSizes[0] !== 'null' && (
           <div className="mt-4">
             <div className="flex justify-between w-full mb-2">
-              <label className="block text-sm font-bold text-slate-900">Kích thước</label>
+              <label className="block text-sm font-bold text-slate-900">
+                {mergedAttributes.uniqueSizeTitles[0]}
+              </label>
               {firstProductImageURL && firstProductImageURL !== hintForSizeChart && (
                 <button
                   onClick={() => setShowSizeChart(true)}
@@ -603,39 +398,18 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
               )}
             </div>
             <div className="flex flex-wrap gap-2">
-              {availableSizes.map((size: TDisplayedSize) => {
-                const isSelected =
-                  selectedAttributes.size?.toUpperCase() === size.value.toUpperCase()
-                const isScopeDisabled = !size.isDisplayed
-
-                // Find variant with this size to check stock
-                const variantForSize = findVariantByAttributes(pickedProduct.variants, {
-                  material: selectedAttributes.material,
-                  scent: selectedAttributes.scent,
-                  color: selectedAttributes.color,
-                  size: size.value,
-                })
+              {mergedAttributes.uniqueSizes.map((size) => {
+                const isSelected = selectedAttributes.size?.toUpperCase() === size.toUpperCase()
+                const isScopeDisabled = !mergedAttributes.groups?.[
+                  selectedAttributes.material ?? 'null'
+                ]?.[selectedAttributes.scent ?? 'null']?.[
+                  selectedAttributes.color ?? 'null'
+                ]?.sizes?.some((s) => s === size)
                 const isDisabled = isScopeDisabled
-
                 return (
                   <button
-                    key={size.value}
-                    onClick={() => {
-                      if (!isDisabled) {
-                        const newAttrs = {
-                          material: selectedAttributes.material,
-                          scent: selectedAttributes.scent,
-                          color: selectedAttributes.color,
-                          size: size.value,
-                        }
-                        setSelectedAttributes(newAttrs)
-                        const matchedVariant = findVariantByAttributes(
-                          pickedProduct.variants,
-                          newAttrs
-                        )
-                        if (matchedVariant) handlePickVariant(matchedVariant)
-                      }
-                    }}
+                    key={size}
+                    onClick={() => pickSize(isDisabled, size)}
                     disabled={isDisabled}
                     className={`px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
                       isDisabled
@@ -645,7 +419,7 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
                         : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
                     }`}
                   >
-                    {size.displayValue}
+                    {size}
                   </button>
                 )
               })}

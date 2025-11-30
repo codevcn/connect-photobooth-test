@@ -2,7 +2,7 @@ import { useRotateElement } from '@/hooks/element/use-rotate-element'
 import { usePinchElement } from '@/hooks/element/use-pinch-element'
 import { useZoomElement } from '@/hooks/element/use-zoom-element'
 import { useDragElement } from '@/hooks/element/use-drag-element'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createInitialConstants } from '@/utils/contants'
 import {
   TElementMountType,
@@ -10,7 +10,6 @@ import {
   TElementVisualBaseState,
 } from '@/utils/types/global'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
-import { captureCurrentElementPosition } from '@/pages/edit/helpers'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { typeToObject } from '@/utils/helpers'
 
@@ -47,6 +46,10 @@ type TElementControlReturn = {
     angle?: number,
     zindex?: number
   ) => void
+  captureCurrentElementPosition: (
+    element: HTMLElement,
+    conatinerElementAbsoluteTo: HTMLElement
+  ) => void
 }
 
 export const useElementControl = (
@@ -70,7 +73,6 @@ export const useElementControl = (
     x: initialPosition?.x || createInitialConstants<number>('ELEMENT_X'),
     y: initialPosition?.y || createInitialConstants<number>('ELEMENT_Y'),
   })
-  const firstDragAndScaleOnAllowedPrintAreaChangeRef = useRef<boolean>(true)
   const [scale, setScale] = useState<TElementVisualBaseState['scale']>(initialZoom)
   const [angle, setAngle] = useState<TElementVisualBaseState['angle']>(initialAngle)
   const [zindex, setZindex] = useState<TElementVisualBaseState['zindex']>(initialZindex)
@@ -200,6 +202,7 @@ export const useElementControl = (
   }
 
   const dragAndScaleElementOnAllowedPrintAreaChange = () => {
+    if (mountType !== 'from-saved') return
     const elementRootRect = elementRootRef.current?.getBoundingClientRect()
     if (!elementRootRect) return
     const allowedPrintAreaRect = printAreaAllowedRef.current?.getBoundingClientRect()
@@ -219,20 +222,16 @@ export const useElementControl = (
     })
 
     const { element } = parsedData
+    if (!element.left || !element.top) return
 
     const newX = element.left + allowedPrintAreaRect.left - printAreaContainerRect.left
     const newY = element.top + allowedPrintAreaRect.top - printAreaContainerRect.top
 
     //>>> còn thiếu phát hiện va chạm với biên của vùng in allowedPrintAreaRect
     console.log('>>> [uuu] drag & scale:', { newX, newY })
-    setPosition((pre) => {
-      if (pre.x !== newX || pre.y !== newY) {
-        return {
-          x: newX,
-          y: newY,
-        }
-      }
-      return pre
+    setPosition({
+      x: newX,
+      y: newY,
     })
   }
 
@@ -256,8 +255,48 @@ export const useElementControl = (
             })
           )
         )
-        // dragAndScaleElementOnAllowedPrintAreaChange()
       })
+    })
+  }
+
+  const handleSetElementRelativeProps = (
+    rootElement: HTMLElement,
+    relativePropsToUpdate: Partial<TElementRelativeProps>
+  ) => {
+    const relativeProps = rootElement.getAttribute('data-element-relative-props')
+    if (!relativeProps) return
+    const parsedProps = JSON.parse(relativeProps) as TElementRelativeProps
+    const updatedProps = {
+      ...parsedProps,
+      ...relativePropsToUpdate,
+    }
+    rootElement.setAttribute('data-element-relative-props', JSON.stringify(updatedProps))
+  }
+
+  const handleGetElementRelativeProps = (
+    rootElement: HTMLElement
+  ): TElementRelativeProps | null => {
+    const relativeProps = rootElement.getAttribute('data-element-relative-props')
+    if (!relativeProps) return null
+    return JSON.parse(relativeProps) as TElementRelativeProps
+  }
+
+  const captureCurrentElementPosition = (
+    element: HTMLElement,
+    conatinerElementAbsoluteTo: HTMLElement
+  ) => {
+    const childRect = element.getBoundingClientRect()
+    const parentRect = conatinerElementAbsoluteTo.getBoundingClientRect()
+
+    // Lưu vị trí dưới dạng % so với parent
+    const leftPercent = ((childRect.left - parentRect.left) / parentRect.width) * 100
+    const topPercent = ((childRect.top - parentRect.top) / parentRect.height) * 100
+
+    handleSetElementRelativeProps(element, {
+      element: {
+        leftPercent,
+        topPercent,
+      },
     })
   }
 
@@ -266,9 +305,9 @@ export const useElementControl = (
     if (!elementRoot) return
     const container = containerForElementAbsoluteToRef.current
     if (!container) return
-    const leftPercent = parseFloat(elementRoot.dataset.leftPercent || '')
-    const topPercent = parseFloat(elementRoot.dataset.topPercent || '')
-    if (!isNaN(leftPercent) && !isNaN(topPercent)) {
+    const leftPercent = handleGetElementRelativeProps(elementRoot)?.element.leftPercent
+    const topPercent = handleGetElementRelativeProps(elementRoot)?.element.topPercent
+    if ((leftPercent || leftPercent === 0) && (topPercent || topPercent === 0)) {
       const containerRect = container.getBoundingClientRect()
       const newX = (leftPercent / 100) * containerRect.width
       const newY = (topPercent / 100) * containerRect.height
@@ -343,5 +382,6 @@ export const useElementControl = (
       scale,
       zindex,
     },
+    captureCurrentElementPosition,
   }
 }

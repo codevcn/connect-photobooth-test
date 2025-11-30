@@ -92,11 +92,13 @@ export const PrintedImagesPreview = ({ printedImages }: TPrintedImagesProps) => 
       </div>
 
       {elementId && elementType === 'template-frame' && elementURL && (
-        <TemplateFrameMenu
-          frameId={elementId}
-          onClose={cancelSelectingElement}
-          printedImageURL={elementURL}
-        />
+        <div className="smd:block hidden w-full">
+          <TemplateFrameMenu
+            frameId={elementId}
+            onClose={cancelSelectingElement}
+            printedImageURL={elementURL}
+          />
+        </div>
       )}
     </div>
   )

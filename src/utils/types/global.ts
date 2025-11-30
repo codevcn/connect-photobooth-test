@@ -22,49 +22,6 @@ export type TAttributeOption = {
   title?: string
 }
 
-/**
- * Color attribute with hex support
- */
-export type TColorAttribute = TAttributeOption & {
-  hex?: string // Hex color code (#000000)
-  displayType: 'swatch' | 'label' // Case 1,2: swatch if hex exists, else label
-  sizes?: TSizeAttribute[] // Sizes available for this color
-}
-
-export type TMaterialAttribute = TAttributeOption & {
-  scents?: TScentAttribute[] // Scents available for this material
-  colors?: TColorAttribute[] // Colors available directly under material (when no scent)
-  sizes?: TSizeAttribute[] // Sizes available directly under material (when no scent, no color)
-}
-export type TScentAttribute = TAttributeOption & {
-  colors?: TColorAttribute[] // Colors available for this scent
-  sizes?: TSizeAttribute[] // Sizes available directly under scent (when no color)
-}
-export type TSizeAttribute = TAttributeOption
-
-/**
- * Merged product attributes structure
- * Priority order: material -> scent -> color -> size
- */
-export type TProductAttributes = {
-  materials?: {
-    title: string // "Chất liệu" or custom title
-    options: TMaterialAttribute[]
-  }
-  scents?: {
-    title: string // "Mùi hương" or custom title
-    options: TScentAttribute[]
-  }
-  colors?: {
-    title: string // "Màu sắc" or custom title
-    options: TColorAttribute[]
-  }
-  sizes?: {
-    title: string // "Kích thước" or custom title
-    options: TSizeAttribute[]
-  }
-}
-
 export type TPrintAreaInfo = {
   // productImageId: string
   id: number
@@ -95,6 +52,36 @@ export type TProductVariantSurface = {
   }
 }
 
+export type TMergedAttributesColorHexGroup = {
+  color: string
+  hex: string
+  sizes: string[] | null
+}
+
+export type TMergedAttributesGroups = {
+  [material: string]: {
+    [scent: string]: {
+      [colorHex: string]: TMergedAttributesColorHexGroup
+    }
+  }
+}
+
+export type TMergedAttributesUniqueColors = { [key: string]: string }
+
+export type TMergedAttributesUniqueString = Set<string>
+
+export type TMergedAttributes = {
+  uniqueMaterials: string[]
+  uniqueMaterialTitles: string[]
+  uniqueScents: string[]
+  uniqueScentTitles: string[]
+  uniqueColors: TMergedAttributesUniqueColors
+  uniqueColorTitles: string[]
+  uniqueSizes: string[]
+  uniqueSizeTitles: string[]
+  groups: TMergedAttributesGroups
+}
+
 export type TBaseProduct = {
   id: number
   url: string
@@ -105,7 +92,7 @@ export type TBaseProduct = {
   inNewLine: boolean
   printAreaList: TPrintAreaInfo[] // surfaces
   variantSurfaces: TProductVariantSurface[]
-  mergedAttributes: TProductAttributes // NEW: Merged attributes from all variants
+  mergedAttributes: TMergedAttributes // NEW: Merged attributes from all variants
   slug: string
 }
 
@@ -122,15 +109,15 @@ export type TClientProductVariant = {
   id: number
   name: string
   attributes: {
-    color?: string | null
-    colorTitle?: string | null
-    hex?: string | null
-    size?: string | null
-    sizeTitle?: string | null
-    material?: string | null
-    materialTitle?: string | null
-    scent?: string | null
-    scentTitle?: string | null
+    color?: string
+    colorTitle?: string
+    hex?: string
+    size?: string
+    sizeTitle?: string
+    material?: string
+    materialTitle?: string
+    scent?: string
+    scentTitle?: string
     [key: string]: any
   }
   priceAmountOneSide: number
@@ -293,10 +280,23 @@ export type TPaymentProductItem = {
   productId: number
   productVariantId: number
   name: string
-  size: string
-  color: {
-    title: string
-    value: string
+  variantAttributesInfo: {
+    material?: {
+      title: string
+      value: string
+    }
+    scent?: {
+      title: string
+      value: string
+    }
+    color?: {
+      title: string
+      value: string
+    }
+    size?: {
+      title: string
+      value: string
+    }
   }
   quantity: number
   originalPrice: number

@@ -1,5 +1,5 @@
 import { useEditedElementStore } from '@/stores/element/element.store'
-import { getInitialContants } from '@/utils/contants'
+import { createInitialConstants } from '@/utils/contants'
 import { useState, useEffect, useRef } from 'react'
 import { StickerElementMenu } from './Menu'
 import { generateUniqueId } from '@/utils/helpers'
@@ -93,12 +93,12 @@ const StickersModal = ({ onClose }: TStickersModalProps) => {
         id: generateUniqueId(),
         path,
         position: {
-          x: getInitialContants<number>('ELEMENT_X'),
-          y: getInitialContants<number>('ELEMENT_Y'),
+          x: createInitialConstants<number>('ELEMENT_X'),
+          y: createInitialConstants<number>('ELEMENT_Y'),
         },
-        angle: getInitialContants<number>('ELEMENT_ROTATION'),
-        scale: getInitialContants<number>('ELEMENT_ZOOM'),
-        zindex: getInitialContants<number>('ELEMENT_ZINDEX'),
+        angle: createInitialConstants<number>('ELEMENT_ROTATION'),
+        scale: createInitialConstants<number>('ELEMENT_ZOOM'),
+        zindex: createInitialConstants<number>('ELEMENT_ZINDEX'),
         mountType: 'from-new',
       },
     ])

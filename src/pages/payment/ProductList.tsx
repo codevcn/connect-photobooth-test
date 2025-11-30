@@ -1,3 +1,4 @@
+import { tempObject } from '@/stores/temp/temp.store'
 import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 import { formatNumberWithCommas } from '@/utils/helpers'
 import {
@@ -57,8 +58,7 @@ export const ProductList: React.FC<ProductListProps> = ({
           productId,
           mockupData,
           name,
-          size,
-          color,
+          variantAttributesInfo: { material, scent, color, size },
           originalPrice,
           discountedPrice,
           quantity,
@@ -85,7 +85,8 @@ export const ProductList: React.FC<ProductListProps> = ({
                   <button
                     onClick={() => {
                       toast.info('Đang tạm khóa')
-                      onEditMockup(mockupData.id)
+                      // tempObject.firstBackFromCartEdit_allowedPrintAreaChange = true
+                      // onEditMockup(mockupData.id)
                     }}
                     className="shrink-0 p-1.5 text-gray-600 bg-gray-200 transition-colors rounded-lg active:scale-95"
                     aria-label="Chỉnh sửa sản phẩm"
@@ -106,12 +107,26 @@ export const ProductList: React.FC<ProductListProps> = ({
                 </div>
 
                 <div className="sm:gap-2 gap-1 flex-wrap flex items-center text-[1em] text-gray-500 mb-2">
-                  <span className="sm:py-1 py-0.5 bg-gray-100 px-2 rounded-md font-medium">
-                    {size}
-                  </span>
-                  <span className="sm:py-1 py-0.5 bg-gray-100 px-2 rounded-md font-medium">
-                    {color.title}
-                  </span>
+                  {material && (
+                    <span className="sm:py-1 py-0.5 bg-blue-100 text-blue-700 px-2 rounded-md font-medium">
+                      {material.value}
+                    </span>
+                  )}
+                  {scent && (
+                    <span className="sm:py-1 py-0.5 bg-purple-100 text-purple-700 px-2 rounded-md font-medium">
+                      {scent.value}
+                    </span>
+                  )}
+                  {color && (
+                    <span className="sm:py-1 py-0.5 bg-gray-100 px-2 rounded-md font-medium">
+                      {color.value}
+                    </span>
+                  )}
+                  {size && (
+                    <span className="sm:py-1 py-0.5 bg-gray-100 px-2 rounded-md font-medium">
+                      {size.value}
+                    </span>
+                  )}
                   <span className="sm:py-1 py-0.5 bg-pink-100 text-pink-600 px-2 rounded-md font-medium">
                     {surface.type === 'front' ? 'Mặt trước' : 'Mặt sau'}
                   </span>

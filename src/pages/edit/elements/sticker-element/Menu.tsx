@@ -1,5 +1,5 @@
 import { useEditedElementStore } from '@/stores/element/element.store'
-import { getInitialContants } from '@/utils/contants'
+import { createInitialConstants } from '@/utils/contants'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { TElementType, TStickerVisualState } from '@/utils/types/global'
 import { useEffect, useRef } from 'react'
@@ -129,7 +129,7 @@ export const StickerElementMenu = ({ elementId, onClose }: TStickerElementMenu) 
         undefined,
         undefined,
         undefined,
-        -getInitialContants<number>('ELEMENT_ZINDEX_STEP')
+        -createInitialConstants<number>('ELEMENT_ZINDEX_STEP')
       )
     } else if (type === 'zindex-up') {
       handleChangeProperties(
@@ -137,7 +137,7 @@ export const StickerElementMenu = ({ elementId, onClose }: TStickerElementMenu) 
         undefined,
         undefined,
         undefined,
-        getInitialContants<number>('ELEMENT_ZINDEX_STEP')
+        createInitialConstants<number>('ELEMENT_ZINDEX_STEP')
       )
     }
   }

@@ -1,5 +1,5 @@
 import { orderService } from '@/services/order.service'
-import { getCommonContants } from '@/utils/contants'
+import { createCommonConstants } from '@/utils/contants'
 import { capitalizeFirstLetter, isValidEmail, isValidPhoneNumber } from '@/utils/helpers'
 import { TEndOfPaymentData, TPaymentProductItem, TPaymentType } from '@/utils/types/global'
 import { useRef, useState } from 'react'
@@ -124,7 +124,7 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
           const paymentInstruction = payment_instructions[0]
 
           setEndOfPayment({
-            countdownInSeconds: getCommonContants<number>('FIXED_COUNTDOWN_PAYMENT_SECONDS'), // 15 minutes default
+            countdownInSeconds: createCommonConstants<number>('FIXED_COUNTDOWN_PAYMENT_SECONDS'), // 15 minutes default
             QRCode: paymentInstruction.qr_code,
             paymentMethod: {
               method: paymentMethod,

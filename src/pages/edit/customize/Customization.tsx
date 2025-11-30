@@ -61,7 +61,7 @@ export const Customization = ({ printedImages }: TCustomizeProps) => {
   // }, [])
 
   return (
-    <div className="smd:order-2 smd:mt-2 mt-0 order-1 border-border rounded-lg p-3 bg-gray-100">
+    <div className="smd:order-2 smd:mt-2 smd:px-3 px-2 py-3 mt-0 order-1 border-border rounded-lg bg-gray-100">
       <h3 className="text-xs smd:text-sm text-center font-bold text-gray-800 uppercase tracking-wide">
         Cá nhân hóa
       </h3>

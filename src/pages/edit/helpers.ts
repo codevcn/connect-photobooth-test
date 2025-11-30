@@ -1,5 +1,5 @@
 import { hardCodedPrintTemplates } from '@/configs/print-template/templates-data'
-import { getInitialContants } from '@/utils/contants'
+import { createInitialConstants } from '@/utils/contants'
 import {
   TPlacedImage,
   TPlacedImageMetaData,
@@ -24,10 +24,10 @@ export const initFramePlacedImageByPrintedImage = (
     imgURL: printedImage.url,
     placementState: {
       frameIndex: frameIndexProperty,
-      objectFit: getInitialContants('PLACED_IMG_OBJECT_FIT'),
-      squareRotation: getInitialContants('PLACED_IMG_SQUARE_ROTATION'),
-      zoom: getInitialContants('PLACED_IMG_ZOOM'),
-      direction: getInitialContants('PLACED_IMG_DIRECTION'),
+      objectFit: createInitialConstants('PLACED_IMG_OBJECT_FIT'),
+      squareRotation: createInitialConstants('PLACED_IMG_SQUARE_ROTATION'),
+      zoom: createInitialConstants('PLACED_IMG_ZOOM'),
+      direction: createInitialConstants('PLACED_IMG_DIRECTION'),
     },
     prrintedImageWidth: printedImage.width,
     printedImageHeight: printedImage.height,
@@ -283,8 +283,8 @@ export const diffPrintedImageFromShapeSize = (
   printedImageSize: TSizeInfo
 ): number => {
   const imgRatio = printedImageSize.width / printedImageSize.height
-  const upSquareDiff = 1 + getInitialContants<number>('MAX_DIFF_RATIO_VALUE')
-  const downSquareDiff = 1 - getInitialContants<number>('MAX_DIFF_RATIO_VALUE')
+  const upSquareDiff = 1 + createInitialConstants<number>('MAX_DIFF_RATIO_VALUE')
+  const downSquareDiff = 1 - createInitialConstants<number>('MAX_DIFF_RATIO_VALUE')
   const { width, height } = frameSize
   if (width < height) {
     if (imgRatio < downSquareDiff) return 0
@@ -368,7 +368,7 @@ export const assignMockFrameSizeToTemplate = (
   frame: TTemplateFrame
 ) => {
   const template = hardCodedPrintTemplates(templateType)
-  const templateH: number = getInitialContants<number>('MOCK_TEMPLATE_HEIGHT_BY_TEMPLATE_TYPE')
+  const templateH: number = createInitialConstants<number>('MOCK_TEMPLATE_HEIGHT_BY_TEMPLATE_TYPE')
   const templateW: number = templateH
   let defaultFrameW = templateW
   let defaultFrameH = templateH

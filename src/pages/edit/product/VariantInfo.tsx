@@ -77,17 +77,41 @@ const findVariantByAttributes = (
   onFound: (variant: TClientProductVariant | null) => void
 ): void => {
   setTimeout(() => {
-    onFound(
-      variants.find((variant) => {
-        const attrs = variant.attributes
-        return (
-          (!selectedAttrs.material || attrs.material === selectedAttrs.material) &&
-          (!selectedAttrs.scent || attrs.scent === selectedAttrs.scent) &&
-          (!selectedAttrs.color || attrs.color === selectedAttrs.color) &&
-          (!selectedAttrs.size || attrs.size?.toUpperCase() === selectedAttrs.size?.toUpperCase())
-        )
-      }) || null
-    )
+    console.log('>>> [pi] find:', { selectedAttrs })
+    let foundVariant = null
+    const { material, scent, color, size } = selectedAttrs
+    for (const variant of variants) {
+      const attrs = variant.attributes
+      if (material && material === attrs.material) {
+        foundVariant = variant
+      }
+      if (scent && scent === attrs.scent && material === attrs.material) {
+        foundVariant = variant
+      }
+      if (color && color === attrs.color && scent === attrs.scent && material === attrs.material) {
+        foundVariant = variant
+      }
+      if (
+        size &&
+        size.toUpperCase() === attrs.size?.toUpperCase() &&
+        color === attrs.color &&
+        scent === attrs.scent &&
+        material === attrs.material
+      ) {
+        foundVariant = variant
+        break
+      }
+      // if (
+      //   (!selectedAttrs.material || attrs.material === selectedAttrs.material) &&
+      //   (!selectedAttrs.scent || attrs.scent === selectedAttrs.scent) &&
+      //   (!selectedAttrs.color || attrs.color === selectedAttrs.color) &&
+      //   (!selectedAttrs.size || attrs.size?.toUpperCase() === selectedAttrs.size?.toUpperCase())
+      // ) {
+      //   foundVariant = variant
+      //   break
+      // }
+    }
+    onFound(foundVariant)
   }, 0)
 }
 
@@ -101,6 +125,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant }: TVariantInfoProps)
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({})
   const [selectedImageToPreview, setSelectedImageToPreview] = useState<string>()
   const handlePickVariant = useProductUIDataStore((s) => s.handlePickVariant)
+  console.log('>>> [pi] log ra:', { pickedVariant, selectedAttributes })
 
   const initSelectedAttributesOnPickedVariantChange = () => {
     const attrs: Record<string, string> = {}
@@ -127,10 +152,18 @@ export const VariantInfo = ({ pickedProduct, pickedVariant }: TVariantInfoProps)
 
   const pickMaterial = (material: string) => {
     // Reset dependent attributes when material changes
-    const newAttrs = { material: material }
-    setSelectedAttributes(newAttrs)
+    const newAttrs = {
+      material: material,
+      scent: selectedAttributes.scent,
+      color: selectedAttributes.color,
+      size: selectedAttributes.size,
+    }
     findVariantByAttributes(pickedProduct.variants, newAttrs, (matchedVariant) => {
-      if (matchedVariant) handlePickVariant(matchedVariant)
+      if (matchedVariant) {
+        setSelectedAttributes(newAttrs)
+
+        handlePickVariant(matchedVariant)
+      }
     })
   }
 
@@ -140,10 +173,14 @@ export const VariantInfo = ({ pickedProduct, pickedVariant }: TVariantInfoProps)
       const newAttrs = {
         material: selectedAttributes.material,
         scent: scent,
+        color: selectedAttributes.color,
+        size: selectedAttributes.size,
       }
-      setSelectedAttributes(newAttrs)
       findVariantByAttributes(pickedProduct.variants, newAttrs, (matchedVariant) => {
-        if (matchedVariant) handlePickVariant(matchedVariant)
+        if (matchedVariant) {
+          setSelectedAttributes(newAttrs)
+          handlePickVariant(matchedVariant)
+        }
       })
     }
   }
@@ -155,10 +192,14 @@ export const VariantInfo = ({ pickedProduct, pickedVariant }: TVariantInfoProps)
         material: selectedAttributes.material,
         scent: selectedAttributes.scent,
         color: color,
+        size: selectedAttributes.size,
       }
-      setSelectedAttributes(newAttrs)
+
       findVariantByAttributes(pickedProduct.variants, newAttrs, (matchedVariant) => {
-        if (matchedVariant) handlePickVariant(matchedVariant)
+        if (matchedVariant) {
+          setSelectedAttributes(newAttrs)
+          handlePickVariant(matchedVariant)
+        }
       })
     }
   }
@@ -173,7 +214,10 @@ export const VariantInfo = ({ pickedProduct, pickedVariant }: TVariantInfoProps)
       }
       setSelectedAttributes(newAttrs)
       findVariantByAttributes(pickedProduct.variants, newAttrs, (matchedVariant) => {
-        if (matchedVariant) handlePickVariant(matchedVariant)
+        if (matchedVariant) {
+          setSelectedAttributes(newAttrs)
+          handlePickVariant(matchedVariant)
+        }
       })
     }
   }

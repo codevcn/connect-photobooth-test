@@ -243,7 +243,6 @@ export const cleanPrintAreaOnExtractMockupImage = (
 ): TCleanPrintAreaResult => {
   const wrapper = printAreaContainer.closest<HTMLElement>('.NAME-print-area-container-wrapper')!
   const clonedPrintAreaContainer = printAreaContainer.cloneNode(true) as HTMLDivElement
-  clonedPrintAreaContainer?.classList.add('ng-ng-ng-vcn')
   clonedPrintAreaContainer.style.transform = 'none'
   clonedPrintAreaContainer.style.position = 'absolute'
   clonedPrintAreaContainer.style.top = '0'

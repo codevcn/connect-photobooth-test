@@ -17,6 +17,8 @@ import {
 import { useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { cleanPrintAreaOnExtractMockupImage } from '../helpers'
+import { useEditAreaStore } from '@/stores/ui/edit-area.store'
+import { createInitialConstants } from '@/utils/contants'
 
 type TAddToCartHandlerProps = {
   printAreaContainerRef: React.RefObject<HTMLDivElement | null>
@@ -57,7 +59,7 @@ export const AddToCartHandler = ({
     onDoneAdd: () => void,
     onError: (error: Error) => void
   ) => {
-    console.log('>>> [to] info:', { sessionId })
+    console.log('>>> [add] handle add to cart:', { sessionId })
     if (!sessionId) return
     if (
       printAreaContainerRef.current?.querySelector<HTMLElement>(
@@ -69,24 +71,15 @@ export const AddToCartHandler = ({
       )
     }
     const [message, pickedVariant, pickedProduct, pickedSurface] = validateBeforeAddToCart()
-    console.log('>>> [to] validate Before Add To Cart:', {
-      message,
-      pickedVariant,
-      pickedProduct,
-      pickedSurface,
-    })
     if (message) {
       return onError(new Error(message))
     }
     if (!pickedVariant || !pickedProduct || !pickedSurface || !printAreaContainerRef.current) return
-    console.log('>>> [to] before cleaning print area:', { printCon: printAreaContainerRef.current })
     const { printAreaContainer, allowedPrintArea, removeMockPrintArea } =
       cleanPrintAreaOnExtractMockupImage(printAreaContainerRef.current)
-    console.log('>>> [to] after cleaning print area:', { printAreaContainer, allowedPrintArea })
     if (!printAreaContainer || !allowedPrintArea) {
       return onError(new Error('Không tìm thấy khu vực in trên sản phẩm'))
     }
-    console.log('>>> [to] run this 85')
     const imgMimeType: TImgMimeType = 'image/png'
     saveHtmlAsImage(
       printAreaContainer,

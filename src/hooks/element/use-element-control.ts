@@ -97,12 +97,43 @@ export const useElementControl = (
     y: initialPosition?.y || createInitialConstants<number>('ELEMENT_Y'),
   })
 
+  const edgesMargin: number = 10 // px
   const handleSetElementPosition = (posX: TPosition['x'], posY: TPosition['y']) => {
-    if (
-      validateElementPositionValue(elementRootRef, containerForElementAbsoluteToRef, posX, posY)
-    ) {
-      setPosition({ x: posX, y: posY })
-    }
+    console.log('>>> [vvv] valid posx posy:', posX, posY)
+    const containerForElementAbsoluteTo = containerForElementAbsoluteToRef.current
+    const rootElement = elementRootRef.current
+    if (!containerForElementAbsoluteTo || !rootElement) return
+    if (posX < 0) return
+    if (posY < 0) return
+    const containerForElementAbsoluteToRect = containerForElementAbsoluteTo.getBoundingClientRect()
+    const rootElementRect = rootElement.getBoundingClientRect()
+    console.log('>>> [vvv] valid rects:', {
+      containerForElementAbsoluteTo,
+      containerForElementAbsoluteToRect,
+      rootElement,
+      rootElementRect,
+    })
+    if (posX > containerForElementAbsoluteToRect.width - rootElementRect.width - edgesMargin) return
+    if (posY > containerForElementAbsoluteToRect.height - rootElementRect.height - edgesMargin)
+      return
+    setPosition({ x: posX, y: posY })
+    setTimeout(() => {
+      const containerForElementAbsoluteTo = containerForElementAbsoluteToRef.current
+      const rootElement = elementRootRef.current
+      if (!containerForElementAbsoluteTo || !rootElement) return
+      const containerForElementAbsoluteToRect =
+        containerForElementAbsoluteTo.getBoundingClientRect()
+      const rootElementRect = rootElement.getBoundingClientRect()
+      if (
+        rootElementRect.left + rootElementRect.width >
+        containerForElementAbsoluteToRect.left + containerForElementAbsoluteToRect.width
+      ) {
+        setPosition((prev) => ({
+          ...prev,
+          x: containerForElementAbsoluteToRect.width - rootElementRect.width - edgesMargin,
+        }))
+      }
+    }, 1000)
   }
 
   const handleSetSinglePosition = (posX?: TPosition['x'], posY?: TPosition['y']) => {
@@ -277,6 +308,7 @@ export const useElementControl = (
   }
 
   const dragAndScaleElementOnAllowedPrintAreaChange = () => {
+    console.log('>>> [uuu] drag and scale')
     const elementRootRect = elementRootRef.current?.getBoundingClientRect()
     if (!elementRootRect) return
     const allowedPrintAreaRect = printAreaAllowedRef.current?.getBoundingClientRect()

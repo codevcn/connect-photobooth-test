@@ -202,7 +202,9 @@ function buildProductAttributes(variants: TProductVariant[], productId: number):
   const uniqueScentTitles: TMergedAttributesUniqueString = new Set()
   const uniqueColorTitles: TMergedAttributesUniqueString = new Set()
   const uniqueSizeTitles: TMergedAttributesUniqueString = new Set()
+  let index: number = 0
   for (const variant of variants) {
+    index += 1
     const attrs = variant.attributes_json || {}
     const material = attrs.material || 'null'
     const scent = attrs.scent || 'null'
@@ -218,13 +220,15 @@ function buildProductAttributes(variants: TProductVariant[], productId: number):
     uniqueSizeTitles.add(attrs.sizeTitle || 'Kích thước')
     uniqueScents.add(scent)
     uniqueScentTitles.add(attrs.scentTitle || 'Mùi hương')
-
+    console.log(`>>> [index]1 ${index}:`, { material, scent, color, hex, size, groups, productId })
     if (!groups[material]) {
       groups[material] = {}
     }
+    console.log('>>> [index]2', index, ':', groups)
     if (!groups[material][scent]) {
       groups[material][scent] = {}
     }
+    console.log('>>> [index]3', index, ':', groups)
     if (!groups[material][scent][colorKey]) {
       groups[material][scent][colorKey] = {
         color,
@@ -232,12 +236,21 @@ function buildProductAttributes(variants: TProductVariant[], productId: number):
         sizes: null,
       }
     }
+    console.log('>>> [index]4', index, ':', groups)
     groups[material][scent][colorKey].sizes = groups[material][scent][colorKey].sizes || []
     if (size !== 'null' && !groups[material][scent][colorKey].sizes!.includes(size)) {
       groups[material][scent][colorKey].sizes!.push(size)
     }
+    console.log('>>> [index]5', index, ':', groups)
   }
-  console.log('>>> [ser] groups:', {groups,productId,uniqueMaterials,uniqueScents,uniqueColors,uniqueSizes})
+  console.log('>>> [ser] groups:', {
+    groups,
+    productId,
+    uniqueMaterials,
+    uniqueScents,
+    uniqueColors,
+    uniqueSizes,
+  })
 
   return {
     uniqueMaterials: Array.from(uniqueMaterials),

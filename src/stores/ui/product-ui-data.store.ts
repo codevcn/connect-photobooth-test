@@ -146,7 +146,6 @@ export const useProductUIDataStore = create<TProductUIDataStore>((set, get) => (
   handlePickVariant: (variant) => {
     const { pickedProduct, pickedSurface } = get()
     if (!pickedProduct || !pickedSurface) {
-      set({ pickedVariant: variant })
       return
     }
 

@@ -15,10 +15,11 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
   const [isScanning, setIsScanning] = useState(false)
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState<string>('')
-  const { detectFromFile, isReady, detectFromUrl } = useFastBoxes()
+  const { detectFromFile, isReady } = useFastBoxes()
 
   const initializeScanner = useCallback(() => {
     if (!videoRef.current) return
+    console.log('>>> run this initializeScanner')
     const qrScanner = new QrScanner(
       videoRef.current,
       (result) => {
@@ -31,10 +32,11 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
               if (error) {
                 console.error('>>> Lỗi lấy dữ liệu mã QR:', error)
                 setError('Không thể lấy dữ liệu từ mã QR. Vui lòng thử lại.')
-                toast.error('Không thể lấy dữ liệu từ mã QR. Vui lòng thử lại.')
+                toast.error(error.message)
                 return
               }
               if (images) {
+                console.log('>>> images extracted:', images)
                 onScanSuccess(
                   images.map((img) => ({
                     ...img,
@@ -48,6 +50,29 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
               setError('Không thể xử lý mã QR. Vui lòng thử lại.')
               toast.error('Không thể xử lý mã QR. Vui lòng thử lại.')
             })
+          // qrGetter
+          //   .handleImageData(result.data, (percentage, images, error) => {
+          //     setProgress(percentage)
+          //     if (error) {
+          //       console.error('>>> Lỗi lấy dữ liệu mã QR:', error)
+          //       setError('Không thể lấy dữ liệu từ mã QR. Vui lòng thử lại.')
+          //       toast.error('Không thể lấy dữ liệu từ mã QR. Vui lòng thử lại.')
+          //       return
+          //     }
+          //     if (images) {
+          //       onScanSuccess(
+          //         images.map((img) => ({
+          //           ...img,
+          //           url: img.isOriginalImage ? img.url : URL.createObjectURL(img.blob),
+          //         }))
+          //       )
+          //     }
+          //   })
+          //   .catch((err) => {
+          //     console.error('>>> Lỗi xử lý dữ liệu mã QR:', err)
+          //     setError('Không thể xử lý mã QR. Vui lòng thử lại.')
+          //     toast.error('Không thể xử lý mã QR. Vui lòng thử lại.')
+          //   })
         }
       },
       {
@@ -66,7 +91,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
       qrScanner.stop()
       qrScanner.destroy()
     }
-  }, [isScanning, onScanSuccess])
+  }, [isScanning])
 
   const stopCamera = useCallback(() => {
     const scanner = scannerRef.current
@@ -88,94 +113,96 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
   }, [])
 
   useEffect(() => {
-    // initializeScanner()
+    if (!isReady) return
+    qrGetter.setDetectFromFileHandler(detectFromFile as any)
+    initializeScanner()
     if (error) {
       stopCamera()
     }
     return () => {
       stopCamera()
     }
-  }, [error])
+  }, [error, isReady])
 
-  useEffect(() => {
-    if (!isReady) return
-    setTimeout(() => {
-      qrGetter.setDetectFromFileHandler(detectFromFile as any)
-      qrGetter
-        .handleImageData('https://qr.seobuk.kr/s/8ijZsg_', (percentage, images, error) => {
-          setProgress(percentage)
-          if (error) {
-            console.error('>>> Lỗi lấy dữ liệu mã QR:', error)
-            setError('Không thể lấy dữ liệu từ mã QR. Vui lòng thử lại.')
-            toast.error(error.message)
-            return
-          }
-          if (images) {
-            console.log('>>> images extracted:', images)
-            onScanSuccess(
-              images.map((img) => ({
-                ...img,
-                url: img.isOriginalImage ? img.url : URL.createObjectURL(img.blob),
-              }))
-            )
-          }
-        })
-        .catch((err) => {
-          console.error('>>> Lỗi xử lý dữ liệu mã QR:', err)
-          setError('Không thể xử lý mã QR. Vui lòng thử lại.')
-          toast.error('Không thể xử lý mã QR. Vui lòng thử lại.')
-        })
-    }, 500)
-  }, [isReady])
+  // useEffect(() => {
+  //   if (!isReady) return
+  //   setTimeout(() => {
+  //     qrGetter.setDetectFromFileHandler(detectFromFile as any)
+  //     qrGetter
+  //       .handleImageData('https://qr.seobuk.kr/s/8ijZsg_', (percentage, images, error) => {
+  //         setProgress(percentage)
+  //         if (error) {
+  //           console.error('>>> Lỗi lấy dữ liệu mã QR:', error)
+  //           setError('Không thể lấy dữ liệu từ mã QR. Vui lòng thử lại.')
+  //           toast.error(error.message)
+  //           return
+  //         }
+  //         if (images) {
+  //           console.log('>>> images extracted:', images)
+  //           onScanSuccess(
+  //             images.map((img) => ({
+  //               ...img,
+  //               url: img.isOriginalImage ? img.url : URL.createObjectURL(img.blob),
+  //             }))
+  //           )
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         console.error('>>> Lỗi xử lý dữ liệu mã QR:', err)
+  //         setError('Không thể xử lý mã QR. Vui lòng thử lại.')
+  //         toast.error('Không thể xử lý mã QR. Vui lòng thử lại.')
+  //       })
+  //   }, 500)
+  // }, [isReady])
 
   return (
-    // <div className="w-full">
-    //   <div className="relative aspect-square bg-gray-900 rounded-2xl overflow-hidden shadow-lg group">
-    //     <video
-    //       ref={videoRef}
-    //       className="max-w-[300px] w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-    //       playsInline
-    //     />
-    //     {error ? (
-    //       <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 p-4 animate-fade-in-down">
-    //         <p className="text-red-600 text-lg font-bold text-center">{error}</p>
-    //       </div>
-    //     ) : (
-    //       <>
-    //         {isScanning && (
-    //           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center animate-fade-in-down">
-    //             <div className="w-4/5">
-    //               <div className="bg-white rounded-full h-4 overflow-hidden mb-4 shadow-lg">
-    //                 <div
-    //                   className="bg-pink-400 h-full transition-all duration-100"
-    //                   style={{ width: `${progress}%` }}
-    //                 />
-    //               </div>
-    //               <p className="text-white text-center font-medium animate-pulse">
-    //                 <span>Đang xử lý ảnh của bạn...</span>
-    //                 <span> {progress}</span>
-    //                 <span>%</span>
-    //               </p>
-    //             </div>
-    //           </div>
-    //         )}
-    //         {!isScanning && (
-    //           <div className="absolute inset-0 pointer-events-none">
-    //             <div className="absolute top-1/4 left-1/4 w-1/2 h-1/2 border-2 border-pink-400 rounded-lg opacity-30 animate-pulse"></div>
-    //           </div>
-    //         )}
-    //       </>
-    //     )}
-    //   </div>
-    //   {!isScanning && !error && (
-    //     <p
-    //       className="text-center mt-4 text-white text-sm animate-fade-in-up"
-    //       style={{ animationDelay: '0.2s' }}
-    //     >
-    //       Hãy đưa mã QR vào khung để quét
-    //     </p>
-    //   )}
-    // </div>
-    <></>
+    <div className="w-full">
+      <div className="relative aspect-square bg-gray-900 rounded-2xl overflow-hidden shadow-lg group">
+        <video
+          ref={videoRef}
+          className="max-w-[300px] w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          playsInline
+        />
+        {error ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 p-4 animate-fade-in-down">
+            <p className="text-red-600 text-lg font-bold text-center">{error}</p>
+          </div>
+        ) : (
+          <>
+            {isScanning && (
+              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center animate-fade-in-down">
+                <div className="w-4/5">
+                  <div className="bg-white rounded-full h-4 overflow-hidden mb-4 shadow-lg">
+                    <div
+                      className="bg-pink-400 h-full transition-all duration-100"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  <p className="text-white text-center font-medium animate-pulse">
+                    <span>Đang xử lý ảnh của bạn...</span>
+                    <span> {progress}</span>
+                    <span>%</span>
+                  </p>
+                </div>
+              </div>
+            )}
+            {!isScanning && (
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-1/4 left-1/4 w-1/2 h-1/2 border-2 border-pink-400 rounded-lg opacity-30 animate-pulse"></div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+      {!isScanning && !error && (
+        <p
+          className="text-center mt-4 text-white text-sm animate-fade-in-up"
+          style={{ animationDelay: '0.2s' }}
+        >
+          Hãy đưa mã QR vào khung để quét
+        </p>
+      )}
+    </div>
+    // <></>
   )
 }

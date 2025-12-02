@@ -184,6 +184,8 @@ const MyDevComponent2: React.FC = () => {
   )
 }
 
-export const MyDevComponent = () => {
-  return <></>
-}
+// export const MyDevComponent = () => {
+//   return <></>
+// }
+
+export const MyDevComponent = MyDevComponent2

@@ -201,7 +201,7 @@ export const LivePreview = ({
       onDragStart={(e) => e.preventDefault()}
       className="NAME-print-area-container-wrapper smd:w-full overflow-hidden w-full min-h-full h-full relative flex items-center justify-center"
     >
-      <MyDevComponent />
+      {/* <MyDevComponent /> */}
       <AddToCartHandler
         checkIfAnyElementOutOfBounds={checkIfAnyElementOutOfBounds}
         printAreaContainerRef={printAreaContainerRef}

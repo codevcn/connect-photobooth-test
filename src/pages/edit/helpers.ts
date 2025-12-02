@@ -255,6 +255,9 @@ export const cleanPrintAreaOnExtractMockupImage = (
   clonedPrintAreaContainer
     .querySelector<HTMLElement>('.NAME-out-of-bounds-overlay-warning')
     ?.remove()
+  clonedPrintAreaContainer
+    .querySelector<HTMLElement>('.NAME-zoom-placed-image-btn-wrapper')
+    ?.remove()
   const clonedAllowedPrintArea = clonedPrintAreaContainer.querySelector<HTMLDivElement>(
     '.NAME-print-area-allowed'
   )

@@ -1,5 +1,4 @@
 import { useRotateElement } from '@/hooks/element/use-rotate-element'
-import { usePinchElement } from '@/hooks/element/use-pinch-element'
 import { useZoomElement } from '@/hooks/element/use-zoom-element'
 import { useDragElement } from '@/hooks/element/use-drag-element'
 import { useEffect, useState } from 'react'
@@ -15,31 +14,6 @@ import { captureCurrentElementPosition } from '@/pages/edit/helpers'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { typeToObject } from '@/utils/helpers'
 import { useEditAreaStore } from '@/stores/ui/edit-area.store'
-
-const validateElementPositionValue = (
-  elementRootRef: React.RefObject<HTMLElement | null>,
-  containerForElementAbsoluteToRef: React.RefObject<HTMLDivElement | null>,
-  posX: TPosition['x'],
-  posY: TPosition['y']
-): boolean => {
-  console.log('>>> [vvv] valid posx posy:', posX, posY)
-  const containerForElementAbsoluteTo = containerForElementAbsoluteToRef.current
-  const rootElement = elementRootRef.current
-  if (!containerForElementAbsoluteTo || !rootElement) return false
-  if (posX < 0) return false
-  if (posY < 0) return false
-  const containerForElementAbsoluteToRect = containerForElementAbsoluteTo.getBoundingClientRect()
-  const rootElementRect = rootElement.getBoundingClientRect()
-  console.log('>>> [vvv] valid rects:', {
-    containerForElementAbsoluteTo,
-    containerForElementAbsoluteToRect,
-    rootElement,
-    rootElementRect,
-  })
-  if (posX > containerForElementAbsoluteToRect.width - rootElementRect.width) return false
-  if (posY > containerForElementAbsoluteToRect.height - rootElementRect.height) return false
-  return true
-}
 
 type TInitialParams = Partial<
   TElementVisualBaseState & {

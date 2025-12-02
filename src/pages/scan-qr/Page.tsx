@@ -55,8 +55,8 @@ const ScanQRPage = () => {
       </div>
 
       {/* Main Content */}
-      <section className="NAME-scan-qr-main-content relative z-10 max-w-2xl bg-white/20 backdrop-blur-sm rounded-2xl shadow-2xl p-6 md:p-8">
-        {/* <div className="flex items-center justify-center gap-3 animate-fade-in-down">
+      <section className="NAME-scan-qr-main-content relative z-10 max-w-2xl bg-white/20 backdrop-blur-sm rounded-2xl shadow-2xl p-6">
+        <div className="flex items-center justify-center gap-3 animate-fade-in-down">
           <div
             onClick={() => navigate('/edit')}
             className="bg-main-cl p-3 rounded-xl shadow-lg animate-float"
@@ -78,7 +78,7 @@ const ScanQRPage = () => {
             </svg>
           </div>
           <h1 className="text-3xl font-bold text-white">Quét mã QR</h1>
-        </div> */}
+        </div>
 
         <div className="animate-scale-in mt-6" style={{ animationDelay: '0.1s' }}>
           <QRScanner onScanSuccess={handleData} />

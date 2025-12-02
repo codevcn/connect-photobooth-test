@@ -1,229 +1,46 @@
-<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>fast_boxes WASM demo</title>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --panel: #111827;
-      --accent: #38bdf8;
-      --muted: #cbd5e1;
-      --mono: "SFMono-Regular", "Cascadia Code", Menlo, Consolas, monospace;
-      --sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-    }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: radial-gradient(circle at 20% 20%, #1e293b 0, #0f172a 45%),
-                  radial-gradient(circle at 80% 10%, #0b3055 0, #0f172a 40%);
-      color: #e2e8f0;
-      font-family: var(--sans);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 32px;
-      box-sizing: border-box;
-    }
-    .card {
-      width: 100%;
-      max-width: 960px;
-      background: var(--panel);
-      border: 1px solid #1f2937;
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-      padding: 24px;
-    }
-    h1 {
-      margin: 0 0 16px;
-      font-size: 22px;
-      letter-spacing: 0.5px;
-    }
-    .row { display: flex; flex-wrap: wrap; gap: 16px; }
-    .left, .right { flex: 1 1 320px; }
-    .drop {
-      position: relative;
-      border: 1px dashed #334155;
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-      transition: border-color 0.2s ease, background 0.2s ease;
-      cursor: pointer;
-    }
-    .drop.dragover {
-      border-color: var(--accent);
-      background: rgba(56, 189, 248, 0.08);
-    }
-    input[type="file"] { display: none; }
-    button {
-      background: var(--accent);
-      color: #0f172a;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    button:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(56,189,248,0.25); }
-    button:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; transform: none; }
-    .status { margin-top: 10px; font-size: 13px; color: var(--muted); }
-    pre {
-      background: #0b1220;
-      border: 1px solid #1f2937;
-      border-radius: 12px;
-      padding: 16px;
-      color: #cbd5e1;
-      font-family: var(--mono);
-      overflow: auto;
-      white-space: pre-wrap;
-      word-break: break-word;
-      min-height: 140px;
-    }
-    .preview {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid #1f2937;
-      background: #0b1220;
-      object-fit: contain;
-      max-height: 360px;
-    }
-    .hint { color: var(--muted); font-size: 13px; margin-top: 8px; }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h1>fast_boxes WASM demo</h1>
-    <div class="row">
-      <div class="left">
-        <label class="drop" id="dropZone">
-          <input type="file" id="fileInput" accept="image/*">
-          <strong>Chọn ảnh hoặc kéo thả vào đây</strong>
-          <div class="hint">Module sẽ decode ảnh và trả về JSON với các bounding box.</div>
-        </label>
-        <div style="margin-top:12px; display:flex; gap:8px; align-items:center;">
-          <button id="runBtn" disabled>Run detect</button>
-          <span class="status" id="status">Đang tải wasm...</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 100vh;
+        width: 100vw;
+      "
+    >
+      <main
+        class="container"
+        style="width: 300px; height: 300px; background-color: black; position: relative"
+      >
+        <h1>Container</h1>
+        <div
+          class="oke"
+          style="height: 50px; width: 50px; background-color: red; position: absolute"
+        >
+          oke
         </div>
-        <div class="hint" style="margin-top:10px;">Yêu cầu: đặt dist/fast_boxes.js & dist/fast_boxes.wasm cùng thư mục index.html.</div>
-      </div>
-      <div class="right">
-        <img id="preview" class="preview" alt="preview" />
-      </div>
+      </main>
     </div>
-    <div style="margin-top:16px;">
-      <pre id="output">Kết quả sẽ hiển thị ở đây...</pre>
+    <div style="margin-top: 200px; position: fixed; top: 20px; right: 20px">
+      <button onclick="move()">BTN 1</button>
+      <button onclick="zoom()">BTN 2</button>
     </div>
-  </div>
-
-  <script src="./dist/fast_boxes.js"></script>
-  <script type="module">
-    const createFastBoxes = globalThis.createFastBoxes;
-    if (!createFastBoxes) {
-      document.getElementById('status').textContent = 'Không tìm thấy createFastBoxes (kiểm tra dist/fast_boxes.js)';
-      throw new Error('createFastBoxes not found on globalThis');
-    }
-
-    const fileInput = document.getElementById('fileInput');
-    const dropZone = document.getElementById('dropZone');
-    const runBtn = document.getElementById('runBtn');
-    const statusEl = document.getElementById('status');
-    const outputEl = document.getElementById('output');
-    const previewEl = document.getElementById('preview');
-
-    let modulePromise = null;
-    let lastFile = null;
-
-    const setStatus = (msg) => { statusEl.textContent = msg; };
-    const setOutput = (obj) => { outputEl.textContent = typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2); };
-
-    function bindDrag() {
-      ['dragenter','dragover'].forEach(ev => dropZone.addEventListener(ev, e => {
-        e.preventDefault(); e.stopPropagation(); dropZone.classList.add('dragover');
-      }));
-      ['dragleave','drop'].forEach(ev => dropZone.addEventListener(ev, e => {
-        e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('dragover');
-      }));
-      dropZone.addEventListener('drop', e => {
-        const f = e.dataTransfer?.files?.[0];
-        if (f) handleFile(f);
-      });
-      dropZone.addEventListener('click', () => fileInput.click());
-    }
-
-    function handleFile(f) {
-      lastFile = f;
-      const reader = new FileReader();
-      reader.onload = () => { previewEl.src = reader.result; };
-      reader.readAsDataURL(f);
-      setOutput('Ảnh đã nạp, nhấn "Run detect" để xử lý.');
-      runBtn.disabled = false;
-    }
-
-    fileInput.addEventListener('change', e => {
-      const f = e.target.files?.[0];
-      if (f) handleFile(f);
-    });
-
-    async function ensureModule() {
-      if (!modulePromise) {
-        modulePromise = createFastBoxes();
-        setStatus('Đang khởi tạo wasm...');
+    <script>
+      const zoom = () => {
+        document.querySelector('.container').style.transform = 'scale(2)'
       }
-      return modulePromise;
-    }
-
-    function getHeapU8(mod) {
-      // Prefer exposed HEAPU8; otherwise find a WebAssembly.Memory on Module/asm and wrap.
-      if (mod.HEAPU8) return mod.HEAPU8;
-      if (mod.HEAP8) return new Uint8Array(mod.HEAP8.buffer);
-      const maybeMem =
-        mod.wasmMemory ||
-        (mod.asm && (mod.asm.memory || Object.values(mod.asm).find(v => v instanceof WebAssembly.Memory))) ||
-        Object.values(mod).find(v => v instanceof WebAssembly.Memory);
-      if (maybeMem?.buffer) return new Uint8Array(maybeMem.buffer);
-      return null;
-    }
-
-    runBtn.addEventListener('click', async () => {
-      if (!lastFile) return;
-      runBtn.disabled = true;
-      setStatus('Đang chạy...');
-      setOutput('Đang chạy...');
-      try {
-        const mod = await ensureModule();
-        const heapU8 = getHeapU8(mod);
-        if (!heapU8) throw new Error('HEAPU8 not exposed from wasm module');
-        const buf = new Uint8Array(await lastFile.arrayBuffer());
-        const ptr = mod._malloc(buf.length);
-        heapU8.set(buf, ptr);
-        const resPtr = mod._detect(ptr, buf.length);
-        const res = JSON.parse(mod.UTF8ToString(resPtr));
-        mod._free(ptr);
-        setOutput(res);
-        setStatus('Done');
-      } catch (err) {
-        console.error(err);
-        setOutput(String(err));
-        setStatus('Lỗi');
-      } finally {
-        runBtn.disabled = false;
+      let count = 10
+      const move = () => {
+        document.querySelector('.oke').style.left = `${count}px`
+        count += 10
       }
-    });
-
-    (async () => {
-      try {
-        await ensureModule();
-        setStatus('WASM sẵn sàng');
-      } catch (e) {
-        console.error(e);
-        setStatus('Không tải được wasm');
-        setOutput('Đặt dist/fast_boxes.js & dist/fast_boxes.wasm cạnh index.html rồi reload.');
-      }
-    })();
-
-    bindDrag();
-  </script>
-</body>
+    </script>
+  </body>
 </html>

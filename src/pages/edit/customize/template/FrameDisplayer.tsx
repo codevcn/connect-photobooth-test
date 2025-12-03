@@ -93,9 +93,7 @@ export const FramesDisplayer = ({
     const containerB = elementsBoxRef.current
     if (!containerB) return null
 
-    const children = containerB.querySelectorAll<HTMLElement>(
-      '.NAME-frame-placed-image-wrapper.NAME-not-zoomed'
-    )
+    const children = containerB.querySelectorAll<HTMLElement>('.NAME-frame-placed-image')
     if (children.length === 0) return null
 
     let minX = Infinity,

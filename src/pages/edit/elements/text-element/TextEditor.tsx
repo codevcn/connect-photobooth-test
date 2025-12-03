@@ -149,17 +149,16 @@ export const TextMenuWrapper = () => {
   const cancelSelectingElement = useEditedElementStore((state) => state.cancelSelectingElement)
 
   const scrollToSelectedElement = () => {
-    if (elementType !== 'text') return
-    cancelSelectingZoomingImages()
-    if (window.innerWidth < 662) {
-      document.body
-        .querySelector('.NAME-print-area-container')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    } else {
-      document.body
-        .querySelector('.NAME-menu-text-element')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
+    // if (elementType !== 'text') return
+    // if (window.innerWidth < 662) {
+    //   document.body
+    //     .querySelector('.NAME-print-area-container')
+    //     ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    // } else {
+    //   document.body
+    //     .querySelector('.NAME-menu-text-element')
+    //     ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    // }
   }
 
   useEffect(() => {

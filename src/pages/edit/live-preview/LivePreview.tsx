@@ -1,5 +1,5 @@
 import { usePrintArea } from '@/hooks/use-print-area'
-import { TBaseProduct, TPrintedImage } from '@/utils/types/global'
+import { TBaseProduct, TPosition, TPrintedImage } from '@/utils/types/global'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { PrintAreaOverlay } from './PrintAreaOverlay'
 import { EditedElementsArea } from './EditedElementsArea'
@@ -10,9 +10,13 @@ import { createPortal } from 'react-dom'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { createCommonConstants } from '@/utils/contants'
 import { useZoomEditBackground } from '@/hooks/use-zoom-edit-background'
-import { adjustSizeOfPlacedImageOnPlaced } from '../helpers'
+import { adjustSizeOfPlacedImageOnPlaced, cancelSelectingZoomingImages } from '../helpers'
 import { useEditAreaStore } from '@/stores/ui/edit-area.store'
 import { MyDevComponent } from '@/dev/components/Preview'
+import { useDragElementWithoutButton } from '@/hooks/element/use-drag-element-without-button'
+import { useDragEditBackground } from '@/hooks/use-drag-edit-background'
+import { toast } from 'react-toastify'
+import { useEditedElementStore } from '@/stores/element/element.store'
 
 type TZoomButtonsProps = {
   scale: number
@@ -128,7 +132,10 @@ export const LivePreview = ({
 
   const minZoom = 0.8
   const maxZoom = 3
-  const { containerRef, scale, handlers, controls } = useZoomEditBackground(minZoom, maxZoom)
+  const { containerRef: refForZoom, scale, controls } = useZoomEditBackground(minZoom, maxZoom)
+  const { refForDrag, position } = useDragEditBackground({
+    scaleFactor: scale,
+  })
 
   const { printAreaRef, printAreaContainerRef, checkIfAnyElementOutOfBounds, isOutOfBounds } =
     usePrintArea(
@@ -195,8 +202,13 @@ export const LivePreview = ({
 
   return (
     <div
-      ref={containerRef}
-      {...handlers}
+      ref={(node) => {
+        refForZoom.current = node
+      }}
+      onPointerDownCapture={(e) => {
+        cancelSelectingZoomingImages()
+        useEditedElementStore.getState().cancelSelectingElement()
+      }}
       onDragStart={(e) => e.preventDefault()}
       className="NAME-print-area-container-wrapper smd:w-full overflow-hidden w-full min-h-full h-full relative flex items-center justify-center"
     >
@@ -220,11 +232,12 @@ export const LivePreview = ({
       <div
         ref={(node) => {
           printAreaContainerRef.current = node
+          refForDrag.current = node
         }}
-        className="NAME-print-area-container w-full h-full min-h-[150px] overflow-hidden bg-gray-100 border z-50 border-gray-400/30 relative"
+        className="NAME-print-area-container touch-none w-full h-full min-h-[150px] overflow-hidden bg-gray-100 border z-50 border-gray-400/30 relative"
         style={{
           backgroundColor: adjustNearF3F4F6(getFinalColorValue() || '#ffffff'),
-          transform: `scale(${scale})`,
+          transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
         }}
       >
         <div

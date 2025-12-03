@@ -6,7 +6,6 @@ import { typeToObject } from '@/utils/helpers'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
 import { useEditAreaStore } from '@/stores/ui/edit-area.store'
 import { createPortal } from 'react-dom'
-import { toast } from 'react-toastify'
 
 const MAX_ZOOM: number = 4
 const MIN_ZOOM: number = 0.4
@@ -240,7 +239,7 @@ export const StickerElement = ({
 
         {createPortal(
           <div
-            className="NAME-element-interactive-buttons fixed z-90 bg-transparent shadow-[0_0_0_2px_#f54900]"
+            className="NAME-element-interactive-buttons fixed z-90 bg-transparent shadow-[0_0_0_2px_#f54900] touch-none"
             style={{
               display: isSelected && interactiveBtns.isShown ? 'block' : 'none',
               top: interactiveBtns.buttonsContainerStyle.top,
@@ -300,11 +299,7 @@ export const StickerElement = ({
             </div>
             <div className={`NAME-remove-box absolute -top-7 -right-7 md:-top-8 md:-right-8`}>
               <button
-                onClick={(e) => {
-                  toast.info('alok vcn')
-                  e.stopPropagation()
-                  removeStickerElement(id)
-                }}
+                onClick={removeElement}
                 className="bg-red-600 text-white rounded-full p-1 active:scale-90 transition"
               >
                 <svg

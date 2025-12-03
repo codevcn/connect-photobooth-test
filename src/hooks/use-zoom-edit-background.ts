@@ -56,15 +56,6 @@ export const useZoomEditBackground = (minZoom: number = 0.5, maxZoom: number = 3
     scale,
     position,
     isDragging: false,
-    handlers: {
-      onMouseDown: () => {},
-      onMouseMove: () => {},
-      onMouseUp: () => {},
-      onMouseLeave: () => {},
-      onTouchStart: () => {},
-      onTouchMove: () => {},
-      onTouchEnd: () => {},
-    },
     controls: {
       zoomIn,
       zoomOut,

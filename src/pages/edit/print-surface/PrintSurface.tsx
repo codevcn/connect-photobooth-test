@@ -19,7 +19,7 @@ export const PrintSurface = ({ printSurfaces, pickedVariant }: TPrintSurfaceProp
 
   return (
     printSurfaces &&
-    printSurfaces.length > 0 && (
+    printSurfaces.length > 1 && (
       <div className="mt-4">
         <h3 className="text-slate-800 font-bold text-sm mb-2">Mặt in</h3>
         <div className="flex flex-wrap gap-2">

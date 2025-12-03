@@ -172,7 +172,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
 
   return (
     <div className="w-full">
-      <div className="relative aspect-square bg-gray-900 rounded-2xl overflow-hidden shadow-lg max-h-[90vh]">
+      {/* <div className="relative aspect-square bg-gray-900 rounded-2xl overflow-hidden shadow-lg max-h-[90vh]">
         <video
           ref={videoRef}
           className="max-w-[600px] max-h-[90vh] w-full h-full object-cover transition-transform duration-300"
@@ -216,7 +216,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
         >
           Hãy đưa mã QR vào khung để quét
         </p>
-      )}
+      )} */}
     </div>
     // <></>
   )

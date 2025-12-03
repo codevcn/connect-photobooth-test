@@ -24,6 +24,7 @@ import { StickerElementMenu } from './elements/sticker-element/Menu'
 import { TextElementMenu } from './elements/text-element/Menu'
 import { PrintedImageElementMenu } from './elements/printed-image/Menu'
 import { cancelSelectingZoomingImages } from './helpers'
+import { toast } from 'react-toastify'
 
 const TemplateFrameMenuResponsive = () => {
   const selectedElement = useEditedElementStore((s) => s.selectedElement)
@@ -167,9 +168,9 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
   const firstRenderRef = useRef(true)
 
   useEffect(() => {
-    const listenClickOnPage = (e: MouseEvent) => {
-      const target = e.target as HTMLElement | null
-      if (target) {
+    const listenPointerDownOnPage = (e: PointerEvent) => {
+      const target = e.target
+      if (target instanceof Element) {
         if (
           !(
             target.closest('.NAME-root-element') ||
@@ -186,15 +187,20 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
         ) {
           cancelSelectingElement()
         }
-      }
-    }
-
-    const listenPointerDownOnPage = (e: PointerEvent) => {
-      if (e.target instanceof Element) {
-        if (!e.target.closest('.NAME-zoom-placed-image-btn-wrapper')) {
+        if (!target.closest('.NAME-zoom-placed-image-btn-wrapper')) {
           cancelSelectingZoomingImages()
         }
       }
+    }
+
+    const listenWindowResize = () => {
+      cancelSelectingZoomingImages()
+      cancelSelectingElement()
+    }
+
+    const listenWindowScroll = () => {
+      cancelSelectingZoomingImages()
+      cancelSelectingElement()
     }
 
     if (mockupId && firstRenderRef.current) {
@@ -202,19 +208,14 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
       firstRenderRef.current = false
     }
 
-    const listenWindowScroll = () => {
-      cancelSelectingZoomingImages()
-      // cancelSelectingElement()
-    }
-
     loadAllFonts()
-    document.body.addEventListener('click', listenClickOnPage)
     document.body.addEventListener('pointerdown', listenPointerDownOnPage)
     window.addEventListener('scroll', listenWindowScroll)
+    window.addEventListener('resize', listenWindowResize)
     return () => {
-      document.body.removeEventListener('click', listenClickOnPage)
       document.body.removeEventListener('pointerdown', listenPointerDownOnPage)
       window.removeEventListener('scroll', listenWindowScroll)
+      window.removeEventListener('resize', listenWindowResize)
       useEditedElementStore.getState().resetData()
       useElementLayerStore.getState().resetData()
       useProductUIDataStore.getState().resetData()

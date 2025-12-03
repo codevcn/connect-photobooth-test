@@ -14,7 +14,7 @@ interface UseDraggableReturn {
   ref: React.RefObject<HTMLDivElement | null>
 }
 
-export const useDragElement = (options: UseDraggableOptions): UseDraggableReturn => {
+export const useDragElementWithoutButton = (options: UseDraggableOptions): UseDraggableReturn => {
   const {
     currentPosition,
     setCurrentPosition,

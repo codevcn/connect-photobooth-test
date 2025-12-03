@@ -220,7 +220,7 @@ export const TemplateFrameMenu = ({ frameId, onClose, printedImageURL }: Printed
         <div className="h-8 smd:h-9 cursor-pointer border-2 border-main-cl text-white hover:bg-white hover:text-main-cl flex items-center justify-center bg-main-cl rounded px-1 shadow">
           <GrayscaleControl />
         </div>
-        <div className="flex items-center justify-center h-8 smd:h-9 mobile-touch cursor-pointer border-2 border-main-cl z-30 text-white bg-main-cl rounded hover:bg-white hover:text-main-cl w-full">
+        <div className="s2xl:col-span-1 col-span-2 flex items-center justify-center h-8 smd:h-9 mobile-touch cursor-pointer border-2 border-main-cl z-30 text-white bg-main-cl rounded hover:bg-white hover:text-main-cl w-full">
           <button
             onClick={onClose}
             className="group flex items-center justify-center h-7 w-full text-inherit rounded p-1"

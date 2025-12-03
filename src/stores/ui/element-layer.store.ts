@@ -19,12 +19,12 @@ export const useElementLayerStore = create<TUseElementLayerStore>((set) => ({
     set({ elementLayers: [] })
   },
   setElementLayers: (elementLayers) => set({ elementLayers }),
-  addToElementLayers: (newLayer) =>
+  addToElementLayers: (newElementLayer) =>
     set(({ elementLayers }) => {
-      if (elementLayers.some((el) => el.elementId === newLayer.elementId)) {
+      if (elementLayers.some((el) => el.elementId === newElementLayer.elementId)) {
         return { elementLayers }
       }
-      return { elementLayers: [...elementLayers, newLayer] }
+      return { elementLayers: [...elementLayers, newElementLayer] }
     }),
   removeFromElementLayers: (elementIds) => {
     set((state) => ({

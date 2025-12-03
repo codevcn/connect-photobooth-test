@@ -2,14 +2,14 @@ import { TElementMountType, TPrintedImageVisualState } from '@/utils/types/globa
 import { useEffect, useRef, useState } from 'react'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { useElementControl } from '@/hooks/element/use-element-control'
-import { getNaturalSizeOfImage, typeToObject } from '@/utils/helpers'
+import { typeToObject } from '@/utils/helpers'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
-import { captureCurrentElementPosition } from '../../helpers'
 import { useEditAreaStore } from '@/stores/ui/edit-area.store'
 import { createPortal } from 'react-dom'
 
 const MAX_ZOOM: number = 4
-const MIN_ZOOM: number = 0.5
+const MIN_ZOOM: number = 0.4
+const DEFAULT_ELEMENT_DIMENSION_SIZE: number = 80
 
 type TInteractiveButtonsState = {
   buttonsContainerStyle: { top: number; left: number; width: number; height: number }
@@ -18,7 +18,7 @@ type TInteractiveButtonsState = {
 
 type TPrintedImageElementProps = {
   element: TPrintedImageVisualState
-  elementContainerRef: React.RefObject<HTMLDivElement | null>
+  allowedPrintAreaRef: React.RefObject<HTMLDivElement | null>
   mountType: TElementMountType
   isSelected: boolean
   selectElement: (elementId: string, elementType: 'printed-image', path: string) => void
@@ -28,14 +28,13 @@ type TPrintedImageElementProps = {
 
 export const PrintedImageElement = ({
   element,
-  elementContainerRef,
+  allowedPrintAreaRef,
   isSelected,
   selectElement,
   removePrintedImageElement,
   printAreaContainerRef,
 }: TPrintedImageElementProps) => {
   const { path, id, mountType, height, width } = element
-  const defaultElementHeight: number = 100
   const rootRef = useRef<HTMLElement | null>(null)
   const scaleFactor = useEditAreaStore((state) => state.editAreaScaleValue)
   const {
@@ -45,7 +44,7 @@ export const PrintedImageElement = ({
     forDrag: { ref: refForDrag, dragButtonRef },
     state: { position, angle, scale, zindex },
     handleSetElementState,
-  } = useElementControl(id, rootRef, elementContainerRef, printAreaContainerRef, {
+  } = useElementControl(id, rootRef, allowedPrintAreaRef, printAreaContainerRef, {
     maxZoom: MAX_ZOOM,
     minZoom: MIN_ZOOM,
     angle: element.angle,
@@ -104,70 +103,63 @@ export const PrintedImageElement = ({
 
   const moveElementIntoCenter = (
     root: HTMLElement,
-    elementContainer: HTMLElement,
+    allowedPrintArea: HTMLElement,
     printAreaContainer: HTMLElement
   ) => {
-    const elementContainerRect = elementContainer.getBoundingClientRect()
+    const allowedPrintAreaRect = allowedPrintArea.getBoundingClientRect()
     const rootRect = root.getBoundingClientRect()
     const printAreaContainerRect = printAreaContainer.getBoundingClientRect()
     handleSetElementState(
-      (elementContainerRect.left +
-        (elementContainerRect.width - rootRect.width) / 2 -
+      (allowedPrintAreaRect.left +
+        (allowedPrintAreaRect.width - rootRect.width) / 2 -
         printAreaContainerRect.left) /
         scaleFactor,
-      (elementContainerRect.top +
-        (elementContainerRect.height - rootRect.height) / 2 -
+      (allowedPrintAreaRect.top +
+        (allowedPrintAreaRect.height - rootRect.height) / 2 -
         printAreaContainerRect.top) /
         scaleFactor
     )
-    captureCurrentElementPosition(root, printAreaContainer)
   }
 
   const initElementDisplaySize = (
     root: HTMLElement,
-    elementContainer: HTMLElement,
+    allowedPrintArea: HTMLElement,
     moveToCenter?: boolean
   ) => {
     const display = root.querySelector<HTMLImageElement>('.NAME-element-display')
     if (!display) return
-    getNaturalSizeOfImage(
-      path,
-      (naturalWidth, naturalHeight) => {
-        let cssText = `
-          height: ${defaultElementHeight}px;
-          aspect-ratio: ${naturalWidth} / ${naturalHeight};
-        `
-        display.style.cssText = cssText
-        display.onload = () => {
-          if (moveToCenter) {
-            if (printAreaContainerRef.current) {
-              moveElementIntoCenter(root, elementContainer, printAreaContainerRef.current)
-            }
+    display.onload = () => {
+      const { naturalWidth, naturalHeight } = display
+      if (naturalWidth > naturalHeight) {
+        root.style.width = `${DEFAULT_ELEMENT_DIMENSION_SIZE}px`
+        root.style.aspectRatio = `${naturalWidth} / ${naturalHeight}`
+        root.style.height = 'auto'
+      } else {
+        root.style.height = `${DEFAULT_ELEMENT_DIMENSION_SIZE}px`
+        root.style.aspectRatio = `${naturalWidth} / ${naturalHeight}`
+        root.style.width = 'auto'
+      }
+      if (moveToCenter) {
+        requestAnimationFrame(() => {
+          if (printAreaContainerRef.current) {
+            moveElementIntoCenter(root, allowedPrintArea, printAreaContainerRef.current)
           }
-          // reset max size limit after image load
-          const elementContainerRect = elementContainer.getBoundingClientRect()
-          const mainBox = root.querySelector<HTMLElement>('.NAME-element-main-box')
-          if (!mainBox) return
-          mainBox.style.cssText = `max-width: ${elementContainerRect.width - 16}px; max-height: ${
-            elementContainerRect.height - 16
-          }px;`
-        }
-        display.src = path
-      },
-      (error) => {}
-    )
+        })
+      }
+    }
+    display.src = path
   }
 
   const initElement = () => {
     requestAnimationFrame(() => {
       const root = rootRef.current
       if (!root) return
-      const elementContainer = elementContainerRef.current
-      if (!elementContainer) return
+      const allowedPrintArea = allowedPrintAreaRef.current
+      if (!allowedPrintArea) return
       const printAreaContainer = printAreaContainerRef.current
       if (!printAreaContainer) return
       if (mountType === 'from-new') {
-        initElementDisplaySize(root, elementContainer, true)
+        initElementDisplaySize(root, allowedPrintArea, true)
       }
     })
   }
@@ -211,10 +203,10 @@ export const PrintedImageElement = ({
         transform: `scale(${scale}) rotate(${angle}deg)`,
         zIndex: zindex,
         ...(mountType === 'from-new'
-          ? { height: `${defaultElementHeight}px` }
+          ? { height: `${DEFAULT_ELEMENT_DIMENSION_SIZE}px` }
           : {
               height: `${height}px`,
-              width: `${width}px`,
+              aspectRatio: `${width} / ${height}`,
             }),
       }}
       className={`NAME-root-element NAME-element-type-printed-image absolute transition h-fit w-fit touch-none z-6`}

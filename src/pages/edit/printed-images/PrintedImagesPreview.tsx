@@ -136,16 +136,16 @@ const PrintedImagesForTemplate = ({ printedImages }: PrintedImageForTemplateProp
   const [pickedImage, setPickedImage] = useState<TPrintedImage>()
 
   const scrollToSelectedElement = () => {
-    if (elementType !== 'template-frame') return
-    if (window.innerWidth < 662) {
-      document.body
-        .querySelector('.NAME-print-area-container')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    } else {
-      document.body
-        .querySelector('.NAME-menu-template-frame')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
+    // if (elementType !== 'template-frame') return
+    // if (window.innerWidth < 662) {
+    //   document.body
+    //     .querySelector('.NAME-print-area-container')
+    //     ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    // } else {
+    //   document.body
+    //     .querySelector('.NAME-menu-template-frame')
+    //     ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    // }
   }
 
   const handleSelectElement = () => {

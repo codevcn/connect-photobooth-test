@@ -4,7 +4,6 @@ import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { useTextElementControl } from '@/hooks/element/use-text-element-control'
 import { typeToObject } from '@/utils/helpers'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
-import { captureCurrentElementPosition } from '../../helpers'
 import { useEditAreaStore } from '@/stores/ui/edit-area.store'
 import { createPortal } from 'react-dom'
 
@@ -18,7 +17,7 @@ type TInteractiveButtonsState = {
 
 type TTextElementProps = {
   element: TTextVisualState
-  elementContainerRef: React.RefObject<HTMLDivElement | null>
+  allowedPrintAreaRef: React.RefObject<HTMLDivElement | null>
   mountType: TElementMountType
   isSelected: boolean
   selectElement: (elementId: string, elementType: 'text') => void
@@ -28,7 +27,7 @@ type TTextElementProps = {
 
 export const TextElement = ({
   element,
-  elementContainerRef,
+  allowedPrintAreaRef,
   isSelected,
   selectElement,
   removeTextElement,
@@ -44,7 +43,7 @@ export const TextElement = ({
     forDrag: { ref: refForDrag, dragButtonRef },
     state: { position, angle, zindex, fontSize, textColor, content, fontFamily, fontWeight, scale },
     handleSetElementState,
-  } = useTextElementControl(id, rootRef, elementContainerRef, printAreaContainerRef, {
+  } = useTextElementControl(id, rootRef, allowedPrintAreaRef, printAreaContainerRef, {
     maxFontSize: MAX_TEXT_FONT_SIZE,
     minFontSize: MIN_TEXT_FONT_SIZE,
     position: element.position,
@@ -125,31 +124,30 @@ export const TextElement = ({
 
   const moveElementIntoCenter = (
     root: HTMLElement,
-    elementContainer: HTMLElement,
+    allowedPrintArea: HTMLElement,
     printAreaContainer: HTMLElement
   ) => {
-    const elementContainerRect = elementContainer.getBoundingClientRect()
+    const allowedPrintAreaRect = allowedPrintArea.getBoundingClientRect()
     const rootRect = root.getBoundingClientRect()
     const printAreaContainerRect = printAreaContainer.getBoundingClientRect()
     handleSetElementState(
-      (elementContainerRect.left +
-        (elementContainerRect.width - rootRect.width) / 2 -
+      (allowedPrintAreaRect.left +
+        (allowedPrintAreaRect.width - rootRect.width) / 2 -
         printAreaContainerRect.left) /
         scaleFactor,
-      (elementContainerRect.top +
-        (elementContainerRect.height - rootRect.height) / 2 -
+      (allowedPrintAreaRect.top +
+        (allowedPrintAreaRect.height - rootRect.height) / 2 -
         printAreaContainerRect.top) /
         scaleFactor
     )
-    captureCurrentElementPosition(root, printAreaContainer)
   }
 
   const initElementDisplaySize = (
     root: HTMLElement,
-    elementContainer: HTMLElement,
+    allowedPrintArea: HTMLElement,
     moveToCenter?: boolean
   ) => {
-    // const editorContainerRect = elementContainer.getBoundingClientRect()
+    // const editorContainerRect = allowedPrintArea.getBoundingClientRect()
     // const mainBox = root.querySelector<HTMLElement>('.NAME-element-main-box')
     // if (!mainBox) return
     // mainBox.style.cssText = `max-width: ${editorContainerRect.width - 16}px; max-height: ${
@@ -161,7 +159,7 @@ export const TextElement = ({
       requestAnimationFrame(() => {
         const printAreaContainer = printAreaContainerRef.current
         if (printAreaContainer) {
-          moveElementIntoCenter(root, elementContainer, printAreaContainer)
+          moveElementIntoCenter(root, allowedPrintArea, printAreaContainer)
         }
       })
     }
@@ -171,10 +169,10 @@ export const TextElement = ({
     requestAnimationFrame(() => {
       const root = rootRef.current
       if (!root) return
-      const elementContainer = elementContainerRef.current
-      if (!elementContainer) return
+      const allowedPrintArea = allowedPrintAreaRef.current
+      if (!allowedPrintArea) return
       if (mountType === 'from-new') {
-        initElementDisplaySize(root, elementContainer, true)
+        initElementDisplaySize(root, allowedPrintArea, true)
       }
     })
   }

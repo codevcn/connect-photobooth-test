@@ -5,7 +5,6 @@ import { useEffect, useState, useRef } from 'react'
 import { createInitialConstants } from '@/utils/contants'
 import { TElementMountType, TElementVisualBaseState, TPosition } from '@/utils/types/global'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
-import { captureCurrentElementPosition } from '@/pages/edit/helpers'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { useEditAreaStore } from '@/stores/ui/edit-area.store'
 
@@ -183,7 +182,6 @@ export const useElementControl = (
       if (!element) return
       const container = containerForElementAbsoluteToRef.current
       if (!container) return
-      captureCurrentElementPosition(element, container)
     },
   })
 

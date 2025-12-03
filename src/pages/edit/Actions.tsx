@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { MockupPreview } from './MockupPreview'
 import { useEffect, useRef, useState } from 'react'
 import { LocalStorageHelper } from '@/utils/localstorage'
+import { toast } from 'react-toastify'
 
 export const Actions = () => {
   const cartCount = useProductUIDataStore((s) => s.cartCount)
@@ -60,6 +61,17 @@ export const Actions = () => {
     }
   }
 
+  const handleShowMockupPreview = () => {
+    if (
+      document.body.querySelector<HTMLElement>(
+        '.NAME-print-area-container .NAME-print-area-allowed[data-is-out-of-bounds="true"]'
+      )
+    ) {
+      return toast.error('Chỉnh sửa vượt ra ngoài vùng in cho phép. Vui lòng điều chỉnh lại.')
+    }
+    setShowMockupPreview(true)
+  }
+
   useEffect(() => {
     updateCartCount()
     initProductAttachedData()
@@ -81,9 +93,7 @@ export const Actions = () => {
       </div>
 
       <button
-        onClick={() => {
-          setShowMockupPreview(true)
-        }}
+        onClick={handleShowMockupPreview}
         className="mt-2 w-full cursor-pointer border-main-cl border-2 active:bg-main-hover-cl text-main-cl font-bold h-10 px-4 rounded shadow-lg touch-target flex items-center justify-center gap-2 text-lg"
       >
         Xem trước bản mockup

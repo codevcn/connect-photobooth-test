@@ -152,6 +152,7 @@ const restoreMockupVisualStates = (mockupId: string) => {
 }
 
 const cancelSelectingZoomingImages = () => {
+  // ko cần truy vấn từ container vì element nằm ngay trên body
   for (const el of document.body.querySelectorAll<HTMLElement>(
     '.NAME-zoom-placed-image-btn-wrapper'
   )) {
@@ -209,12 +210,19 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
       firstRenderRef.current = false
     }
 
+    const listenWindowScroll = () => {
+      cancelSelectingZoomingImages()
+      cancelSelectingElement()
+    }
+
     loadAllFonts()
     document.body.addEventListener('click', listenClickOnPage)
     document.body.addEventListener('pointerdown', listenPointerDownOnPage)
+    window.addEventListener('scroll', listenWindowScroll)
     return () => {
       document.body.removeEventListener('click', listenClickOnPage)
       document.body.removeEventListener('pointerdown', listenPointerDownOnPage)
+      window.removeEventListener('scroll', listenWindowScroll)
       useEditedElementStore.getState().resetData()
       useElementLayerStore.getState().resetData()
       useProductUIDataStore.getState().resetData()

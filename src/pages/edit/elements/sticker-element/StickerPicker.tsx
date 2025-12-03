@@ -285,16 +285,16 @@ export const StickerMenuWrapper = () => {
   const cancelSelectingElement = useEditedElementStore((state) => state.cancelSelectingElement)
 
   const scrollToSelectedElement = () => {
-    if (elementType !== 'sticker') return
-    if (window.innerWidth < 662) {
-      document.body
-        .querySelector('.NAME-print-area-container')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    } else {
-      document.body
-        .querySelector('.NAME-menu-sticker-element')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
+    // if (elementType !== 'sticker') return
+    // if (window.innerWidth < 662) {
+    //   document.body
+    //     .querySelector('.NAME-print-area-container')
+    //     ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    // } else {
+    //   document.body
+    //     .querySelector('.NAME-menu-sticker-element')
+    //     ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    // }
   }
 
   useEffect(() => {

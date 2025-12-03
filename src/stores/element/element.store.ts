@@ -72,6 +72,7 @@ export const useEditedElementStore = create<TUseElementStore>((set, get) => ({
       selectedElement: null,
       stickerElements: [],
       textElements: [],
+      printedImages: [],
     })
   },
   addTextElement: (addedTextElements) => {

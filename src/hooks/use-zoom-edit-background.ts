@@ -1,4 +1,5 @@
 import { createInitialConstants } from '@/utils/contants'
+import { TPosition } from '@/utils/types/global'
 import React, { useState, useRef, useEffect } from 'react'
 
 const ignoreZoomByPrintAreaAllowed = (
@@ -11,29 +12,29 @@ const ignoreZoomByPrintAreaAllowed = (
 }
 
 // Hook để xử lý zoom và pan
-export const useZoomEditBackground = (minZoom = 0.5, maxZoom = 3) => {
+export const useZoomEditBackground = (minZoom: number = 0.5, maxZoom: number = 3) => {
   const [scale, setScale] = useState(createInitialConstants<number>('ELEMENT_ZOOM'))
-  const [position, setPosition] = useState({ x: 0, y: 0 })
+  const [position, setPosition] = useState<TPosition>({ x: 0, y: 0 })
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Xử lý zoom bằng scroll wheel - zoom về trung tâm
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
+  // // Xử lý zoom bằng scroll wheel - zoom về trung tâm
+  // useEffect(() => {
+  //   const container = containerRef.current
+  //   if (!container) return
 
-    const handleWheel = (e: WheelEvent) => {
-      if (ignoreZoomByPrintAreaAllowed(e)) return
-      e.preventDefault()
+  //   const handleWheel = (e: WheelEvent) => {
+  //     if (ignoreZoomByPrintAreaAllowed(e)) return
+  //     e.preventDefault()
 
-      const delta = e.deltaY > 0 ? 0.9 : 1.1
-      const newScale = Math.min(Math.max(scale * delta, minZoom), maxZoom)
+  //     const delta = e.deltaY > 0 ? 0.9 : 1.1
+  //     const newScale = Math.min(Math.max(scale * delta, minZoom), maxZoom)
 
-      setScale(newScale)
-    }
+  //     setScale(newScale)
+  //   }
 
-    container.addEventListener('wheel', handleWheel, { passive: false })
-    return () => container.removeEventListener('wheel', handleWheel)
-  }, [scale, minZoom, maxZoom])
+  //   container.addEventListener('wheel', handleWheel, { passive: false })
+  //   return () => container.removeEventListener('wheel', handleWheel)
+  // }, [scale, minZoom, maxZoom])
 
   // Reset về mặc định
   const reset = () => {

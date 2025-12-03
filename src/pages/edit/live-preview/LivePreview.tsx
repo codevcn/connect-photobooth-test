@@ -127,7 +127,7 @@ export const LivePreview = ({
   }, [pickedProduct.id, pickedProduct.printAreaList, pickedSurfaceId, editedVariantId])
 
   const minZoom = 0.8
-  const maxZoom = 5
+  const maxZoom = 3
   const { containerRef, scale, handlers, controls } = useZoomEditBackground(minZoom, maxZoom)
 
   const { printAreaRef, printAreaContainerRef, checkIfAnyElementOutOfBounds, isOutOfBounds } =

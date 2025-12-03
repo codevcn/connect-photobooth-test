@@ -350,21 +350,6 @@ export const initPlacedImageStyle = (
   })
 }
 
-export const captureCurrentElementPosition = (
-  element: HTMLElement,
-  conatinerElementAbsoluteTo: HTMLElement
-) => {
-  const childRect = element.getBoundingClientRect()
-  const parentRect = conatinerElementAbsoluteTo.getBoundingClientRect()
-
-  // Lưu vị trí dưới dạng % so với parent
-  const leftPercent = ((childRect.left - parentRect.left) / parentRect.width) * 100
-  const topPercent = ((childRect.top - parentRect.top) / parentRect.height) * 100
-
-  element.dataset.leftPercent = `${leftPercent}`
-  element.dataset.topPercent = `${topPercent}`
-}
-
 export const assignMockFrameSizeToTemplate = (
   templateShapeType: TShapeOrientationType,
   templateType: TTemplateType,

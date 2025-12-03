@@ -93,7 +93,9 @@ export const FramesDisplayer = ({
     const containerB = elementsBoxRef.current
     if (!containerB) return null
 
-    const children = containerB.querySelectorAll<HTMLElement>('.NAME-frame-placed-image')
+    const children = containerB.querySelectorAll<HTMLElement>(
+      '.NAME-frame-placed-image-wrapper.NAME-not-zoomed'
+    )
     if (children.length === 0) return null
 
     let minX = Infinity,
@@ -101,7 +103,7 @@ export const FramesDisplayer = ({
     let maxX = -Infinity,
       maxY = -Infinity
 
-    children.forEach((child) => {
+    for (const child of children) {
       const rect = child.getBoundingClientRect()
       const bRect = containerB.getBoundingClientRect()
 
@@ -115,7 +117,7 @@ export const FramesDisplayer = ({
       minY = Math.min(minY, relativeTop)
       maxX = Math.max(maxX, relativeRight)
       maxY = Math.max(maxY, relativeBottom)
-    })
+    }
 
     return {
       left: minX,

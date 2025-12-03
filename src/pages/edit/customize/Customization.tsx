@@ -47,7 +47,7 @@ export const Customization = ({ printedImages }: TCustomizeProps) => {
         Cá nhân hóa
       </h3>
       <Instructions />
-      <div className="smd:mt-6 mt-1 overflow-hidden relative w-full">
+      <div className="smd:mt-6 mt-1 relative w-full">
         <TemplatesPicker printedImages={printedImages} />
         <div className="gap-2 grid grid-cols-1 smd:grid-cols-2 flex-wrap mt-2">
           <PrintedImagesPreview printedImages={printedImages} />

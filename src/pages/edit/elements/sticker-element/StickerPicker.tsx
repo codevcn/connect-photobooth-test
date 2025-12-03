@@ -3,6 +3,7 @@ import { createInitialConstants } from '@/utils/contants'
 import { useState, useEffect } from 'react'
 import { StickerElementMenu } from './Menu'
 import { generateUniqueId } from '@/utils/helpers'
+import { cancelSelectingZoomingImages } from '../../helpers'
 
 type TStickerGroup = {
   name: string
@@ -285,16 +286,17 @@ export const StickerMenuWrapper = () => {
   const cancelSelectingElement = useEditedElementStore((state) => state.cancelSelectingElement)
 
   const scrollToSelectedElement = () => {
-    // if (elementType !== 'sticker') return
-    // if (window.innerWidth < 662) {
-    //   document.body
-    //     .querySelector('.NAME-print-area-container')
-    //     ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    // } else {
-    //   document.body
-    //     .querySelector('.NAME-menu-sticker-element')
-    //     ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    // }
+    if (elementType !== 'sticker') return
+    cancelSelectingZoomingImages()
+    if (window.innerWidth < 662) {
+      document.body
+        .querySelector('.NAME-print-area-container')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else {
+      document.body
+        .querySelector('.NAME-menu-sticker-element')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
   }
 
   useEffect(() => {

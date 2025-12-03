@@ -1,6 +1,7 @@
 import { useEditedElementStore } from '@/stores/element/element.store'
 import { useEffect } from 'react'
 import { PrintedImageElementMenu } from './Menu'
+import { cancelSelectingZoomingImages } from '../../helpers'
 
 export const PrintedImageMenuWrapper = () => {
   const selectedElement = useEditedElementStore((state) => state.selectedElement)
@@ -9,6 +10,7 @@ export const PrintedImageMenuWrapper = () => {
 
   const scrollToSelectedElement = () => {
     if (elementType !== 'printed-image') return
+    cancelSelectingZoomingImages()
     if (window.innerWidth < 662) {
       document.body
         .querySelector('.NAME-print-area-container')

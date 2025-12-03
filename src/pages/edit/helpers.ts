@@ -441,3 +441,12 @@ export const adjustSizeOfPlacedImageOnPlaced = () => {
     }
   }
 }
+
+export const cancelSelectingZoomingImages = () => {
+  // ko cần truy vấn từ container vì element nằm ngay trên body
+  for (const el of document.body.querySelectorAll<HTMLElement>(
+    '.NAME-zoom-placed-image-btn-wrapper'
+  )) {
+    el.classList.add('hidden')
+  }
+}

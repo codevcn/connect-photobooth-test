@@ -3,10 +3,8 @@ import { PlacedImage } from './PlacedImage'
 import type React from 'react'
 import { cn } from '@/configs/ui/tailwind-utils'
 import { styleFrameByTemplateType } from '@/configs/print-template/templates-helpers'
-import { useRef, useState } from 'react'
 import { useEditedElementStore } from '@/stores/element/element.store'
 import { calContrastForReadableColor, getFinalColorValue } from '@/utils/helpers'
-import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 
 type TAddImageIconProps = {} & Partial<{
   classNames: Partial<{
@@ -61,7 +59,6 @@ type TemplateFrameProps = {
   }>
   onClickFrame: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, frameId: string) => void
   displayPlusIcon: boolean
-  registerChild?: (index: number, el: HTMLImageElement | null) => void
   childIndex?: number
   onPointerDown?: (e: React.PointerEvent<HTMLDivElement>, frameId: string) => void
   displaySelectingColor: boolean
@@ -78,7 +75,6 @@ export const TemplateFrame = ({
   classNames,
   onClickFrame,
   displayPlusIcon = true,
-  registerChild,
   childIndex,
   onPointerDown,
   displaySelectingColor = false,
@@ -119,7 +115,6 @@ export const TemplateFrame = ({
           templateType={templateType}
           frameIndex={templateFrame.index}
           frame={templateFrame}
-          registerChild={registerChild}
           childIndex={childIndex}
           onImageLoad={onImageLoad}
           displayZoomButton={displayZoomButton}

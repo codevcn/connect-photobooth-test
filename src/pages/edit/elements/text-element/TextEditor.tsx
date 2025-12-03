@@ -3,6 +3,7 @@ import { createInitialConstants } from '@/utils/contants'
 import { useEffect, useRef, useState } from 'react'
 import { TextElementMenu } from './Menu'
 import { generateUniqueId } from '@/utils/helpers'
+import { cancelSelectingZoomingImages } from '../../helpers'
 
 type TEditorModalProps = {
   onClose: () => void
@@ -148,16 +149,17 @@ export const TextMenuWrapper = () => {
   const cancelSelectingElement = useEditedElementStore((state) => state.cancelSelectingElement)
 
   const scrollToSelectedElement = () => {
-    // if (elementType !== 'text') return
-    // if (window.innerWidth < 662) {
-    //   document.body
-    //     .querySelector('.NAME-print-area-container')
-    //     ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    // } else {
-    //   document.body
-    //     .querySelector('.NAME-menu-text-element')
-    //     ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    // }
+    if (elementType !== 'text') return
+    cancelSelectingZoomingImages()
+    if (window.innerWidth < 662) {
+      document.body
+        .querySelector('.NAME-print-area-container')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else {
+      document.body
+        .querySelector('.NAME-menu-text-element')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
   }
 
   useEffect(() => {

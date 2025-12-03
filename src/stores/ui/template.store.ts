@@ -34,6 +34,7 @@ type TTemplateStore = {
   removeFrameImage: (frameId: string) => void
   updatePickedTemplate: (template: TPrintTemplate) => void
   pickTemplateOnRestore: (templateId: TPrintTemplate, printAreaForTemplate: TPrintAreaInfo) => void
+  updateTemplateGrayscale: (templateId: string, grayscale: number) => void
   resetData: () => void
 }
 
@@ -227,6 +228,25 @@ export const useTemplateStore = create(
 
     updatePickedTemplate: (template) => {
       set({ pickedTemplate: { ...template } })
+    },
+
+    updateTemplateGrayscale: (templateId, grayscale) => {
+      const { allTemplates, pickedTemplate } = get()
+      const templates = [...allTemplates]
+      
+      for (const template of templates) {
+        if (template.id === templateId) {
+          template.grayscale = grayscale
+          break
+        }
+      }
+      
+      set({ allTemplates: templates })
+      
+      // Update picked template if it's the one being modified
+      if (pickedTemplate && pickedTemplate.id === templateId) {
+        set({ pickedTemplate: { ...pickedTemplate, grayscale } })
+      }
     },
   }))
 )

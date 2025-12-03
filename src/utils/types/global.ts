@@ -376,6 +376,7 @@ export type TPrintTemplate = {
   frames: TTemplateFrame[]
   type: TTemplateType
   framesCount: TFramesCount
+  grayscale?: number // 0-100 percentage
   initialVisualState?: Partial<{
     offsetY: number
   }>

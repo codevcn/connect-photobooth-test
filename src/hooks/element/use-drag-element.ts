@@ -46,7 +46,7 @@ export const useDragElement = (options: UseDraggableOptions): UseDraggableReturn
 
   // Xử lý khi bắt đầu nhấn vào nút drag
   const handleStart = useCallback(
-    (e: MouseEvent | TouchEvent) => {
+    (e: PointerEvent) => {
       if (disabled) return
 
       e.preventDefault()
@@ -55,15 +55,8 @@ export const useDragElement = (options: UseDraggableOptions): UseDraggableReturn
       isDraggingRef.current = true
       setIsDragging(true)
 
-      // Lấy vị trí ban đầu
-      let clientX: number, clientY: number
-      if (e instanceof MouseEvent) {
-        clientX = e.clientX
-        clientY = e.clientY
-      } else {
-        clientX = e.touches[0].clientX
-        clientY = e.touches[0].clientY
-      }
+      const clientX = e.clientX
+      const clientY = e.clientY
 
       offsetRef.current = {
         x: clientX - currentPosition.x * scaleFactor,
@@ -78,21 +71,14 @@ export const useDragElement = (options: UseDraggableOptions): UseDraggableReturn
 
   // Xử lý khi di chuyển
   const handleMove = useCallback(
-    (e: MouseEvent | TouchEvent) => {
+    (e: PointerEvent) => {
       if (!isDraggingRef.current || disabled) return
 
       e.preventDefault()
       e.stopPropagation()
 
-      // Lấy vị trí hiện tại
-      let clientX: number, clientY: number
-      if (e instanceof MouseEvent) {
-        clientX = e.clientX
-        clientY = e.clientY
-      } else {
-        clientX = e.touches[0].clientX
-        clientY = e.touches[0].clientY
-      }
+      const clientX = e.clientX
+      const clientY = e.clientY
 
       handleFinalPosition(clientX - offsetRef.current.x, clientY - offsetRef.current.y)
     },
@@ -121,26 +107,20 @@ export const useDragElement = (options: UseDraggableOptions): UseDraggableReturn
     if (!button) return
 
     // Đăng ký sự kiện chỉ trên nút drag
-    button.addEventListener('mousedown', handleStart)
-    button.addEventListener('touchstart', handleStart, { passive: false })
+    button.addEventListener('pointerdown', handleStart)
 
     // Sự kiện move và end trên document để xử lý khi kéo ra ngoài
-    document.body.addEventListener('mousemove', handleMove)
-    document.body.addEventListener('touchmove', handleMove, { passive: false })
+    document.body.addEventListener('pointermove', handleMove)
 
-    document.body.addEventListener('mouseup', handleEnd)
-    document.body.addEventListener('touchend', handleEnd)
+    document.body.addEventListener('pointerup', handleEnd)
 
     // Cleanup
     return () => {
-      button.removeEventListener('mousedown', handleStart)
-      button.removeEventListener('touchstart', handleStart)
+      button.removeEventListener('pointerdown', handleStart)
 
-      document.body.removeEventListener('mousemove', handleMove)
-      document.body.removeEventListener('touchmove', handleMove)
+      document.body.removeEventListener('pointermove', handleMove)
 
-      document.body.removeEventListener('mouseup', handleEnd)
-      document.body.removeEventListener('touchend', handleEnd)
+      document.body.removeEventListener('pointerup', handleEnd)
 
       document.body.style.cursor = 'default'
       document.body.style.userSelect = 'auto'

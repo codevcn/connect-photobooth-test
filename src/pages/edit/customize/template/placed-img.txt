@@ -1,18 +1,15 @@
-import { TPlacedImage, TTemplateFrame, TTemplateType } from '@/utils/types/global'
+import { TPlacedImage, TPosition, TTemplateFrame, TTemplateType } from '@/utils/types/global'
 import { stylePlacedImageByTemplateType } from '@/configs/print-template/templates-helpers'
 import { useEffect, useRef, useState } from 'react'
 import { useZoomElement } from '@/hooks/element/use-zoom-element'
 import { createPortal } from 'react-dom'
 import { useEditAreaStore } from '@/stores/ui/edit-area.store'
-import { useTemplateStore } from '@/stores/ui/template.store'
 
 type TPlacedImageProps = {
   placedImage: TPlacedImage
   templateType: TTemplateType
   frameIndex: TTemplateFrame['index']
   frame: TTemplateFrame
-  isLog?: boolean
-  registerChild?: (index: number, el: HTMLImageElement | null) => void
   childIndex?: number
   onImageLoad?: () => void
   displayZoomButton?: boolean
@@ -23,32 +20,70 @@ export const PlacedImage = ({
   templateType,
   frameIndex,
   frame,
-  isLog,
-  registerChild,
   childIndex,
   onImageLoad,
   displayZoomButton = false,
 }: TPlacedImageProps) => {
   const { placementState } = placedImage
   const [zoom, setZoom] = useState<number>(1)
-  const { containerRef, zoomButtonRef } = useZoomElement<HTMLImageElement>({
+  const { containerRef: refForZoom, zoomButtonRef } = useZoomElement<HTMLImageElement>({
     currentZoom: zoom,
     setCurrentZoom: setZoom,
   })
   const imgRef = useRef<HTMLImageElement | null>(null)
   const scaleFactor = useEditAreaStore((state) => state.editAreaScaleValue)
-  const pickedTemplate = useTemplateStore((s) => s.pickedTemplate)
-  const grayscale = pickedTemplate?.grayscale || 0
+  const dragStart = useRef<TPosition>({ x: 0, y: 0 })
+  const isDragging = useRef<boolean>(false)
+  const positionInFrameRef = useRef<TPosition>({ x: 0, y: 0 })
+  const styleByTemplateType = stylePlacedImageByTemplateType(
+    templateType,
+    placedImage,
+    frame,
+    {},
+    zoom
+  )
 
-  const handleRef = (el: HTMLImageElement | null) => {
-    imgRef.current = el
-    containerRef.current = el
-    if (registerChild && childIndex !== undefined) {
-      registerChild(childIndex, el)
+  const handlePointerDown = (e: React.PointerEvent) => {
+    isDragging.current = true
+    dragStart.current = {
+      x: e.clientX - positionInFrameRef.current.x,
+      y: e.clientY - positionInFrameRef.current.y,
     }
+    imgRef.current!.style.cursor = 'grabbing'
   }
 
-  const handleClickImage = () => {
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging.current) return
+    const element = imgRef.current
+    const container = element?.closest<HTMLElement>('.NAME-template-frame')
+    if (!element || !container) return
+
+    const containerRect = container.getBoundingClientRect()
+    const elementRect = element.getBoundingClientRect()
+
+    let newX = e.clientX - dragStart.current.x
+    let newY = e.clientY - dragStart.current.y
+
+    // Giới hạn trong container
+    const maxX = containerRect.width - elementRect.width
+    const maxY = containerRect.height - elementRect.height
+
+    newX = Math.max(0, Math.min(newX, maxX))
+    newY = Math.max(0, Math.min(newY, maxY))
+
+    element.style.top = `${newY}px`
+    element.style.left = `${newX}px`
+    element.style.bottom = 'auto'
+    element.style.right = 'auto'
+    positionInFrameRef.current = { x: newX, y: newY }
+  }
+
+  const handlePointerUp = () => {
+    isDragging.current = false
+    imgRef.current!.style.cursor = 'grab'
+  }
+
+  const handleDisplayingZoomButton = () => {
     for (const el of document.body.querySelectorAll<HTMLElement>(
       '.NAME-zoom-placed-image-btn-wrapper'
     )) {
@@ -89,22 +124,42 @@ export const PlacedImage = ({
     updateZoomButtonWrapper(img, imgRect, zoomBtnWrapper)
   }, [zoom])
 
+  useEffect(() => {
+    const img = imgRef.current
+    if (!img) return
+    positionInFrameRef.current = {
+      x: img.offsetLeft,
+      y: img.offsetTop,
+    }
+  }, [placedImage.id])
+
   return (
-    <>
+    <div
+      style={{
+        ...styleByTemplateType,
+      }}
+      className={`${
+        zoom !== 1 ? 'NAME-zoomed' : 'NAME-not-zoomed'
+      } NAME-frame-placed-image-wrapper h-full w-full relative select-none`}
+    >
       <img
-        onClick={handleClickImage}
+        onClick={handleDisplayingZoomButton}
         onDragStart={(e) => e.preventDefault()}
-        ref={handleRef}
+        ref={(node) => {
+          imgRef.current = node
+          refForZoom.current = node
+        }}
         src={placedImage.imgURL}
-        alt="Ảnh in của bạn"
+        alt="Ảnh photobooth của bạn"
         className="NAME-frame-placed-image h-full w-full absolute top-0 left-0 z-10 select-none"
         style={{
           objectFit: placementState.objectFit,
           willChange: 'transform',
-          filter: `grayscale(${grayscale}%)`,
-          ...stylePlacedImageByTemplateType(templateType, placedImage, frame, {}, zoom),
         }}
         onLoad={(e) => onImageLoad?.()}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
         // data-placed-image-meta-data={JSON.stringify(
         //   typeToObject<TPlacedImageMetaData>({
         //     placedImageInitialSize:,
@@ -115,7 +170,7 @@ export const PlacedImage = ({
 
       {displayZoomButton &&
         createPortal(
-          <div className="NAME-zoom-placed-image-btn-wrapper hidden fixed bg-transparent top-0 left-0 z-99 border-2 border-main-cl">
+          <div className="NAME-zoom-placed-image-btn-wrapper hidden select-none fixed bg-transparent top-0 left-0 z-99 border-2 border-main-cl">
             <button
               ref={zoomButtonRef}
               onClick={(e) => e.stopPropagation()}
@@ -142,6 +197,6 @@ export const PlacedImage = ({
           </div>,
           document.body
         )}
-    </>
+    </div>
   )
 }

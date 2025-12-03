@@ -23,6 +23,7 @@ import { TemplateFrameMenu } from './customize/template/TemplateFrameMenu'
 import { StickerElementMenu } from './elements/sticker-element/Menu'
 import { TextElementMenu } from './elements/text-element/Menu'
 import { PrintedImageElementMenu } from './elements/printed-image/Menu'
+import { cancelSelectingZoomingImages } from './helpers'
 
 const TemplateFrameMenuResponsive = () => {
   const selectedElement = useEditedElementStore((s) => s.selectedElement)
@@ -151,15 +152,6 @@ const restoreMockupVisualStates = (mockupId: string) => {
   }, 0)
 }
 
-const cancelSelectingZoomingImages = () => {
-  // ko cần truy vấn từ container vì element nằm ngay trên body
-  for (const el of document.body.querySelectorAll<HTMLElement>(
-    '.NAME-zoom-placed-image-btn-wrapper'
-  )) {
-    el.classList.add('hidden')
-  }
-}
-
 type TEditPageProps = {
   products: TBaseProduct[]
   printedImages: TPrintedImage[]
@@ -212,7 +204,7 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
 
     const listenWindowScroll = () => {
       cancelSelectingZoomingImages()
-      cancelSelectingElement()
+      // cancelSelectingElement()
     }
 
     loadAllFonts()

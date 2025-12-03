@@ -42,7 +42,7 @@ export const TextElement = ({
     forRotate: { ref: refForRotate, rotateButtonRef },
     forZoom: { ref: refForZoom, zoomButtonRef },
     forDrag: { ref: refForDrag, dragButtonRef },
-    state: { position, angle, zindex, fontSize, textColor, content, fontFamily, fontWeight },
+    state: { position, angle, zindex, fontSize, textColor, content, fontFamily, fontWeight, scale },
     handleSetElementState,
   } = useTextElementControl(id, rootRef, elementContainerRef, printAreaContainerRef, {
     maxFontSize: MAX_TEXT_FONT_SIZE,
@@ -55,6 +55,7 @@ export const TextElement = ({
     zindex: element.zindex,
     fontFamily: element.fontFamily,
     fontWeight: element.fontWeight,
+    scale: element.scale,
     mountType,
   })
   const [interactiveBtns, setInteractiveBtns] = useState<TInteractiveButtonsState>({
@@ -231,6 +232,7 @@ export const TextElement = ({
           content,
           fontFamily,
           fontWeight,
+          scale,
         })
       )}
       onDragStart={(e) => e.preventDefault()}

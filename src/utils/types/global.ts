@@ -214,7 +214,7 @@ export type TElementVisualBaseState = {
   zindex: number
 }
 
-export type TTextVisualState = Omit<TElementVisualBaseState, 'scale'> & {
+export type TTextVisualState = TElementVisualBaseState & {
   id: string
   fontSize: number
   textColor: string

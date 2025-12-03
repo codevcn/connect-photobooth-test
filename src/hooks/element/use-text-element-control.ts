@@ -66,6 +66,7 @@ export const useTextElementControl = (
     fontWeight: initialFontWeight = createInitialConstants<number>('ELEMENT_TEXT_FONT_WEIGHT'),
     angle: initialAngle = createInitialConstants<number>('ELEMENT_ROTATION'),
     zindex: initialZindex = createInitialConstants<number>('ELEMENT_ZINDEX'),
+    scale: initialZoom = createInitialConstants<number>('ELEMENT_ZOOM'),
     mountType,
   } = initialParams || {}
 
@@ -86,6 +87,7 @@ export const useTextElementControl = (
       angle: initialAngle,
       zindex: initialZindex,
       mountType: mountType,
+      scale: initialZoom,
     }
   )
 
@@ -218,6 +220,7 @@ export const useTextElementControl = (
       angle: baseState.angle,
       position: baseState.position,
       zindex: baseState.zindex,
+      scale: baseState.scale,
     },
   }
 }

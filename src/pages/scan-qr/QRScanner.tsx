@@ -19,10 +19,11 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
 
   const initializeScanner = useCallback(() => {
     if (!videoRef.current) return
-    console.log('>>> [qr] run this initializeScanner')
+    console.log('>>> [qr] run this initializeScanner:', videoRef.current)
     const qrScanner = new QrScanner(
       videoRef.current,
       (result) => {
+        console.log('>>> [qr] scan result:', { result, isScanning })
         if (!isScanning) {
           setIsScanning(true)
           qrScanner.stop()

@@ -187,6 +187,7 @@ class QRGetter {
   }
 
   private async getFileId(url: string, onProgress: TGetImageDataProgressCallback): Promise<string> {
+    console.log('>>> [qr] getFileId called with url:', url)
     const browserHeaders = {
       accept:
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
@@ -300,7 +301,7 @@ class QRGetter {
     try {
       const fileId = await this.getFileId(url, onProgress)
       const data = await this.getFileInfo(fileId, onProgress)
-      console.log('>>> [qr] get file info res:', data)
+      console.log('>>> [qr] get file info:', data)
       try {
         await this.fetchImageData(data.content.fileInfo.picFile.path, onProgress)
       } catch (err) {

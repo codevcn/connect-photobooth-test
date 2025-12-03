@@ -86,7 +86,7 @@ export const ProductList: React.FC<ProductListProps> = ({
                     onClick={() => {
                       toast.info('Đang tạm khóa')
                       // tempObject.firstBackFromCartEdit_allowedPrintAreaChange = true
-                      // onEditMockup(mockupData.id)
+                      onEditMockup(mockupData.id)
                     }}
                     className="shrink-0 p-1.5 text-gray-600 bg-gray-200 transition-colors rounded-lg active:scale-95"
                     aria-label="Chỉnh sửa sản phẩm"

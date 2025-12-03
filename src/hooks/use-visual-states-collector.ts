@@ -21,33 +21,33 @@ export const useVisualStatesCollector = (): TUseVisualStatesCollectorReturn => {
       }
 
       for (const element of document.body.querySelectorAll<HTMLElement>(
-        '.NAME-element-type-printed-image'
+        '.NAME-print-area-container .NAME-element-type-printed-image'
       )) {
         const visualState = element.getAttribute('data-visual-state')
         if (!visualState) continue
         const visualStateObj = JSON.parse(visualState)
         elementsVisualState.printedImages?.push({
           ...visualStateObj,
-          height: element.offsetHeight / visualStateObj.scale,
-          width: element.offsetWidth / visualStateObj.scale,
+          height: element.offsetHeight,
+          width: element.offsetWidth,
         })
       }
 
       for (const element of document.body.querySelectorAll<HTMLElement>(
-        '.NAME-element-type-sticker'
+        '.NAME-print-area-container .NAME-element-type-sticker'
       )) {
         const visualState = element.getAttribute('data-visual-state')
         if (!visualState) continue
         const visualStateObj = JSON.parse(visualState)
         elementsVisualState.stickers?.push({
           ...visualStateObj,
-          height: element.offsetHeight / visualStateObj.scale,
-          width: element.offsetWidth / visualStateObj.scale,
+          height: element.offsetHeight,
+          width: element.offsetWidth,
         })
       }
 
       for (const element of document.body.querySelectorAll<HTMLElement>(
-        '.NAME-element-type-text'
+        '.NAME-print-area-container .NAME-element-type-text'
       )) {
         const visualState = element.getAttribute('data-visual-state')
         if (!visualState) continue
@@ -73,7 +73,7 @@ export const useVisualStatesCollector = (): TUseVisualStatesCollectorReturn => {
       if (elementsVisualState.storedTemplates?.length === 0)
         delete elementsVisualState.storedTemplates
 
-      console.log('>>> [now] element visual state oiiiiiiiiiiiii:', elementsVisualState)
+      console.log('>>> [coll] element visual state oiiiiiiiiiiiii:', elementsVisualState)
       return elementsVisualState
     },
     []

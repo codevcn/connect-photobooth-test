@@ -65,8 +65,8 @@ export const PrintedImageElement = ({
     if (!root) return
     const rootRect = root.getBoundingClientRect()
     const { left, top } = rootRect
-    const widthAfterScale = root.offsetWidth * scale
-    const heightAfterScale = root.offsetHeight * scale
+    const widthAfterScale = root.offsetWidth * scale * scaleFactor
+    const heightAfterScale = root.offsetHeight * scale * scaleFactor
     setInteractiveBtns({
       buttonsContainerStyle: {
         top: top + rootRect.height / 2 - heightAfterScale / 2,

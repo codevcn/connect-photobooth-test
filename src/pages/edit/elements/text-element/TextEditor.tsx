@@ -29,6 +29,7 @@ const EditorModal = ({ onClose }: TEditorModalProps) => {
           fontWeight: createInitialConstants<number>('ELEMENT_TEXT_FONT_WEIGHT'),
           zindex: createInitialConstants<number>('ELEMENT_ZINDEX'),
           mountType: 'from-new',
+          scale: createInitialConstants<number>('ELEMENT_ZOOM'),
         },
       ])
       // useEditedElementStore.getState().selectElement(elementId, 'text')

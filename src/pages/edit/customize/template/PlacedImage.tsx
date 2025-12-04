@@ -41,7 +41,7 @@ export const PlacedImage = ({
   const imgRef = useRef<HTMLImageElement | null>(null)
   const scaleFactor = useEditAreaStore((state) => state.editAreaScaleValue)
   const pickedTemplate = useTemplateStore((s) => s.pickedTemplate)
-  const grayscale = pickedTemplate?.grayscale || 0
+  const grayscale = pickedTemplate?.initialVisualState?.grayscale || 0
 
   const handleRef = (el: HTMLImageElement | null) => {
     imgRef.current = el

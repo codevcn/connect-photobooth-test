@@ -238,7 +238,10 @@ export const useTemplateStore = create(
 
       for (const template of templates) {
         if (template.id === templateId) {
-          template.grayscale = grayscale
+          template.initialVisualState = {
+            ...template.initialVisualState,
+            grayscale,
+          }
           break
         }
       }
@@ -247,7 +250,12 @@ export const useTemplateStore = create(
 
       // Update picked template if it's the one being modified
       if (pickedTemplate && pickedTemplate.id === templateId) {
-        set({ pickedTemplate: { ...pickedTemplate, grayscale } })
+        set({
+          pickedTemplate: {
+            ...pickedTemplate,
+            initialVisualState: { ...pickedTemplate.initialVisualState, grayscale },
+          },
+        })
       }
     },
   }))

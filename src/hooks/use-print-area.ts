@@ -209,7 +209,7 @@ export const usePrintArea = (
   useEffect(() => {
     if (!printAreaBounds) return
 
-    let checkTimeout: NodeJS.Timeout
+    // let checkTimeout: NodeJS.Timeout
 
     const checkBounds = () => {
       const editableElements =
@@ -245,22 +245,27 @@ export const usePrintArea = (
       updateOverlayVisibility(hasOutOfBounds)
     }
 
-    const debouncedCheck = () => {
-      clearTimeout(checkTimeout)
-      checkTimeout = setTimeout(checkBounds, 100) // Debounce để tránh check quá nhiều
-    }
+    const checkBoundsIntervalId = setInterval(() => {
+      checkBounds()
+    }, 170)
 
-    // Chỉ listen mouse/touch move, không dùng MutationObserver nữa
-    document.addEventListener('mousemove', debouncedCheck, { passive: true })
-    document.addEventListener('touchmove', debouncedCheck, { passive: true })
+    // const debouncedCheck = () => {
+    //   clearTimeout(checkTimeout)
+    //   checkTimeout = setTimeout(checkBounds, 100) // Debounce để tránh check quá nhiều
+    // }
+
+    // // Chỉ listen mouse/touch move, không dùng MutationObserver nữa
+    // document.addEventListener('mousemove', debouncedCheck, { passive: true })
+    // document.addEventListener('touchmove', debouncedCheck, { passive: true })
 
     // Check ban đầu
     checkBounds()
 
     return () => {
-      clearTimeout(checkTimeout)
-      document.removeEventListener('mousemove', debouncedCheck)
-      document.removeEventListener('touchmove', debouncedCheck)
+      clearInterval(checkBoundsIntervalId)
+      // clearTimeout(checkTimeout)
+      // document.removeEventListener('mousemove', debouncedCheck)
+      // document.removeEventListener('touchmove', debouncedCheck)
     }
   }, [printAreaBounds, checkElementBounds, updateOverlayVisibility, containerScale])
 

@@ -8,6 +8,7 @@ import { styleToFramesDisplayerByTemplateType } from '@/configs/print-template/t
 import { useEffect, useMemo } from 'react'
 import { assignMockFrameSizeToTemplate, initFramePlacedImageByPrintedImage } from '../../helpers'
 import { useEditModeStore } from '@/stores/ui/edit-mode.store'
+import { useEditedElementStore } from '@/stores/element/element.store'
 
 type TFramesDisplayerProps = {
   template: TPrintTemplate
@@ -115,6 +116,7 @@ export const TemplatesPicker = ({ printedImages }: TTemplatePickerProps) => {
   const handlePickTemplate = (template: TPrintTemplate) => {
     const pickedSurface = useProductUIDataStore.getState().pickedSurface
     if (!pickedSurface) return
+    useEditedElementStore.getState().cancelSelectingElement()
     useEditModeStore.getState().setEditMode('with-template')
     useTemplateStore.getState().pickTemplate(template.id, pickedSurface)
   }

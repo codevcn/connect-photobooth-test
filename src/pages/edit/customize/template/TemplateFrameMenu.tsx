@@ -8,68 +8,21 @@ const GrayscaleControl = ({}: TGrayscaleControlProps) => {
   const [showPopover, setShowPopover] = useState(false)
   const pickedTemplate = useTemplateStore((s) => s.pickedTemplate)
   const updateTemplateGrayscale = useTemplateStore((s) => s.updateTemplateGrayscale)
-  const [grayscale, setGrayscale] = useState(pickedTemplate?.grayscale || 0)
+  const [grayscale, setGrayscale] = useState(pickedTemplate?.initialVisualState?.grayscale || 0)
+
   const popoverRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
-  const [popoverPosition, setPopoverPosition] = useState<{
-    top?: string
-    bottom?: string
-    left?: string
-    right?: string
-  }>({ bottom: 'full', left: '0' })
+
+  const [popoverPosition, setPopoverPosition] = useState({
+    top: '0px',
+    left: '0px',
+  })
 
   useEffect(() => {
-    setGrayscale(pickedTemplate?.grayscale || 0)
-  }, [pickedTemplate?.grayscale])
+    setGrayscale(pickedTemplate?.initialVisualState?.grayscale || 0)
+  }, [pickedTemplate?.initialVisualState?.grayscale])
 
-  // Detect collision with viewport and adjust popover position
-  useEffect(() => {
-    if (showPopover && popoverRef.current && buttonRef.current) {
-      const popover = popoverRef.current
-      const button = buttonRef.current.getBoundingClientRect()
-      const popoverRect = popover.getBoundingClientRect()
-      const viewportWidth = window.innerWidth
-      const viewportHeight = window.innerHeight
-
-      const newPosition: typeof popoverPosition = {}
-
-      // Check vertical position
-      const spaceAbove = button.top
-      const spaceBelow = viewportHeight - button.bottom
-      const popoverHeight = popoverRect.height
-
-      if (spaceAbove >= popoverHeight + 8) {
-        // Enough space above - show above button
-        newPosition.bottom = 'full'
-        delete newPosition.top
-      } else if (spaceBelow >= popoverHeight + 8) {
-        // Not enough space above but enough below - show below button
-        newPosition.top = 'full'
-        delete newPosition.bottom
-      } else {
-        // Not enough space either side - show above and let it overflow
-        newPosition.bottom = 'full'
-        delete newPosition.top
-      }
-
-      // Check horizontal position
-      const spaceRight = viewportWidth - button.left
-      const popoverWidth = popoverRect.width
-
-      if (spaceRight >= popoverWidth) {
-        // Enough space on the right
-        newPosition.left = '0'
-        delete newPosition.right
-      } else {
-        // Not enough space on the right - align to right edge
-        newPosition.right = '0'
-        delete newPosition.left
-      }
-
-      setPopoverPosition(newPosition)
-    }
-  }, [showPopover])
-
+  // Close popover on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -85,8 +38,67 @@ const GrayscaleControl = ({}: TGrayscaleControlProps) => {
     if (showPopover) {
       document.addEventListener('mousedown', handleClickOutside)
     }
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showPopover])
+
+  // === Collision Detection & Smart Position ===
+  useEffect(() => {
+    if (!showPopover) return
+
+    const computePosition = () => {
+      if (!buttonRef.current || !popoverRef.current) return
+
+      const btn = buttonRef.current.getBoundingClientRect()
+      const pop = popoverRef.current
+
+      // Popover phải được render xong mới đo được size.
+      const popRect = pop.getBoundingClientRect()
+
+      const viewportW = window.innerWidth
+      const viewportH = window.innerHeight
+      const margin = 10
+
+      let top = btn.bottom + 8
+      let left = btn.left
+
+      // Nếu tràn phải
+      if (left + popRect.width + margin > viewportW) {
+        left = viewportW - popRect.width - margin
+      }
+
+      // Nếu tràn trái
+      if (left < margin) {
+        left = margin
+      }
+
+      // Nếu tràn đáy → đưa lên trên
+      if (top + popRect.height + margin > viewportH) {
+        top = btn.top - popRect.height - 8
+      }
+
+      // Nếu tràn top → fix 10px
+      if (top < margin) {
+        top = margin
+      }
+
+      setPopoverPosition({
+        top: `${top + window.scrollY}px`,
+        left: `${left + window.scrollX}px`,
+      })
+    }
+
+    // Đợi DOM cập nhật xong rồi đo
+    requestAnimationFrame(computePosition)
+
+    window.addEventListener('resize', computePosition)
+    window.addEventListener('scroll', computePosition)
+
+    return () => {
+      window.removeEventListener('resize', computePosition)
+      window.removeEventListener('scroll', computePosition)
     }
   }, [showPopover])
 
@@ -102,7 +114,7 @@ const GrayscaleControl = ({}: TGrayscaleControlProps) => {
       <button
         ref={buttonRef}
         onClick={() => setShowPopover(!showPopover)}
-        className="group flex flex-nowrap items-center justify-center font-bold gap-1 text-inherit rounded p-1 w-full h-full"
+        className="group flex items-center justify-center font-bold gap-1 text-inherit rounded p-1 w-full h-full"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -117,46 +129,43 @@ const GrayscaleControl = ({}: TGrayscaleControlProps) => {
           <circle cx="12" cy="12" r="10" />
           <path d="M12 2v20" />
         </svg>
-        <span className="text-xs smd:text-sm">B&W</span>
+        <span className="text-xs smd:text-sm">Trắng đen</span>
       </button>
 
       {showPopover && (
         <div
           ref={popoverRef}
-          className="absolute bg-white border-2 border-main-cl rounded-lg shadow-xl p-3 z-100 transition-all duration-200"
+          className="fixed bg-white border-2 border-main-cl rounded-lg shadow-xl p-3 z-999"
           style={{
-            [popoverPosition.top ? 'top' : 'bottom']: popoverPosition.top || popoverPosition.bottom,
-            [popoverPosition.left !== undefined ? 'left' : 'right']:
-              popoverPosition.left !== undefined ? popoverPosition.left : popoverPosition.right,
-            marginTop: popoverPosition.top ? '0.5rem' : '0',
-            marginBottom: popoverPosition.bottom ? '0.5rem' : '0',
-            minWidth: '80px',
-            maxWidth: '100px',
+            top: popoverPosition.top,
+            left: popoverPosition.left,
+            minWidth: '200px',
+            maxWidth: '280px',
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-xs font-semibold text-main-cl whitespace-nowrap">
-              {grayscale}%
-            </span>
-            <div className="relative h-48 w-full flex justify-center">
+          <div className="flex flex-row items-center gap-3">
+            <span className="text-xs font-semibold text-main-cl whitespace-nowrap">0%</span>
+
+            <div className="relative flex-1 flex items-center">
               <input
                 type="range"
                 min="0"
                 max="100"
                 value={grayscale}
                 onChange={(e) => handleGrayscaleChange(Number(e.target.value))}
-                className="vertical-slider cursor-pointer accent-main-cl"
+                className="w-full cursor-pointer accent-main-cl"
                 style={{
-                  writingMode: 'bt-lr' as any,
-                  WebkitAppearance: 'slider-vertical',
-                  width: '8px',
-                  height: '100%',
-                  background: `linear-gradient(to top, #3b82f6 0%, #3b82f6 ${grayscale}%, #e5e7eb ${grayscale}%, #e5e7eb 100%)`,
+                  height: '8px',
+                  background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${grayscale}%, #e5e7eb ${grayscale}%, #e5e7eb 100%)`,
                   borderRadius: '4px',
+                  WebkitAppearance: 'none',
+                  appearance: 'none',
                 }}
               />
             </div>
+
+            <span className="text-xs font-semibold text-main-cl whitespace-nowrap">100%</span>
           </div>
         </div>
       )}

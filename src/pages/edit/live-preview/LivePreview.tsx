@@ -244,7 +244,7 @@ export const LivePreview = ({
           printAreaContainerRef.current = node
           // refForDrag.current = node
         }}
-        className="NAME-print-area-container touch-none w-full h-full min-h-[150px] overflow-hidden bg-gray-100 border z-50 border-gray-400/30 relative"
+        className="NAME-print-area-container w-full h-full min-h-[150px] overflow-hidden bg-gray-100 border z-50 border-gray-400/30 relative"
         style={{
           backgroundColor: adjustNearF3F4F6(getFinalColorValue() || '#ffffff'),
           transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,

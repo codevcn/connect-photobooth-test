@@ -158,7 +158,7 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
   }
 
   return (
-    <div className="md:px-4 px-2 py-4 fixed inset-0 flex items-center justify-center z-50 animate-pop-in">
+    <div className="3xl:text-[1em] md:px-4 px-2 py-4 fixed inset-0 flex items-center justify-center z-50 animate-pop-in">
       <div onClick={() => onHideShow(false)} className="bg-black/50 absolute inset-0 z-10"></div>
       <div className="flex flex-col pt-12 bg-white rounded-2xl z-20 overflow-hidden relative shadow-2xl w-fit max-w-[98vw] max-h-[95vh] animate-in slide-in-from-bottom duration-200">
         {confirming && (
@@ -176,7 +176,9 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
 
         {/* Modal Header */}
         <div className="px-4 py-2 absolute top-0 left-0 w-full z-20 bg-white border-b border-gray-200 flex items-center justify-between rounded-t-3xl">
-          <h2 className="md:text-xl text-base font-bold text-gray-900">Hoàn tất thanh toán</h2>
+          <h2 className="3xl:text-[1em] md:text-xl text-base font-bold text-gray-900">
+            Hoàn tất thanh toán
+          </h2>
           <button
             onClick={() => onHideShow(false)}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors active:scale-90"
@@ -184,15 +186,13 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-x-icon lucide-x text-gray-500"
+              className="lucide lucide-x-icon lucide-x text-gray-800 w-6 h-6 3xl:h-10 3xl:w-10"
             >
               <path d="M18 6 6 18" />
               <path d="m6 6 12 12" />
@@ -218,27 +218,25 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
           <div className="space-y-3 pt-2">
             <button
               onClick={handleConfirmPayment}
-              className="md:text-lg text-base flex items-center justify-center gap-2 w-full h-[50px] bg-main-cl text-white font-bold rounded-lg shadow-lg active:scale-90 transition"
+              className="3xl:text-[0.9em] md:text-lg text-base flex items-center justify-center gap-2 w-full h-[50px] bg-main-cl text-white font-bold rounded-lg shadow-lg active:scale-90 transition"
             >
               <span>Xác nhận thanh toán</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="3"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="lucide lucide-check-icon lucide-check"
+                className="lucide lucide-check-icon lucide-check w-6 h-6 3xl:h-9 3xl:w-9"
               >
                 <path d="M20 6 9 17l-5-5" />
               </svg>
             </button>
             <button
               onClick={() => onHideShow(false)}
-              className="w-full h-[45px] text-lg text-gray-800 font-bold active:scale-90 transition"
+              className="3xl:text-[0.9em] md:text-lg text-base w-full h-[45px] text-gray-800 font-bold active:scale-90 transition"
             >
               Hủy
             </button>

@@ -34,21 +34,20 @@ export const Modal = ({ onClose, children, title, classNames }: TModalProps) => 
             classNames?.titleContainer
           )}
         >
-          <h3 className="text-xl font-bold text-inherit">{title}</h3>
+          <h3 className="font-bold text-inherit">{title}</h3>
           <button
             onClick={onClose}
             className="p-2 hover:bg-white/40 rounded-full active:scale-95 transition"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
+              className="w-6 h-6 3xl:w-10 3xl:h-10"
             >
               <path d="M18 6 6 18" />
               <path d="m6 6 12 12" />

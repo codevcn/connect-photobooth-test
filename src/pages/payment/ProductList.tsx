@@ -181,7 +181,7 @@ export const ProductList: React.FC<ProductListProps> = ({
                           <path d="M5 12h14" />
                         </svg>
                       </button>
-                      <span className="3xl:text-lg w-8 text-center font-semibold text-sm">
+                      <span className="3xl:text-xl w-8 text-center font-semibold text-sm">
                         {quantity}
                       </span>
                       <button

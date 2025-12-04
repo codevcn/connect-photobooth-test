@@ -10,8 +10,10 @@ export const PaymentMethodSelector = ({
   onSelectMethod,
 }: PaymentMethodSelectorProps) => {
   return (
-    <section className="flex flex-col gap-2">
-      <h3 className="font-semibold text-gray-900 text-lg">Phương thức thanh toán</h3>
+    <section className="3xl:text-3xl flex flex-col gap-2">
+      <h3 className="3xl:text-[0.8em] font-semibold text-gray-900 text-lg">
+        Phương thức thanh toán
+      </h3>
 
       <div className="grid-cols-1 grid smd:grid-cols-2 gap-x-2 gap-y-2 smd:gap-y-1">
         {/* Momo */}
@@ -20,11 +22,11 @@ export const PaymentMethodSelector = ({
             <div className="flex items-center justify-between gap-2 w-full">
               <div className="flex items-center gap-3">
                 <div className="bg-[#A50064] rounded-lg p-2">
-                  <img src="/images/logo/momo.png" alt="Momo" className="h-6 w-6" />
+                  <img src="/images/logo/momo.png" alt="Momo" className="3xl:h-9 3xl:w-9 h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Đang chọn</p>
-                  <p className="font-bold text-gray-900">Thanh toán Momo</p>
+                  <p className="3xl:text-[0.6em] text-sm text-gray-600">Đang chọn</p>
+                  <p className="3xl:text-[0.7em] font-bold text-gray-900">Thanh toán Momo</p>
                 </div>
               </div>
               <div className="bg-green-500 rounded-full p-1">
@@ -48,10 +50,10 @@ export const PaymentMethodSelector = ({
         ) : (
           <button
             onClick={() => onSelectMethod('momo')}
-            className="w-full h-[50px] bg-[#A50064] text-white flex items-center justify-center gap-2 px-4 rounded-xl border-2 border-transparent transition hover:border-pink-200 active:scale-95"
+            className="3xl:h-[60px] h-[50px] bg-[#A50064] text-white flex items-center justify-center gap-2 px-4 rounded-xl border-2 border-transparent transition hover:border-pink-200 active:scale-95"
           >
-            <img src="/images/logo/momo.png" alt="Momo" className="h-8 w-8" />
-            <span className="font-medium">Thanh toán với Momo</span>
+            <img src="/images/logo/momo.png" alt="Momo" className="3xl:h-9 3xl:w-9 h-8 w-8" />
+            <span className="3xl:text-[0.9em] font-medium">Thanh toán với Momo</span>
           </button>
         )}
 
@@ -61,11 +63,11 @@ export const PaymentMethodSelector = ({
             <div className="flex items-center justify-between gap-2 w-full">
               <div className="flex items-center gap-3">
                 <div className="bg-[#0144DB] rounded-lg p-2">
-                  <img src="/images/logo/zalo.png" alt="Zalo" className="h-6 w-6" />
+                  <img src="/images/logo/zalo.png" alt="Zalo" className="3xl:h-9 3xl:w-9 h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Đang chọn</p>
-                  <p className="font-bold text-gray-900">Thanh toán Zalo</p>
+                  <p className="3xl:text-[0.6em] text-sm text-gray-600 font-medium">Đang chọn</p>
+                  <p className="3xl:text-[0.7em] font-bold text-gray-900">Thanh toán Zalo</p>
                 </div>
               </div>
               <div className="bg-green-500 rounded-full p-1">
@@ -89,10 +91,10 @@ export const PaymentMethodSelector = ({
         ) : (
           <button
             onClick={() => onSelectMethod('zalo')}
-            className="w-full h-[50px] bg-[#0144DB] text-white flex items-center justify-center gap-2 px-4 rounded-xl border-2 border-transparent transition hover:border-pink-200 active:scale-95"
+            className="3xl:h-[60px] w-full h-[50px] bg-[#0144DB] text-white flex items-center justify-center gap-2 px-4 rounded-xl border-2 border-transparent transition hover:border-pink-200 active:scale-95"
           >
-            <img src="/images/logo/zalo.png" alt="Zalo" className="h-8 w-8" />
-            <span className="font-medium">Thanh toán với Zalo</span>
+            <img src="/images/logo/zalo.png" alt="Zalo" className="3xl:h-9 3xl:w-9 h-6 w-6" />
+            <span className="3xl:text-[0.9em] font-medium">Thanh toán với Zalo</span>
           </button>
         )}
 
@@ -120,15 +122,15 @@ export const PaymentMethodSelector = ({
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Đang chọn</p>
-                  <p className="font-bold text-gray-900">Thanh toán khi nhận hàng</p>
+                  <p className="3xl:text-[0.6em] text-sm text-gray-600 font-medium">Đang chọn</p>
+                  <p className="3xl:text-[0.7em] font-bold text-gray-900">
+                    Thanh toán khi nhận hàng
+                  </p>
                 </div>
               </div>
               <div className="bg-green-500 rounded-full p-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="18"
-                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -157,13 +159,13 @@ export const PaymentMethodSelector = ({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-banknote-icon lucide-banknote text-green-600"
+              className="lucide lucide-banknote-icon lucide-banknote text-green-600 3xl:h-9 3xl:w-9 h-6 w-6"
             >
               <rect width="20" height="12" x="2" y="6" rx="2" />
               <circle cx="12" cy="12" r="2" />
               <path d="M6 12h.01M18 12h.01" />
             </svg>
-            <span className="font-medium">Thanh toán khi nhận hàng</span>
+            <span className="3xl:text-[0.7em] font-medium">Thanh toán khi nhận hàng</span>
           </button>
         )}
       </div>

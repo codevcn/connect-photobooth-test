@@ -13,11 +13,6 @@ const GrayscaleControl = ({}: TGrayscaleControlProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
-  const [popoverPosition, setPopoverPosition] = useState({
-    top: '0px',
-    left: '0px',
-  })
-
   useEffect(() => {
     setGrayscale(pickedTemplate?.initialVisualState?.grayscale || 0)
   }, [pickedTemplate?.initialVisualState?.grayscale])
@@ -41,64 +36,6 @@ const GrayscaleControl = ({}: TGrayscaleControlProps) => {
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [showPopover])
-
-  // === Collision Detection & Smart Position ===
-  useEffect(() => {
-    if (!showPopover) return
-
-    const computePosition = () => {
-      if (!buttonRef.current || !popoverRef.current) return
-
-      const btn = buttonRef.current.getBoundingClientRect()
-      const pop = popoverRef.current
-
-      // Popover phải được render xong mới đo được size.
-      const popRect = pop.getBoundingClientRect()
-
-      const viewportW = window.innerWidth
-      const viewportH = window.innerHeight
-      const margin = 10
-
-      let top = btn.bottom + 8
-      let left = btn.left
-
-      // Nếu tràn phải
-      if (left + popRect.width + margin > viewportW) {
-        left = viewportW - popRect.width - margin
-      }
-
-      // Nếu tràn trái
-      if (left < margin) {
-        left = margin
-      }
-
-      // Nếu tràn đáy → đưa lên trên
-      if (top + popRect.height + margin > viewportH) {
-        top = btn.top - popRect.height - 8
-      }
-
-      // Nếu tràn top → fix 10px
-      if (top < margin) {
-        top = margin
-      }
-
-      setPopoverPosition({
-        top: `${top + window.scrollY}px`,
-        left: `${left + window.scrollX}px`,
-      })
-    }
-
-    // Đợi DOM cập nhật xong rồi đo
-    requestAnimationFrame(computePosition)
-
-    window.addEventListener('resize', computePosition)
-    window.addEventListener('scroll', computePosition)
-
-    return () => {
-      window.removeEventListener('resize', computePosition)
-      window.removeEventListener('scroll', computePosition)
     }
   }, [showPopover])
 
@@ -135,10 +72,8 @@ const GrayscaleControl = ({}: TGrayscaleControlProps) => {
       {showPopover && (
         <div
           ref={popoverRef}
-          className="fixed bg-white border-2 border-main-cl rounded-lg shadow-xl p-3 z-999"
+          className="absolute -right-1 top-[calc(100%+4px)] bg-white border-2 border-main-cl rounded-lg shadow-xl p-3 z-999"
           style={{
-            top: popoverPosition.top,
-            left: popoverPosition.left,
             minWidth: '200px',
             maxWidth: '280px',
           }}

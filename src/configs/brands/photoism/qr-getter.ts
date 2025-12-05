@@ -11,8 +11,8 @@ type TGetImageDataProgressCallback = (
 
 let count = 0
 const getLinkByCount = (): string => {
-  return 'https://api.encycom.com/files/1764043107649-213696048.jpg'
-  // return 'http://192.168.2.6:3000/images/img-vertical-to-test.jpg'
+  // return 'https://api.encycom.com/files/1764043107649-213696048.jpg'
+  return 'http://192.168.2.6:3000/images/hy.jpg'
   // if (count === 1) {
   //   count++
   //   return 'https://photobooth-public.s3.ap-southeast-1.amazonaws.com/d63a64aa48c6c4989dd7.jpg'
@@ -237,7 +237,7 @@ class QRGetter {
     uuid: string,
     onProgress: TGetImageDataProgressCallback,
     imgURL: string
-  ): Promise<TGetCustomerMediaResponse> {
+  ): Promise<TGetCustomerMediaResponse_dev> {
     // let a = await fetch('https://cmsapi-apse.seobuk.kr/v1/etc/seq/resource', {
     //   headers: {
     //     accept: 'application/json, text/plain, */*',
@@ -256,23 +256,23 @@ class QRGetter {
     //   method: 'POST',
     // })
 
-    console.log('>>> [qr] result from QR scanning:', imgURL)
-    const strippedURL = this.removeProtocol(imgURL)
-    console.log('>>> [qr] stripped URL:', strippedURL)
-    let a = await fetch(`https://api.encycom.com/api/getimg/?u=${strippedURL}`)
-    onProgress(50, null, null)
-    return (await a.json()) as TGetCustomerMediaResponse
-
+    // console.log('>>> [qr] result from QR scanning:', imgURL)
+    // const strippedURL = this.removeProtocol(imgURL)
+    // console.log('>>> [qr] stripped URL:', strippedURL)
+    // let a = await fetch(`https://api.encycom.com/api/getimg/?u=${strippedURL}`)
     // onProgress(50, null, null)
-    // return {
-    //   content: {
-    //     fileInfo: {
-    //       picFile: {
-    //         path: getLinkByCount(),
-    //       },
-    //     },
-    //   },
-    // } as TGetCustomerMediaResponse_dev
+    // return (await a.json()) as TGetCustomerMediaResponse
+
+    onProgress(50, null, null)
+    return {
+      content: {
+        fileInfo: {
+          picFile: {
+            path: getLinkByCount(),
+          },
+        },
+      },
+    } as TGetCustomerMediaResponse_dev
   }
 
   private async fetchImageData(
@@ -325,8 +325,8 @@ class QRGetter {
       const data = await this.getFileInfo('', onProgress, url)
       console.log('>>> [qr] get file info:', data)
       try {
-        // await this.fetchImageData(data.content.fileInfo.picFile.path, onProgress)
-        await this.fetchImageData(data.data.picFile.path, onProgress)
+        await this.fetchImageData(data.content.fileInfo.picFile.path, onProgress)
+        // await this.fetchImageData(data.data.picFile.path, onProgress)
       } catch (err) {
         console.error('>>> Lỗi lấy dữ liệu hình ảnh tại local:', err)
         onProgress(0, null, err as Error)

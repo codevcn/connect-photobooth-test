@@ -230,6 +230,7 @@ export type TStickerVisualState = TElementVisualBaseState & {
   mountType?: TElementMountType
   height?: number
   width?: number
+  matchOrientation?: 'width' | 'height'
 }
 
 export type TPrintedImageVisualState = TStickerVisualState

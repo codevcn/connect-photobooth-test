@@ -1,22 +1,19 @@
 import { usePrintArea } from '@/hooks/use-print-area'
-import { TBaseProduct, TPosition, TPrintedImage } from '@/utils/types/global'
+import { TBaseProduct, TPrintedImage } from '@/utils/types/global'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { PrintAreaOverlay } from './PrintAreaOverlay'
 import { EditedElementsArea } from './EditedElementsArea'
 import { AddToCartHandler } from './AddToCartHandler'
 import { adjustNearF3F4F6, getFinalColorValue } from '@/utils/helpers'
 import { SectionLoading } from '@/components/custom/Loading'
-import { createPortal } from 'react-dom'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { createCommonConstants } from '@/utils/contants'
 import { useZoomEditBackground } from '@/hooks/use-zoom-edit-background'
 import { adjustSizeOfPlacedImageOnPlaced, cancelSelectingZoomingImages } from '../helpers'
 import { useEditAreaStore } from '@/stores/ui/edit-area.store'
-import { MyDevComponent } from '@/dev/components/Preview'
-import { useDragElementWithoutButton } from '@/hooks/element/use-drag-element-without-button'
 import { useDragEditBackground } from '@/hooks/use-drag-edit-background'
-import { toast } from 'react-toastify'
 import { useEditedElementStore } from '@/stores/element/element.store'
+import { MyDevComponent } from '@/dev/components/Preview'
 
 type TZoomButtonsProps = {
   scale: number
@@ -132,10 +129,14 @@ export const LivePreview = ({
 
   const minZoom = 0.8
   const maxZoom = 3
-  const { containerRef: refForZoom, scale, controls } = useZoomEditBackground(minZoom, maxZoom)
-  const { refForDrag, position } = useDragEditBackground({
-    scaleFactor: scale,
-  })
+  const {
+    scale,
+    controls,
+    translate,
+    printAreaContainerWrapperRef,
+    allowedPrintAreaRef,
+    maxZoomAllowedPrintAreaIntoView,
+  } = useZoomEditBackground(minZoom, maxZoom)
 
   const { printAreaRef, printAreaContainerRef, checkIfAnyElementOutOfBounds, isOutOfBounds } =
     usePrintArea(
@@ -143,6 +144,8 @@ export const LivePreview = ({
       () => {
         setTimeout(() => {
           eventEmitter.emit(EInternalEvents.ELEMENTS_OUT_OF_BOUNDS_CHANGED)
+          controls.reset()
+          maxZoomAllowedPrintAreaIntoView()
         }, createCommonConstants<number>('ANIMATION_DURATION_PRINT_AREA_BOUNDS_CHANGE') + 100)
         adjustSizeOfPlacedImageOnPlaced()
       },
@@ -212,17 +215,20 @@ export const LivePreview = ({
   useEffect(() => {
     useEditAreaStore.getState().setEditAreaScaleValue(scale)
   }, [scale])
-
+  console.log('>>> [mov] pos:', {
+    translate,
+  })
   return (
     <div
       ref={(node) => {
-        refForZoom.current = node
+        // refForZoom.current = node
+        printAreaContainerWrapperRef.current = node
       }}
       onPointerDownCapture={listenPointerDownCapture}
       onDragStart={(e) => e.preventDefault()}
       className="NAME-print-area-container-wrapper smd:w-full overflow-hidden w-full min-h-full h-full relative flex items-center justify-center"
     >
-      {/* <MyDevComponent /> */}
+      <MyDevComponent />
       <AddToCartHandler
         checkIfAnyElementOutOfBounds={checkIfAnyElementOutOfBounds}
         printAreaContainerRef={printAreaContainerRef}
@@ -244,10 +250,10 @@ export const LivePreview = ({
           printAreaContainerRef.current = node
           // refForDrag.current = node
         }}
-        className="NAME-print-area-container w-full h-full min-h-[150px] overflow-hidden bg-gray-100 border z-50 border-gray-400/30 relative"
+        className="NAME-print-area-container origin-center w-full h-full min-h-[150px] overflow-hidden bg-gray-100 border z-50 border-gray-400/30 relative"
         style={{
           backgroundColor: adjustNearF3F4F6(getFinalColorValue() || '#ffffff'),
-          transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
+          transform: `translate(${translate.x}px, ${translate.y}px) scale(${scale})`,
         }}
       >
         <div
@@ -262,7 +268,10 @@ export const LivePreview = ({
           onLoad={() => removeProductChangingModal(true)}
         />
         <PrintAreaOverlay
-          printAreaRef={printAreaRef}
+          registerRef={(node) => {
+            allowedPrintAreaRef.current = node
+            printAreaRef.current = node
+          }}
           isOutOfBounds={isOutOfBounds}
           displayWarningOverlay
           printedImages={printedImages}

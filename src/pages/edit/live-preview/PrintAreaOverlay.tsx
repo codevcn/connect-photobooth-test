@@ -111,7 +111,6 @@ export const PrintAreaOverlayPreview = ({
 }
 
 type TPrintAreaOverlayProps = {
-  printAreaRef: React.RefObject<HTMLDivElement | null>
   isOutOfBounds: boolean
   printedImages: TPrintedImage[]
 } & Partial<{
@@ -131,15 +130,16 @@ type TPrintAreaOverlayProps = {
       container: string
     }
   }
+  registerRef: (allowedPrintArea: HTMLDivElement | null) => void
 }>
 
 export const PrintAreaOverlay = ({
-  printAreaRef,
   isOutOfBounds,
   printAreaOptions,
   displayWarningOverlay = true,
   printedImages,
   frameDisplayerOptions,
+  registerRef,
 }: TPrintAreaOverlayProps) => {
   const pickedTemplate = useTemplateStore((s) => s.pickedTemplate)
   const editMode = useEditModeStore((s) => s.editMode)
@@ -163,7 +163,9 @@ export const PrintAreaOverlay = ({
 
   return (
     <div
-      ref={printAreaRef}
+      ref={(node) => {
+        registerRef?.(node)
+      }}
       className={cn(
         'NAME-print-area-allowed z-6 border border-white border-dashed flex justify-center items-center absolute transition',
         printAreaOptions?.className,

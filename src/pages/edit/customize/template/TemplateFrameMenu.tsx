@@ -61,12 +61,12 @@ const GrayscaleControl = ({}: TGrayscaleControlProps) => {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="w-4 h-4 smd:w-5 smd:h-5 3xl:w-7 3xl:h-7"
+          className="w-4 h-4 smd:w-5 smd:h-5 5xl:w-7 5xl:h-7"
         >
           <circle cx="12" cy="12" r="10" />
           <path d="M12 2v20" />
         </svg>
-        <span className="3xl:text-[1em] text-xs smd:text-sm">Trắng đen</span>
+        <span className="5xl:text-[1em] text-xs smd:text-sm">Trắng đen</span>
       </button>
 
       {showPopover && (
@@ -130,14 +130,14 @@ const ChangePrintedImage = ({ frameId }: TChangePrintedImageProps) => {
         strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="lucide lucide-refresh-ccw-icon lucide-refresh-ccw w-4 h-4 smd:w-5 smd:h-5 3xl:w-7 3xl:h-7"
+        className="lucide lucide-refresh-ccw-icon lucide-refresh-ccw w-4 h-4 smd:w-5 smd:h-5 5xl:w-7 5xl:h-7"
       >
         <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
         <path d="M3 3v5h5" />
         <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
         <path d="M16 16h5v5" />
       </svg>
-      <span className="3xl:text-[1em] text-xs smd:text-sm">Đổi ảnh</span>
+      <span className="5xl:text-[1em] text-xs smd:text-sm">Đổi ảnh</span>
     </button>
   )
 }
@@ -154,19 +154,19 @@ export const TemplateFrameMenu = ({ frameId, onClose, printedImageURL }: Printed
   return (
     <div
       ref={menuRef}
-      className="NAME-menu-section NAME-menu-template-frame STYLE-hide-scrollbar 3xl:text-2xl smd:text-sm smd:mt-2 smd:px-0 px-2 text-sm w-full"
+      className="NAME-menu-section NAME-menu-template-frame STYLE-hide-scrollbar 5xl:text-2xl smd:text-sm smd:mt-2 smd:px-0 px-2 text-sm w-full"
     >
-      <h3 className="3xl:text-[1em] smd:text-sm smd:mt-3 text-xs mb-1 font-bold">
+      <h3 className="5xl:text-[1em] smd:text-sm smd:mt-3 text-xs mb-1 font-bold">
         Tùy chỉnh ảnh photobooth
       </h3>
       <div className="s2xl:grid-cols-3 smd:grid-cols-2 sms:grid-cols-4 grid-cols-2 spmd:gap-2 gap-1 grid rounded-md">
-        <div className="3xl:h-12 h-8 smd:h-9 mobile-touch cursor-pointer border-2 border-main-cl text-white hover:bg-white hover:text-main-cl flex items-center justify-center bg-main-cl rounded px-1 shadow">
+        <div className="5xl:h-12 h-8 smd:h-9 mobile-touch cursor-pointer border-2 border-main-cl text-white hover:bg-white hover:text-main-cl flex items-center justify-center bg-main-cl rounded px-1 shadow">
           <ChangePrintedImage frameId={frameId} />
         </div>
-        <div className="3xl:h-12 h-8 smd:h-9 cursor-pointer border-2 border-main-cl text-white hover:bg-white hover:text-main-cl flex items-center justify-center bg-main-cl rounded px-1 shadow">
+        <div className="5xl:h-12 h-8 smd:h-9 cursor-pointer border-2 border-main-cl text-white hover:bg-white hover:text-main-cl flex items-center justify-center bg-main-cl rounded px-1 shadow">
           <GrayscaleControl />
         </div>
-        <div className="3xl:h-12 s2xl:col-span-1 col-span-2 flex items-center justify-center h-8 smd:h-9 mobile-touch cursor-pointer border-2 border-main-cl z-30 text-white bg-main-cl rounded hover:bg-white hover:text-main-cl w-full">
+        <div className="5xl:h-12 s2xl:col-span-1 col-span-2 flex items-center justify-center h-8 smd:h-9 mobile-touch cursor-pointer border-2 border-main-cl z-30 text-white bg-main-cl rounded hover:bg-white hover:text-main-cl w-full">
           <button
             onClick={onClose}
             className="group flex items-center justify-center h-7 w-full text-inherit rounded p-1"
@@ -181,7 +181,7 @@ export const TemplateFrameMenu = ({ frameId, onClose, printedImageURL }: Printed
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-check-icon lucide-check 3xl:w-7 3xl:h-7"
+              className="lucide lucide-check-icon lucide-check 5xl:w-7 5xl:h-7"
             >
               <path d="M20 6 9 17l-5-5" />
             </svg>

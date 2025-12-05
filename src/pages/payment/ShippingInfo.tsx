@@ -130,15 +130,15 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
     }
 
     return (
-      <form className="3xl:text-3xl md:text-base text-sm space-y-2" ref={ref}>
-        <h3 className="3xl:text-[0.8em] font-semibold text-gray-900 text-lg">
+      <form className="5xl:text-3xl md:text-base text-sm space-y-2" ref={ref}>
+        <h3 className="5xl:text-[0.8em] font-semibold text-gray-900 text-lg">
           Thông tin giao hàng
         </h3>
         <div className="space-y-3">
           <div>
             <label
               htmlFor="fullName-input"
-              className="3xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
+              className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
             >
               Họ và tên
             </label>
@@ -147,10 +147,10 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
               name="fullName"
               type="text"
               placeholder="Nguyễn Văn A"
-              className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 3xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
+              className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
             />
             {errors.fullName && (
-              <p className="3xl:text-[0.6em] text-red-600 text-sm mt-0.5 pl-1">{errors.fullName}</p>
+              <p className="5xl:text-[0.6em] text-red-600 text-sm mt-0.5 pl-1">{errors.fullName}</p>
             )}
           </div>
 
@@ -158,7 +158,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
             <div>
               <label
                 htmlFor="phone-input"
-                className="3xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
+                className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
               >
                 Số điện thoại
               </label>
@@ -167,17 +167,17 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
                 name="phone"
                 type="tel"
                 placeholder="09xx xxx xxx"
-                className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 3xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
+                className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
               />
               {errors.phone && (
-                <p className="3xl:text-[0.6em] text-red-600 text-sm mt-0.5 pl-1">{errors.phone}</p>
+                <p className="5xl:text-[0.6em] text-red-600 text-sm mt-0.5 pl-1">{errors.phone}</p>
               )}
             </div>
 
             <div>
               <label
                 htmlFor="email-input"
-                className="3xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
+                className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
               >
                 Email
               </label>
@@ -186,10 +186,10 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
                 name="email"
                 type="email"
                 placeholder="email@domain.com"
-                className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 3xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
+                className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
               />
               {errors.email && (
-                <p className="3xl:text-[0.6em] text-red-600 text-sm mt-0.5 pl-1">{errors.email}</p>
+                <p className="5xl:text-[0.6em] text-red-600 text-sm mt-0.5 pl-1">{errors.email}</p>
               )}
             </div>
           </div>
@@ -198,7 +198,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
             <div>
               <label
                 htmlFor="province-input"
-                className="3xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
+                className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
               >
                 Tỉnh/Thành phố
               </label>
@@ -206,7 +206,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
                 id="province-input"
                 name="province"
                 onChange={handleProvinceChange}
-                className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 3xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all bg-white`}
+                className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all bg-white`}
                 disabled={isLoadingProvinces}
               >
                 <option value="">
@@ -219,7 +219,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
                 ))}
               </select>
               {errors.province && (
-                <p className="3xl:text-[0.6em] text-red-600 text-sm mt-0.5 pl-1">
+                <p className="5xl:text-[0.6em] text-red-600 text-sm mt-0.5 pl-1">
                   {errors.province}
                 </p>
               )}
@@ -228,7 +228,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
             <div>
               <label
                 htmlFor="city-input"
-                className="3xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
+                className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
               >
                 Quận/Huyện
               </label>
@@ -236,7 +236,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
                 id="city-input"
                 name="city"
                 onChange={handleDistrictChange}
-                className="3xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all bg-white"
+                className="5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all bg-white"
                 disabled={!selectedProvinceId || isLoadingDistricts}
               >
                 <option value="">
@@ -253,7 +253,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
                 ))}
               </select>
               {errors.city && (
-                <p className="3xl:text-[0.6em] text-red-600 text-sm mt-0.5 pl-1">{errors.city}</p>
+                <p className="5xl:text-[0.6em] text-red-600 text-sm mt-0.5 pl-1">{errors.city}</p>
               )}
             </div>
           </div>
@@ -261,14 +261,14 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
           <div>
             <label
               htmlFor="ward-input"
-              className="3xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
+              className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
             >
               Phường/Xã
             </label>
             <select
               id="ward-input"
               name="ward"
-              className="3xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all bg-white"
+              className="5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all bg-white"
               disabled={!selectedDistrictId || isLoadingWards}
             >
               <option value="">
@@ -289,7 +289,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
           <div>
             <label
               htmlFor="address-input"
-              className="3xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
+              className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
             >
               Địa chỉ chi tiết
             </label>
@@ -298,17 +298,17 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
               name="address"
               type="text"
               placeholder="Số nhà, tên đường, phường/xã..."
-              className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 3xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
+              className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
             />
             {errors.address && (
-              <p className="3xl:text-[0.6em] text-red-600 text-sm mt-0.5 pl-1">{errors.address}</p>
+              <p className="5xl:text-[0.6em] text-red-600 text-sm mt-0.5 pl-1">{errors.address}</p>
             )}
           </div>
 
           <div>
             <label
               htmlFor="message-input"
-              className="3xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
+              className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1"
             >
               Lời nhắn (tùy chọn)
             </label>
@@ -317,7 +317,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
               name="message"
               placeholder="Nhập lời nhắn của bạn..."
               rows={2}
-              className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 3xl:text-[0.7em] py-2 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
+              className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] py-2 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
             ></textarea>
           </div>
         </div>

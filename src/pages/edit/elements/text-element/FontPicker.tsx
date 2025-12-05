@@ -86,7 +86,7 @@ export const TextFontPicker = ({ onHideShow, onSelectFont }: TextFontPickerProps
   return (
     <div
       ref={pickerContainerRef}
-      className="NAME-text-font-picker 3xl:text-3xl fixed inset-0 flex items-center justify-center z-99 animate-pop-in"
+      className="NAME-text-font-picker 5xl:text-3xl fixed inset-0 flex items-center justify-center z-99 animate-pop-in"
     >
       <div onClick={() => onHideShow(false)} className="bg-black/60 absolute inset-0 z-10"></div>
       <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-3 h-[95vh] flex flex-col relative z-20 overflow-hidden">
@@ -101,7 +101,7 @@ export const TextFontPicker = ({ onHideShow, onSelectFont }: TextFontPickerProps
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="text-white shrink-0 w-5 h-5 3xl:w-12 3xl:h-12"
+              className="text-white shrink-0 w-5 h-5 5xl:w-12 5xl:h-12"
             >
               <path d="M14 16.5a.5.5 0 0 0 .5.5h.5a2 2 0 0 1 0 4H9a2 2 0 0 1 0-4h.5a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5V8a2 2 0 0 1-4 0V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3a2 2 0 0 1-4 0v-.5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5Z" />
             </svg>
@@ -125,7 +125,7 @@ export const TextFontPicker = ({ onHideShow, onSelectFont }: TextFontPickerProps
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="w-5 h-5 3xl:w-12 3xl:h-12"
+              className="w-5 h-5 5xl:w-12 5xl:h-12"
             >
               <path d="M18 6 6 18" />
               <path d="m6 6 12 12" />
@@ -136,8 +136,8 @@ export const TextFontPicker = ({ onHideShow, onSelectFont }: TextFontPickerProps
         {/* Title bar */}
         <div className="bg-superlight-main-cl px-3 py-2 border-b border-light-main-cl">
           <div className="flex items-center justify-between">
-            <h3 className="3xl:text-[0.8em] text-sm font-bold text-gray-800">Font chữ phổ biến</h3>
-            <span className="3xl:text-[0.8em] text-xs font-medium text-main-cl bg-white px-2 py-0.5 rounded-full">
+            <h3 className="5xl:text-[0.8em] text-sm font-bold text-gray-800">Font chữ phổ biến</h3>
+            <span className="5xl:text-[0.8em] text-xs font-medium text-main-cl bg-white px-2 py-0.5 rounded-full">
               <span>{filteredFonts.length}</span> fonts
             </span>
           </div>
@@ -156,7 +156,7 @@ export const TextFontPicker = ({ onHideShow, onSelectFont }: TextFontPickerProps
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="w-10 h-10 text-main-cl animate-spin 3xl:w-12 3xl:h-12"
+                className="w-10 h-10 text-main-cl animate-spin 5xl:w-12 5xl:h-12"
               >
                 <path d="M12 2v4" />
                 <path d="m16.2 7.8 2.9-2.9" />
@@ -167,7 +167,7 @@ export const TextFontPicker = ({ onHideShow, onSelectFont }: TextFontPickerProps
                 <path d="M2 12h4" />
                 <path d="m4.9 4.9 2.9 2.9" />
               </svg>
-              <p className="3xl:text-[1em] text-gray-600 font-medium text-sm">Đang tải fonts...</p>
+              <p className="5xl:text-[1em] text-gray-600 font-medium text-sm">Đang tải fonts...</p>
             </div>
           )}
 
@@ -185,10 +185,10 @@ export const TextFontPicker = ({ onHideShow, onSelectFont }: TextFontPickerProps
                 >
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
-                      <span className="3xl:text-[0.8em] text-xs font-bold text-white bg-main-cl group-hover:bg-secondary-cl rounded px-1.5 py-0.5 transition-colors">
+                      <span className="5xl:text-[0.8em] text-xs font-bold text-white bg-main-cl group-hover:bg-secondary-cl rounded px-1.5 py-0.5 transition-colors">
                         {index + 1}
                       </span>
-                      <span className="3xl:text-[0.8em] text-xs font-semibold text-gray-700 group-hover:text-main-cl transition-colors">
+                      <span className="5xl:text-[0.8em] text-xs font-semibold text-gray-700 group-hover:text-main-cl transition-colors">
                         {fontFamily}
                       </span>
                     </div>
@@ -208,7 +208,7 @@ export const TextFontPicker = ({ onHideShow, onSelectFont }: TextFontPickerProps
                     </svg>
                   </div>
                   <div
-                    className="3xl:text-[1em] text-lg text-gray-800 group-hover:text-gray-900 leading-tight"
+                    className="5xl:text-[1em] text-lg text-gray-800 group-hover:text-gray-900 leading-tight"
                     style={{ fontFamily }}
                   >
                     Xin chào! Đây là {fontFamily}

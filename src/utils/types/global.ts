@@ -477,7 +477,7 @@ export type TPosition = {
   y: number
 }
 
-export type TElementMountType = 'from-new' | 'from-saved'
+export type TElementMountType = 'from-new' | 'from-saved' | 'from-template'
 
 export type TElementRelativeProps = {
   element: {

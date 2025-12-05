@@ -52,7 +52,7 @@ export const ProductList: React.FC<ProductListProps> = ({
   const getProductAttachedData = useProductUIDataStore((s) => s.getProductAttachedData)
 
   return (
-    <section className="3xl:text-[0.8em] text-xs sm:text-sm flex flex-col gap-2 mb-2">
+    <section className="5xl:text-[0.8em] text-xs sm:text-sm flex flex-col gap-2 mb-2">
       {cartItems.map(
         ({
           productId,
@@ -72,7 +72,7 @@ export const ProductList: React.FC<ProductListProps> = ({
             <div className="flex gap-3">
               {/* Product Image */}
               <div
-                className="3xl:h-[280px] sm:h-[120px] sms:h-[150px] md:h-[180px] h-[100px] aspect-square cursor-pointer"
+                className="5xl:h-[280px] sm:h-[120px] sms:h-[150px] md:h-[180px] h-[100px] aspect-square cursor-pointer"
                 onClick={() => onShowProductImage(mockupData.image)}
               >
                 <img src={mockupData.image} alt={name} className="w-full h-full object-contain" />
@@ -99,14 +99,14 @@ export const ProductList: React.FC<ProductListProps> = ({
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="lucide lucide-pen-icon lucide-pen w-3 h-3 sm:w-4 sm:h-4 3xl:w-6 3xl:h-6"
+                      className="lucide lucide-pen-icon lucide-pen w-3 h-3 sm:w-4 sm:h-4 5xl:w-6 5xl:h-6"
                     >
                       <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
                     </svg>
                   </button>
                 </div>
 
-                <div className="3xl:text-[0.8em] sm:gap-2 gap-1 flex-wrap flex items-center text-[1em] text-gray-500 mb-2">
+                <div className="5xl:text-[0.8em] sm:gap-2 gap-1 flex-wrap flex items-center text-[1em] text-gray-500 mb-2">
                   {material && (
                     <span className="sm:py-1 py-0.5 bg-blue-100 text-blue-700 px-2 rounded-md font-medium">
                       {material.value}
@@ -176,12 +176,12 @@ export const ProductList: React.FC<ProductListProps> = ({
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          className="lucide lucide-minus-icon lucide-minus text-gray-600 w-4.5 h-4.5 p-0.5 sm:w-7 sm:h-7 sm:p-1.5 3xl:w-9 3xl:h-9"
+                          className="lucide lucide-minus-icon lucide-minus text-gray-600 w-4.5 h-4.5 p-0.5 sm:w-7 sm:h-7 sm:p-1.5 5xl:w-9 5xl:h-9"
                         >
                           <path d="M5 12h14" />
                         </svg>
                       </button>
-                      <span className="3xl:text-xl w-8 text-center font-semibold text-sm">
+                      <span className="5xl:text-xl w-8 text-center font-semibold text-sm">
                         {quantity}
                       </span>
                       <button
@@ -200,7 +200,7 @@ export const ProductList: React.FC<ProductListProps> = ({
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          className="lucide lucide-plus-icon lucide-plus text-gray-600 w-4.5 h-4.5 p-0.5 sm:w-7 sm:h-7 sm:p-1.5 3xl:w-9 3xl:h-9"
+                          className="lucide lucide-plus-icon lucide-plus text-gray-600 w-4.5 h-4.5 p-0.5 sm:w-7 sm:h-7 sm:p-1.5 5xl:w-9 5xl:h-9"
                         >
                           <path d="M5 12h14" />
                           <path d="M12 5v14" />

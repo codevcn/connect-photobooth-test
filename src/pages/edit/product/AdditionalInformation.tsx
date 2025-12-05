@@ -91,7 +91,7 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
   }
 
   return (
-    <div className="3xl:text-[1.4em] order-4 flex flex-col gap-1 w-full bg-gray-100 rounded-lg shadow-sm p-2 border-border">
+    <div className="5xl:text-[1.4em] order-4 flex flex-col gap-1 w-full bg-gray-100 rounded-lg shadow-sm p-2 border-border">
       <div className="w-full">
         <div
           className="w-full group flex items-center mobile-touch justify-between p-4 cursor-pointer hover:bg-white border-border rounded-md border-b border-transparent"
@@ -105,7 +105,7 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
                 stroke="currentColor"
-                className=" w-6 h-6 3xl:w-8 3xl:h-8"
+                className=" w-6 h-6 5xl:w-8 5xl:h-8"
               >
                 <path
                   strokeLinecap="round"
@@ -114,7 +114,7 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
                 />
               </svg>
             </div>
-            <span className="3xl:text-[1em] text-base text-gray-700 font-semibold">
+            <span className="5xl:text-[1em] text-base text-gray-700 font-semibold">
               Mô tả sản phẩm
             </span>
           </div>
@@ -127,14 +127,14 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
               stroke="currentColor"
               className={`${
                 activeTab === 'description' ? 'rotate-90' : ''
-              } w-6 h-6 3xl:w-8 3xl:h-8`}
+              } w-6 h-6 5xl:w-8 5xl:h-8`}
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
             </svg>
           </div>
         </div>
         {activeTab === 'description' && (
-          <div className="3xl:text-[1em] px-2 py-4 text-sm text-black/80">
+          <div className="5xl:text-[1em] px-2 py-4 text-sm text-black/80">
             {productDescription ? (
               <div dangerouslySetInnerHTML={{ __html: productDescription }}></div>
             ) : (
@@ -157,7 +157,7 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
                 stroke="currentColor"
-                className="w-6 h-6 3xl:w-8 3xl:h-8"
+                className="w-6 h-6 5xl:w-8 5xl:h-8"
               >
                 <path
                   strokeLinecap="round"
@@ -166,7 +166,7 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
                 />
               </svg>
             </div>
-            <span className="3xl:text-[1em] text-base text-gray-700 font-semibold">
+            <span className="5xl:text-[1em] text-base text-gray-700 font-semibold">
               Vận chuyển & Trả hàng
             </span>
           </div>
@@ -177,7 +177,7 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              className="w-6 h-6 3xl:w-8 3xl:h-8"
+              className="w-6 h-6 5xl:w-8 5xl:h-8"
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
             </svg>
@@ -187,7 +187,7 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
           {activeTab === 'shipping' && (
             <div
               dangerouslySetInnerHTML={{ __html: shippingInfo }}
-              className="3xl:text-[1em] px-2 py-2 text-sm text-black/80"
+              className="5xl:text-[1em] px-2 py-2 text-sm text-black/80"
             ></div>
           )}
         </div>

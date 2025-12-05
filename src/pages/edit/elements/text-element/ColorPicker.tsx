@@ -75,15 +75,15 @@ export const ColorPickerModal = ({
   }, [])
 
   return (
-    <div className="NAME-color-picker-modal 3xl:text-3xl fixed inset-0 flex items-center justify-center z-99 animate-pop-in">
+    <div className="NAME-color-picker-modal 5xl:text-3xl fixed inset-0 flex items-center justify-center z-99 animate-pop-in">
       <div onClick={() => onHideShow(false)} className="bg-black/50 absolute inset-0 z-10"></div>
       <div className="bg-white rounded-lg p-4 w-full mx-4 shadow-2xl max-h-[95vh] overflow-y-auto relative z-20">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <h3 className="3xl:text-[1.2em] text-lg font-bold text-gray-800">Chọn màu chữ</h3>
+          <h3 className="5xl:text-[1.2em] text-lg font-bold text-gray-800">Chọn màu chữ</h3>
           <button
             onClick={() => onHideShow(false)}
-            className="text-gray-800 active:scale-90 w-8 h-8 3xl:w-12 3xl:h-12 flex items-center justify-center rounded-full transition"
+            className="text-gray-800 active:scale-90 w-8 h-8 5xl:w-12 5xl:h-12 flex items-center justify-center rounded-full transition"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -93,7 +93,7 @@ export const ColorPickerModal = ({
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-x-icon lucide-x 3xl:w-12 3xl:h-12"
+              className="lucide lucide-x-icon lucide-x 5xl:w-12 5xl:h-12"
             >
               <path d="M18 6 6 18" />
               <path d="m6 6 12 12" />
@@ -122,7 +122,7 @@ export const ColorPickerModal = ({
               }}
               className="flex-1 bg-gray-50 rounded-lg border-2 border-gray-300 p-2 text-center"
             >
-              <p className="3xl:text-4xl text-3xl font-bold" style={{ color: currentColor }}>
+              <p className="5xl:text-4xl text-3xl font-bold" style={{ color: currentColor }}>
                 {inputText}
               </p>
             </div>
@@ -140,7 +140,7 @@ export const ColorPickerModal = ({
             value={currentColor}
             onChange={handleInputChange}
             placeholder="Nhập tên màu (red / pink / ...) hoặc mã màu hex (#fe6e87)"
-            className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 3xl:text-[0.9em] w-full px-3 text-gray-800 py-2 border-gray-300 border-2 rounded-lg outline-none transition-all`}
+            className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.9em] w-full px-3 text-gray-800 py-2 border-gray-300 border-2 rounded-lg outline-none transition-all`}
           />
         </div>
 

@@ -164,8 +164,8 @@ export const PrintedImageElementMenu = ({ elementId, onClose }: TPrintedImageEle
   }, [])
 
   return (
-    <div className="NAME-menu-section NAME-menu-printed-image-element STYLE-hide-scrollbar 3xl:text-[1.3em] smd:text-base smd:px-0 smd:mt-2 px-2 text-sm w-full">
-      <h3 className="3xl:text-[1em] text-xs smd:text-sm smd:mt-3 mb-1 font-bold">
+    <div className="NAME-menu-section NAME-menu-printed-image-element STYLE-hide-scrollbar 5xl:text-[1.3em] smd:text-base smd:px-0 smd:mt-2 px-2 text-sm w-full">
+      <h3 className="5xl:text-[1em] text-xs smd:text-sm smd:mt-3 mb-1 font-bold">
         Tùy chỉnh ảnh photobooth
       </h3>
       <div
@@ -200,7 +200,7 @@ export const PrintedImageElementMenu = ({ elementId, onClose }: TPrintedImageEle
             <span className="text-white text-[1em] font-bold">%</span>
           </div>
         </div> */}
-        <div className="NAME-form-group NAME-form-angle 3xl:h-14 h-8 smd:h-9 flex items-center bg-main-cl rounded px-1 shadow">
+        <div className="NAME-form-group NAME-form-angle 5xl:h-14 h-8 smd:h-9 flex items-center bg-main-cl rounded px-1 shadow">
           <div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -212,7 +212,7 @@ export const PrintedImageElementMenu = ({ elementId, onClose }: TPrintedImageEle
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-refresh-ccw-icon lucide-refresh-ccw w-4 h-4 smd:w-5 smd:h-5 3xl:w-6 3xl:h-6"
+              className="lucide lucide-refresh-ccw-icon lucide-refresh-ccw w-4 h-4 smd:w-5 smd:h-5 5xl:w-6 5xl:h-6"
             >
               <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
               <path d="M3 3v5h5" />
@@ -225,12 +225,12 @@ export const PrintedImageElementMenu = ({ elementId, onClose }: TPrintedImageEle
               type="text"
               placeholder="Độ xoay, VD: 22"
               onKeyDown={(e) => catchEnter(e, 'angle')}
-              className="text-black bg-white rounded px-1 py-0.5 text-[1em] outline-none w-full 3xl:text-[1.3em]"
+              className="text-black bg-white rounded px-1 py-0.5 text-[1em] outline-none w-full 5xl:text-[1.3em]"
             />
             <span className="text-white text-[1em] font-bold">độ</span>
           </div>
         </div>
-        <div className="NAME-form-group NAME-form-zindex 3xl:h-14 h-8 smd:h-9 flex items-center justify-between bg-main-cl rounded px-1 shadow">
+        <div className="NAME-form-group NAME-form-zindex 5xl:h-14 h-8 smd:h-9 flex items-center justify-between bg-main-cl rounded px-1 shadow">
           <div className="mr-0.5">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -240,7 +240,7 @@ export const PrintedImageElementMenu = ({ elementId, onClose }: TPrintedImageEle
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-layers2-icon lucide-layers-2 w-4 h-4 smd:w-5 smd:h-5 3xl:w-6 3xl:h-6"
+              className="lucide lucide-layers2-icon lucide-layers-2 w-4 h-4 smd:w-5 smd:h-5 5xl:w-6 5xl:h-6"
             >
               <path d="M13 13.74a2 2 0 0 1-2 0L2.5 8.87a1 1 0 0 1 0-1.74L11 2.26a2 2 0 0 1 2 0l8.5 4.87a1 1 0 0 1 0 1.74z" />
               <path d="m20 14.285 1.5.845a1 1 0 0 1 0 1.74L13 21.74a2 2 0 0 1-2 0l-8.5-4.87a1 1 0 0 1 0-1.74l1.5-.845" />
@@ -259,7 +259,7 @@ export const PrintedImageElementMenu = ({ elementId, onClose }: TPrintedImageEle
                 strokeWidth="3"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="lucide lucide-arrow-up-icon lucide-arrow-up w-5 h-5 3xl:w-9 3xl:h-9"
+                className="lucide lucide-arrow-up-icon lucide-arrow-up w-5 h-5 5xl:w-9 5xl:h-9"
               >
                 <path d="m5 12 7-7 7 7" />
                 <path d="M12 19V5" />
@@ -279,7 +279,7 @@ export const PrintedImageElementMenu = ({ elementId, onClose }: TPrintedImageEle
                 strokeWidth="3"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="lucide lucide-arrow-down-icon lucide-arrow-down w-5 h-5 3xl:w-9 3xl:h-9"
+                className="lucide lucide-arrow-down-icon lucide-arrow-down w-5 h-5 5xl:w-9 5xl:h-9"
               >
                 <path d="M12 5v14" />
                 <path d="m19 12-7 7-7-7" />
@@ -324,7 +324,7 @@ export const PrintedImageElementMenu = ({ elementId, onClose }: TPrintedImageEle
             />
           </div>
         </div> */}
-        <div className="3xl:h-14 smd:col-span-2 2xl:col-span-1 flex items-center">
+        <div className="5xl:h-14 smd:col-span-2 2xl:col-span-1 flex items-center">
           <button
             onClick={handleClickCheck}
             className="smd:h-8 smd:px-1 2xl:h-full group h-full px-3 w-full cursor-pointer flex flex-nowrap items-center justify-center shadow-md font-bold bg-main-cl gap-1 text-white mobile-touch rounded"
@@ -339,7 +339,7 @@ export const PrintedImageElementMenu = ({ elementId, onClose }: TPrintedImageEle
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-check-icon lucide-check 3xl:w-8 3xl:h-8"
+              className="lucide lucide-check-icon lucide-check 5xl:w-8 5xl:h-8"
             >
               <path d="M20 6 9 17l-5-5" />
             </svg>

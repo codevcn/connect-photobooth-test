@@ -91,7 +91,7 @@ export const MockupPreview = ({ onClose }: TMockupPreviewProps) => {
       <div className="relative z-20 flex flex-col bg-white rounded-lg shadow-2xl overflow-hidden animate-pop-in">
         {/* Header */}
         <div className="flex items-center justify-between gap-4 px-2 py-1 border-b border-gray-200 bg-main-cl">
-          <h2 className="3xl:text-3xl sms:text-xl text-sm font-bold text-white flex items-center gap-2">
+          <h2 className="5xl:text-3xl sms:text-xl text-sm font-bold text-white flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -100,7 +100,7 @@ export const MockupPreview = ({ onClose }: TMockupPreviewProps) => {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-eye 3xl:w-12 3xl:h-12"
+              className="lucide lucide-eye 5xl:w-12 5xl:h-12"
             >
               <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
               <circle cx="12" cy="12" r="3" />
@@ -120,7 +120,7 @@ export const MockupPreview = ({ onClose }: TMockupPreviewProps) => {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-x 3xl:w-12 3xl:h-12"
+              className="lucide lucide-x 5xl:w-12 5xl:h-12"
             >
               <path d="M18 6 6 18" />
               <path d="m6 6 12 12" />

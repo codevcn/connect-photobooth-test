@@ -41,14 +41,14 @@ const SizeChartPreview = ({ setShowSizeChart, sizeChartImageURL }: TSizeChartPre
       title="Bảng kích thước"
       classNames={{
         contentContainer: 'p-0 overflow-y-auto',
-        titleContainer: '3xl:text-4xl text-xl bg-secondary-cl text-white py-2',
+        titleContainer: '5xl:text-4xl text-xl bg-secondary-cl text-white py-2',
         board: 'max-h-[98vh]',
       }}
     >
       <div className="bg-white w-full rounded-xl shadow-2xl border border-gray-200 relative">
         <div className="p-3">
           <div className="border border-slate-300 rounded-2xl p-2">
-            <p className="3xl:text-[0.5em] text-center text-sm text-gray-800 font-medium mb-4">
+            <p className="5xl:text-[0.5em] text-center text-sm text-gray-800 font-medium mb-4">
               Có thể chênh lệch ±1.5 inch do đo thủ công và quy trình sản xuất
             </p>
 
@@ -216,7 +216,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant }: TVariantInfoProps)
   return (
     <div className="smd:order-4 mt-2 order-1 bg-gray-100 border-border rounded-lg overflow-hidden p-3">
       <div className="smd:block hidden mb-4">
-        <h3 className="3xl:text-[0.5em] block text-[1.3em] font-bold text-slate-900">
+        <h3 className="5xl:text-[0.5em] block text-sm font-bold text-slate-900">
           Danh mục hình ảnh sản phẩm
         </h3>
         {/* <div className="flex overflow-x-auto gap-2 w-full mt-2 gallery-scroll">
@@ -239,7 +239,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant }: TVariantInfoProps)
             </div>
           )}
         </div> */}
-        <p className="3xl:text-[0.4em] flex justify-center items-center w-full text-gray-600 font-bold text-[0.9em] mt-3 italic">
+        <p className="5xl:text-[0.4em] flex justify-center items-center w-full text-gray-600 font-bold text-[0.9em] mt-3 italic">
           Hiển thị hình ảnh người mặc áo
         </p>
       </div>
@@ -248,17 +248,17 @@ export const VariantInfo = ({ pickedProduct, pickedVariant }: TVariantInfoProps)
       {mergedAttributes.uniqueMaterials.length > 0 &&
         mergedAttributes.uniqueMaterials[0] !== 'null' && (
           <div className="mb-4">
-            <h3 className="3xl:text-[0.5em] text-sm text-slate-800 font-bold mb-2">
+            <h3 className="5xl:text-[0.5em] text-sm text-slate-800 font-bold mb-2">
               {mergedAttributes.uniqueMaterialTitles[0]}
             </h3>
-            <div className="3xl:text-[0.5em] flex flex-wrap gap-2">
+            <div className="5xl:text-[0.4em] flex flex-wrap gap-2">
               {mergedAttributes.uniqueMaterials.map((material) => {
                 const isSelected = selectedAttributes.material === material
                 return (
                   <button
                     key={material}
                     onClick={() => pickMaterial(material)}
-                    className={`3xl:py-3 px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
+                    className={`5xl:py-3 px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
                       isSelected
                         ? 'bg-main-cl border-2 border-main-cl text-white shadow-md'
                         : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
@@ -275,10 +275,10 @@ export const VariantInfo = ({ pickedProduct, pickedVariant }: TVariantInfoProps)
       {/* Scent Section */}
       {mergedAttributes.uniqueScents.length > 0 && mergedAttributes.uniqueScents[0] !== 'null' && (
         <div className="mb-4">
-          <h3 className="3xl:text-[0.5em] text-sm text-slate-800 font-bold mb-2">
+          <h3 className="5xl:text-[0.5em] text-sm text-slate-800 font-bold mb-2">
             {mergedAttributes.uniqueScentTitles[0]}
           </h3>
-          <div className=" 3xl:text-[0.5em] flex flex-wrap gap-2">
+          <div className=" 5xl:text-[0.4em] flex flex-wrap gap-2">
             {mergedAttributes.uniqueScents.map((scent) => {
               const isSelected = selectedAttributes.scent === scent
               const isDisabled =
@@ -290,7 +290,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant }: TVariantInfoProps)
                   key={scent}
                   onClick={() => pickScent(isDisabled, scent)}
                   disabled={isDisabled}
-                  className={`3xl:py-3 px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
+                  className={`5xl:py-3 px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
                     isDisabled
                       ? 'bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                       : isSelected
@@ -309,13 +309,13 @@ export const VariantInfo = ({ pickedProduct, pickedVariant }: TVariantInfoProps)
       {/* Color Section */}
       {colorsCount > 0 && Object.keys(mergedAttributes.uniqueColors)[0] !== 'null' && (
         <div className="mb-4">
-          <h3 className="3xl:text-[0.5em] text-sm text-slate-800 font-bold mb-2">
+          <h3 className="5xl:text-[0.5em] text-sm text-slate-800 font-bold mb-2">
             {mergedAttributes.uniqueColorTitles[0]}
           </h3>
           <div
             className={`${
               colorsCount > 0 ? '' : ''
-            } 3xl:text-[0.5em] font-bold grid grid-cols-4 gap-3 text-sm`}
+            } 5xl:text-[0.4em] font-bold grid grid-cols-4 gap-3 text-sm`}
           >
             {Object.keys(mergedAttributes.uniqueColors).map((color) => {
               const isSelected = selectedAttributes.color === color
@@ -329,7 +329,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant }: TVariantInfoProps)
                     key={color}
                     onClick={() => pickColor(isDisabled, color)}
                     disabled={isDisabled}
-                    className={`3xl:py-2 flex flex-col items-center rounded-full focus:outline-none transition active:scale-90 ${
+                    className={`5xl:py-2 flex flex-col items-center rounded-full focus:outline-none transition active:scale-90 ${
                       isDisabled ? 'opacity-50 cursor-not-allowed' : ''
                     }`}
                     title={color}
@@ -385,7 +385,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant }: TVariantInfoProps)
                     key={color}
                     onClick={() => pickColor(isDisabled, color)}
                     disabled={isDisabled}
-                    className={`3xl:py-2 px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
+                    className={`5xl:py-2 px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
                       isDisabled
                         ? 'bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                         : isSelected
@@ -406,19 +406,19 @@ export const VariantInfo = ({ pickedProduct, pickedVariant }: TVariantInfoProps)
       {sortedSizes.length > 0 && sortedSizes[0] !== 'null' && (
         <div className="mb-4">
           <div className="flex justify-between w-full mb-2">
-            <label className="3xl:text-[0.5em] text-sm block font-bold text-slate-900">
+            <label className="5xl:text-[0.5em] text-sm block font-bold text-slate-900">
               {mergedAttributes.uniqueSizeTitles[0]}
             </label>
             {firstProductImageURL && firstProductImageURL !== hintForSizeChart && (
               <button
                 onClick={() => setShowSizeChart(true)}
-                className="3xl:text-[0.5em] text-sm cursor-pointer mobile-touch text-main-cl underline font-medium hover:text-secondary-cl"
+                className="5xl:text-[0.5em] text-sm cursor-pointer mobile-touch text-main-cl underline font-medium hover:text-secondary-cl"
               >
                 Bảng size
               </button>
             )}
           </div>
-          <div className=" 3xl:text-[0.5em] text-base flex flex-wrap gap-2">
+          <div className="5xl:text-[0.4em] text-base flex flex-wrap gap-2">
             {sortedSizes.map((size) => {
               const isSelected = selectedAttributes.size?.toUpperCase() === size.toUpperCase()
               const isScopeDisabled = !mergedAttributes.groups?.[
@@ -432,7 +432,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant }: TVariantInfoProps)
                   key={size}
                   onClick={() => pickSize(isDisabled, size)}
                   disabled={isDisabled}
-                  className={`3xl:py-2 px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
+                  className={`5xl:py-2 px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
                     isDisabled
                       ? `bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed`
                       : isSelected

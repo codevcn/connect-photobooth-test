@@ -21,13 +21,13 @@ export const PrintSurface = ({ printSurfaces, pickedVariant }: TPrintSurfaceProp
     printSurfaces &&
     printSurfaces.length > 1 && (
       <div className="mt-4">
-        <h3 className="3xl:text-[0.5em] text-slate-800 font-bold text-sm mb-2">Mặt in</h3>
+        <h3 className="5xl:text-[0.5em] text-slate-800 font-bold text-sm mb-2">Mặt in</h3>
         <div className="flex flex-wrap gap-2">
           {printSurfaces.map((surface) => (
             <button
               key={surface.id}
               onClick={() => handlePickSurface(surface.id, pickedVariant.id)}
-              className={`3xl:text-[0.5em] 3xl:py-2 px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
+              className={`5xl:text-[0.5em] 5xl:py-2 px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
                 pickedSurface?.id === surface.id
                   ? 'bg-main-cl border-2 border-main-cl text-white shadow-md'
                   : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'

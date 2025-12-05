@@ -253,13 +253,13 @@ const PaymentPage = () => {
   }, [])
 
   return (
-    <div className="3xl:text-3xl h-screen bg-gray-100">
+    <div className="5xl:text-3xl h-screen bg-gray-100">
       {/* Header */}
       <header className="2xl:px-24 xl:px-20 lg:px-14 spmd:px-10 sms:px-4 px-2 flex items-center bg-white w-full top-0 z-10">
         <div>
           <button
             onClick={backToEditPage}
-            className="3xl:text-[0.7em] flex items-center gap-2 py-1 px-2 md:px-4 text-sm md:text-base bg-main-cl rounded text-white font-bold active:scale-95 transition"
+            className="5xl:text-[0.7em] flex items-center gap-2 py-1 px-2 md:px-4 text-sm md:text-base bg-main-cl rounded text-white font-bold active:scale-95 transition"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -271,7 +271,7 @@ const PaymentPage = () => {
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-arrow-left-icon lucide-arrow-left md:w-5 md:h-5 3xl:w-8 3xl:h-8"
+              className="lucide lucide-arrow-left-icon lucide-arrow-left md:w-5 md:h-5 5xl:w-8 5xl:h-8"
             >
               <path d="m12 19-7-7 7-7" />
               <path d="M19 12H5" />
@@ -280,11 +280,11 @@ const PaymentPage = () => {
           </button>
         </div>
 
-        <div className="3xl:py-4 md:px-6 px-4 py-2">
-          <h1 className="3xl:text-[1em] sms:text-lg md:text-2xl leading-none font-bold text-gray-900">
+        <div className="5xl:py-4 md:px-6 px-4 py-2">
+          <h1 className="5xl:text-[1em] sms:text-lg md:text-2xl leading-none font-bold text-gray-900">
             Trang thanh toán
           </h1>
-          <p className="3xl:text-[0.7em] md:text-base sms:text-sm text-xs font-medium text-gray-500 mt-1">
+          <p className="5xl:text-[0.7em] md:text-base sms:text-sm text-xs font-medium text-gray-500 mt-1">
             <span>{cartItems.length}</span>
             <span> sản phẩm trong giỏ hàng</span>
           </p>
@@ -294,7 +294,7 @@ const PaymentPage = () => {
       {cartItems && cartItems.length > 0 ? (
         <>
           {/* Main Content */}
-          <div className="3xl:h-[calc(100vh-98px)] md:h-[calc(100vh-70px)] h-auto 2xl:px-24 xl:px-20 lg:px-14 spmd:px-10 sms:px-4 px-2 flex flex-col gap-2 mx-auto pt-2 bg-gray-100">
+          <div className="5xl:h-[calc(100vh-98px)] md:h-[calc(100vh-70px)] h-auto 2xl:px-24 xl:px-20 lg:px-14 spmd:px-10 sms:px-4 px-2 flex flex-col gap-2 mx-auto pt-2 bg-gray-100">
             {/* Layout: 2 columns on medium+ screens */}
             <div className="grid grid-cols-1 md:grid-cols-[4fr_2fr] gap-3 h-full">
               {/* Left Column: Product List */}
@@ -322,10 +322,10 @@ const PaymentPage = () => {
 
                 {/* Order Summary */}
                 <section className="bg-white rounded-2xl shadow-sm p-4 md:p-5 space-y-2 md:sticky md:top-4 mb-2">
-                  <h3 className="3xl:text-[0.9em] text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">
+                  <h3 className="5xl:text-[0.9em] text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">
                     Tổng đơn hàng
                   </h3>
-                  <div className="3xl:text-[0.8em] font-medium flex justify-between text-xs md:text-sm">
+                  <div className="5xl:text-[0.8em] font-medium flex justify-between text-xs md:text-sm">
                     <span className="text-gray-600">Tạm tính</span>
                     <span className="text-gray-900">
                       <span>{formatNumberWithCommas(subtotal)}</span>
@@ -344,10 +344,10 @@ const PaymentPage = () => {
                   )}
                   <div className="border-t border-gray-200 pt-2 mb-0 mt-2">
                     <div className="flex justify-between">
-                      <span className="3xl:text-[0.8em] font-semibold text-gray-900 text-sm md:text-base">
+                      <span className="5xl:text-[0.8em] font-semibold text-gray-900 text-sm md:text-base">
                         Tổng cộng
                       </span>
-                      <span className="3xl:text-[0.8em] text-lg md:text-xl font-bold text-primary">
+                      <span className="5xl:text-[0.8em] text-lg md:text-xl font-bold text-primary">
                         <span>{formatNumberWithCommas(total)}</span>
                         <span> VND</span>
                       </span>
@@ -361,7 +361,7 @@ const PaymentPage = () => {
                         // toast.info('Đang tạm khóa')
                         setShowModal(true)
                       }}
-                      className="3xl:text-[0.9em] 3xl:h-14 flex items-center justify-center gap-2 w-full mt-4 h-11 bg-main-cl hover:scale-95 text-white font-bold text-base rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition duration-200"
+                      className="5xl:text-[0.9em] 5xl:h-14 flex items-center justify-center gap-2 w-full mt-4 h-11 bg-main-cl hover:scale-95 text-white font-bold text-base rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition duration-200"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -371,7 +371,7 @@ const PaymentPage = () => {
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className="lucide lucide-banknote-icon lucide-banknote w-6 h-6 3xl:w-10 3xl:h-10"
+                        className="lucide lucide-banknote-icon lucide-banknote w-6 h-6 5xl:w-10 5xl:h-10"
                       >
                         <rect width="20" height="12" x="2" y="6" rx="2" />
                         <circle cx="12" cy="12" r="2" />

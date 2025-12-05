@@ -180,7 +180,7 @@ const PrintedImagesForTemplate = ({ printedImages }: PrintedImageForTemplateProp
   }, [elementId, elementType, elementURL])
 
   return (
-    <div className="3xl:text-[1.5em] w-full text-[1em]">
+    <div className="5xl:text-[1.5em] w-full text-[1em]">
       <h3 className="smd:text-[1em] text-xs mb-1 font-bold text-gray-800">
         Chọn ảnh <span className="smd:inline hidden">chụp photobooth</span>
       </h3>
@@ -195,7 +195,7 @@ const PrintedImagesForTemplate = ({ printedImages }: PrintedImageForTemplateProp
               <img
                 className={`${
                   index === 0 ? 'aspect-video' : 'aspect-square'
-                } 3xl:h-20 h-12 border-2 border-main-cl object-contain mobile-touch`}
+                } 5xl:h-20 h-12 border-2 border-main-cl object-contain mobile-touch`}
                 src={printedImage.url}
                 alt="Ảnh chụp photobooth"
               />

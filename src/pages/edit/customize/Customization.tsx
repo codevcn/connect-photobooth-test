@@ -7,7 +7,7 @@ import { PrintedImageMenuWrapper } from '../elements/printed-image/MenuWrapper'
 
 const Instructions = () => {
   return (
-    <div className="3xl:text-[1.1em] smd:block text-sm hidden max-w-2xl mx-auto text-gray-600 leading-relaxed mt-4">
+    <div className="5xl:text-[1.1em] smd:block text-sm hidden max-w-2xl mx-auto text-gray-600 leading-relaxed mt-4">
       <ul className="list-disc pl-5 space-y-1.5 font-medium">
         <li>
           <span className="font-bold text-gray-700">Chọn mẫu in:</span> Lựa chọn layout phù hợp với
@@ -43,7 +43,7 @@ type TCustomizeProps = {
 export const Customization = ({ printedImages }: TCustomizeProps) => {
   return (
     <div className="smd:order-2 smd:mt-2 smd:px-3 px-2 py-3 mt-0 order-1 border-border rounded-lg bg-gray-100">
-      <h3 className="smd:text-sm 3xl:text-[1.4em] text-xs text-center font-bold text-gray-800 uppercase tracking-wide">
+      <h3 className="smd:text-sm 5xl:text-[1.4em] text-xs text-center font-bold text-gray-800 uppercase tracking-wide">
         Cá nhân hóa
       </h3>
       <Instructions />
@@ -51,7 +51,7 @@ export const Customization = ({ printedImages }: TCustomizeProps) => {
         <TemplatesPicker printedImages={printedImages} />
         <div className="gap-2 grid grid-cols-1 smd:grid-cols-2 flex-wrap mt-2">
           <PrintedImagesPreview printedImages={printedImages} />
-          <div className="3xl:gap-4 flex col-span-2 gap-2">
+          <div className="5xl:gap-4 flex col-span-2 gap-2">
             <StickerPicker />
             <TextEditor />
           </div>

@@ -52,11 +52,11 @@ const EditorModal = ({ onClose }: TEditorModalProps) => {
   }
 
   return (
-    <div className="3xl:text-3xl fixed inset-0 flex justify-center z-99 animate-pop-in p-2">
+    <div className="5xl:text-3xl fixed inset-0 flex justify-center z-99 animate-pop-in p-2">
       <div onClick={onClose} className="bg-black/50 absolute inset-0 z-10"></div>
       <div className="bg-white w-full rounded-xl p-3 shadow-2xl relative z-20 h-fit">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="3xl:text-3xl text-xl font-bold text-gray-800">Thêm chữ</h3>
+          <h3 className="5xl:text-3xl text-xl font-bold text-gray-800">Thêm chữ</h3>
           <button onClick={onClose} className="p-2 active:bg-gray-100 rounded-full touch-target">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -66,7 +66,7 @@ const EditorModal = ({ onClose }: TEditorModalProps) => {
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-x-icon lucide-x text-black h-6 w-6 3xl:w-10 3xl:h-10"
+              className="lucide lucide-x-icon lucide-x text-black h-6 w-6 5xl:w-10 5xl:h-10"
             >
               <path d="M18 6 6 18" />
               <path d="m6 6 12 12" />
@@ -80,14 +80,14 @@ const EditorModal = ({ onClose }: TEditorModalProps) => {
             onChange={handleEdit}
             onKeyDown={catchEnterKey}
             placeholder="Nhập chữ tại đây..."
-            className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 3xl:text-[1em] w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-lg`}
+            className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[1em] w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-lg`}
             autoFocus
           />
 
           <button
             onClick={handleAddText}
             disabled={!text.trim()}
-            className="3xl:text-[1em] sm:text-base smd:text-lg text-sm w-full bg-primary active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded-xl shadow-lg touch-target flex items-center justify-center gap-2 transition"
+            className="5xl:text-[1em] sm:text-base smd:text-lg text-sm w-full bg-primary active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded-xl shadow-lg touch-target flex items-center justify-center gap-2 transition"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -97,7 +97,7 @@ const EditorModal = ({ onClose }: TEditorModalProps) => {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-plus-icon lucide-plus h-6 w-6 3xl:w-10 3xl:h-10"
+              className="lucide lucide-plus-icon lucide-plus h-6 w-6 5xl:w-10 5xl:h-10"
             >
               <path d="M5 12h14" />
               <path d="M12 5v14" />
@@ -127,7 +127,7 @@ export const EditorModalWrapper = () => {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="lucide lucide-type-icon lucide-type text-main-cl w-6 h-6 smd:w-8 smd:h-8 3xl:w-12 3xl:h-12"
+          className="lucide lucide-type-icon lucide-type text-main-cl w-6 h-6 smd:w-8 smd:h-8 5xl:w-12 5xl:h-12"
         >
           <path d="M12 4v16" />
           <path d="M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2" />
@@ -205,8 +205,8 @@ export const TextEditor = () => {
   }, [elementType])
 
   return (
-    <div ref={containerRef} className="3xl:text-[1.5em] smd:mt-4 mt-2 flex-1">
-      <h3 className="3xl:text-[1em] smd:text-base text-xs mb-1 font-bold text-gray-800">
+    <div ref={containerRef} className="5xl:text-[1.5em] smd:mt-4 mt-2 flex-1">
+      <h3 className="5xl:text-[1em] smd:text-base text-xs mb-1 font-bold text-gray-800">
         Thêm văn bản
       </h3>
       <EditorModalWrapper />

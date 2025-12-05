@@ -97,12 +97,12 @@ export const VoucherSection = ({ cartItems, onVoucherApplied }: VoucherSectionPr
           strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="lucide lucide-tag-icon lucide-tag text-main-cl 3xl:w-6 3xl:h-6"
+          className="lucide lucide-tag-icon lucide-tag text-main-cl 5xl:w-6 5xl:h-6"
         >
           <path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z" />
           <circle cx="7.5" cy="7.5" r=".5" fill="currentColor" />
         </svg>
-        <h2 className="3xl:text-[0.9em] font-semibold text-gray-900">Mã giảm giá</h2>
+        <h2 className="5xl:text-[0.9em] font-semibold text-gray-900">Mã giảm giá</h2>
       </div>
 
       {/* Applied Voucher Display */}
@@ -151,12 +151,12 @@ export const VoucherSection = ({ cartItems, onVoucherApplied }: VoucherSectionPr
           onKeyDown={(e) => e.key === 'Enter' && !isApplyingVoucher && applyVoucher()}
           placeholder="Nhập mã khuyến mãi"
           disabled={!!appliedVoucher || isApplyingVoucher}
-          className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 3xl:text-[0.8em] md:h-10 h-9 flex-1 w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed`}
+          className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.8em] md:h-10 h-9 flex-1 w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed`}
         />
         <button
           onClick={applyVoucher}
           disabled={!!appliedVoucher || isApplyingVoucher}
-          className="3xl:text-[0.8em] 3xl:h-12 h-8 px-6 bg-main-cl text-white font-medium rounded-xl active:scale-95 transition shadow-sm w-max disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="5xl:text-[0.8em] 5xl:h-12 h-8 px-6 bg-main-cl text-white font-medium rounded-xl active:scale-95 transition shadow-sm w-max disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           {isApplyingVoucher ? (
             <>

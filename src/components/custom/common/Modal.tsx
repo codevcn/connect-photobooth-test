@@ -47,7 +47,7 @@ export const Modal = ({ onClose, children, title, classNames }: TModalProps) => 
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="w-6 h-6 3xl:w-10 3xl:h-10"
+              className="w-6 h-6 5xl:w-10 5xl:h-10"
             >
               <path d="M18 6 6 18" />
               <path d="m6 6 12 12" />

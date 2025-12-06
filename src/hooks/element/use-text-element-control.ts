@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { roundZooming } from '@/utils/helpers'
 import { createInitialConstants } from '@/utils/contants'
 import { TElementMountType, TTextVisualState } from '@/utils/types/global'
+import { useEditAreaStore } from '@/stores/ui/edit-area.store'
 
 type TInitialTextParams = Partial<
   TTextVisualState & {
@@ -69,6 +70,7 @@ export const useTextElementControl = (
     scale: initialZoom = createInitialConstants<number>('ELEMENT_ZOOM'),
     mountType,
   } = initialParams || {}
+  const scaleFactor = useEditAreaStore((s) => s.editAreaScaleValue)
 
   const {
     // forPinch,
@@ -198,8 +200,8 @@ export const useTextElementControl = (
   }
 
   useEffect(() => {
-    handleSetFontSize(undefined, baseState.scale)
-  }, [baseState.scale])
+    handleSetFontSize(undefined, baseState.scale / scaleFactor)
+  }, [baseState.scale, scaleFactor])
 
   useEffect(() => {
     setupVisualData()

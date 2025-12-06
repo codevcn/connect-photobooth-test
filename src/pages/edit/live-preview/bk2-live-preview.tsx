@@ -11,6 +11,7 @@ import { createCommonConstants } from '@/utils/contants'
 import { useZoomEditBackground } from '@/hooks/use-zoom-edit-background'
 import { adjustSizeOfPlacedImageOnPlaced, cancelSelectingZoomingImages } from '../helpers'
 import { useEditAreaStore } from '@/stores/ui/edit-area.store'
+import { useDragEditBackground } from '@/hooks/use-drag-edit-background'
 import { useEditedElementStore } from '@/stores/element/element.store'
 import { MyDevComponent } from '@/dev/components/Preview'
 import { buildDefaultTemplateLayout } from '../customize/default-template/builder'
@@ -36,7 +37,7 @@ const ZoomButtons = ({
 
   // Hàm xử lý zoom với logic snap to 100%
   const handleZoom = (direction: 'in' | 'out') => {
-    // Tính toán giá trị zoom tiếp theo dựa trên logic thực tế của zoomEditAreaController
+    // Tính toán giá trị zoom tiếp theo dựa trên logic thực tế của controls
     // zoomIn: scale * 1.2, zoomOut: scale * 0.8
     const nextScale = direction === 'in' ? scale * 1.2 : scale * 0.8
 
@@ -121,8 +122,6 @@ export const LivePreview = ({
   pickedSurfaceId,
   printedImages,
 }: TLivePreviewProps) => {
-  const prevProductIdRef = useRef<TBaseProduct['id'] | null>(null)
-
   const printAreaInfo = useMemo(() => {
     return pickedProduct.printAreaList.find(
       (printArea) => printArea.id === pickedSurfaceId && printArea.variantId === editedVariantId
@@ -133,43 +132,35 @@ export const LivePreview = ({
   const maxZoom = 3
   const {
     scale,
-    controls: zoomEditAreaController,
+    controls,
     translate,
     printAreaContainerWrapperRef,
     allowedPrintAreaRef,
+    maxZoomAllowedPrintAreaIntoView,
   } = useZoomEditBackground(minZoom, maxZoom)
 
   const handlePrintAreaUpdated = () => {
-    const currentProductId = pickedProduct.id
-    const isProductChanged = prevProductIdRef.current !== currentProductId
-    prevProductIdRef.current = currentProductId
     setTimeout(() => {
-      if (isProductChanged) {
-        // nếu print area thay đổi do đổi sản phẩm
-        printAreaContainerWrapperRef.current
-          ?.querySelector<HTMLElement>('.NAME-print-area-container')
-          ?.style.setProperty('transform', 'translate(0px, 0px) scale(1)')
-        zoomEditAreaController.reset()
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            const defaultTemplate = buildDefaultTemplateLayout(
-              printAreaContainerRef.current!,
-              allowedPrintAreaRef.current!,
-              printedImages,
-              4
-            )
-            useEditedElementStore.getState().initBuiltPrintedImageElements(defaultTemplate.elements)
-            eventEmitter.emit(EInternalEvents.ELEMENTS_OUT_OF_BOUNDS_CHANGED)
-          })
-        })
-      } else {
-        eventEmitter.emit(EInternalEvents.ELEMENTS_OUT_OF_BOUNDS_CHANGED)
-      }
+      eventEmitter.emit(EInternalEvents.ELEMENTS_OUT_OF_BOUNDS_CHANGED)
+      controls.reset()
+      const now = performance.now()
+      const defaultTemplate = buildDefaultTemplateLayout(
+        printAreaContainerRef.current!,
+        allowedPrintAreaRef.current!,
+        printedImages,
+        4
+      )
+      useEditedElementStore.getState().setPrintedImageElements(defaultTemplate.elements)
+      const nowEnd = performance.now()
+      console.log('>>> [bui] du:', nowEnd - now)
+      console.log('>>> [bui] printed:', printedImages)
+      console.log('>>> [bui] def:', defaultTemplate)
+      maxZoomAllowedPrintAreaIntoView()
     }, createCommonConstants<number>('ANIMATION_DURATION_PRINT_AREA_BOUNDS_CHANGE') + 50)
   }
 
   const { printAreaRef, printAreaContainerRef, checkIfAnyElementOutOfBounds, isOutOfBounds } =
-    usePrintArea(printAreaInfo, handlePrintAreaUpdated, scale, pickedProduct.id)
+    usePrintArea(printAreaInfo, handlePrintAreaUpdated, scale)
 
   const displayedImage = useMemo<TDisplayedImage>(() => {
     const variantSurface = pickedProduct.printAreaList.find(
@@ -304,9 +295,9 @@ export const LivePreview = ({
 
       <ZoomButtons
         scale={scale}
-        onZoomIn={zoomEditAreaController.zoomIn}
-        setZoom={zoomEditAreaController.setZoom}
-        onZoomOut={zoomEditAreaController.zoomOut}
+        onZoomIn={controls.zoomIn}
+        setZoom={controls.setZoom}
+        onZoomOut={controls.zoomOut}
         minZoom={minZoom}
         maxZoom={maxZoom}
       />

@@ -75,7 +75,7 @@ export const StickerElement = ({
       },
       isShown: true,
     })
-    requestAnimationFrame(updateInteractiveButtonsVisual)
+    // requestAnimationFrame(updateInteractiveButtonsVisual)
   }
 
   useEffect(() => {

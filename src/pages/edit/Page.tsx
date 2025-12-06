@@ -191,8 +191,6 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
         if (!target.closest('.NAME-zoom-placed-image-btn-wrapper')) {
           cancelSelectingZoomingImages()
         }
-        console.log('>>> [keyb]1:', target.closest('.NAME-vietnamese-virtual-keyboard'))
-        console.log('>>> [keyb]2:', target)
         if (
           !target.closest('.NAME-vietnamese-virtual-keyboard') &&
           !target.classList.contains('hg-button')
@@ -202,6 +200,16 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
       }
     }
 
+    const listenWindowResize = () => {
+      cancelSelectingElement()
+      cancelSelectingZoomingImages()
+    }
+
+    const listenWindowScroll = () => {
+      cancelSelectingElement()
+      cancelSelectingZoomingImages()
+    }
+
     if (mockupId && firstRenderRef.current) {
       restoreMockupVisualStates(mockupId)
       firstRenderRef.current = false
@@ -209,8 +217,12 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
 
     loadAllFonts()
     document.body.addEventListener('pointerdown', listenPointerDownOnPage)
+    window.addEventListener('resize', listenWindowResize)
+    window.addEventListener('scroll', listenWindowScroll)
     return () => {
       document.body.removeEventListener('pointerdown', listenPointerDownOnPage)
+      window.removeEventListener('resize', listenWindowResize)
+      window.removeEventListener('scroll', listenWindowScroll)
       useEditedElementStore.getState().resetData()
       useElementLayerStore.getState().resetData()
       useProductUIDataStore.getState().resetData()

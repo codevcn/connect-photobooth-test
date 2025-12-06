@@ -1,3 +1,4 @@
+import { useEditedElementStore } from '@/stores/element/element.store'
 import { createInitialConstants } from '@/utils/contants'
 import { TPosition } from '@/utils/types/global'
 import { useState, useRef, useEffect } from 'react'
@@ -14,6 +15,9 @@ export const useZoomEditBackground = (
   const [translate, setTranslate] = useState<TPosition>({ x: 0, y: 0 })
   const allowedPrintAreaRef = useRef<HTMLDivElement>(null)
   const printAreaContainerWrapperRef = useRef<HTMLElement | null>(null)
+  const printedImagesBuildId = useEditedElementStore((s) => s.printedImagesBuildId)
+  const printedImages = useEditedElementStore((s) => s.printedImages)
+  const preBuildIdRef = useRef<string | null>(null)
 
   // Reset về mặc định
   const reset = () => {
@@ -67,7 +71,7 @@ export const useZoomEditBackground = (
   }
 
   const detectCollisionByAllowedPrintArea = () => {
-    if (scale === 1) return
+    if (scale === createInitialConstants<number>('ELEMENT_ZOOM')) return
     const allowedPrintArea = allowedPrintAreaRef.current
     if (!allowedPrintArea) return
     const printAreaContainerWrapper = printAreaContainerWrapperRef.current
@@ -138,6 +142,19 @@ export const useZoomEditBackground = (
       })
     })
   }, [scale])
+
+  // Zoom edit area khi printed images được build và mount xong
+  useEffect(() => {
+    if (!printedImagesBuildId) return
+    if (preBuildIdRef.current === printedImagesBuildId) return
+    preBuildIdRef.current = printedImagesBuildId
+    // Đợi 1 frame để đảm bảo DOM đã mount xong
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        maxZoomAllowedPrintAreaIntoView()
+      })
+    })
+  }, [printedImagesBuildId, printedImages.length])
 
   return {
     allowedPrintAreaRef,

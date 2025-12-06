@@ -1,5 +1,5 @@
 import { usePrintArea } from '@/hooks/use-print-area'
-import { TBaseProduct, TPrintedImage } from '@/utils/types/global'
+import { TBaseProduct, TPrintAreaInfo, TPrintedImage } from '@/utils/types/global'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { PrintAreaOverlay } from './PrintAreaOverlay'
 import { EditedElementsArea } from './EditedElementsArea'
@@ -11,6 +11,7 @@ import { createCommonConstants } from '@/utils/contants'
 import { useZoomEditBackground } from '@/hooks/use-zoom-edit-background'
 import { adjustSizeOfPlacedImageOnPlaced, cancelSelectingZoomingImages } from '../helpers'
 import { useEditAreaStore } from '@/stores/ui/edit-area.store'
+import { useDragEditBackground } from '@/hooks/use-drag-edit-background'
 import { useEditedElementStore } from '@/stores/element/element.store'
 import { MyDevComponent } from '@/dev/components/Preview'
 import { buildDefaultTemplateLayout } from '../customize/default-template/builder'
@@ -36,7 +37,7 @@ const ZoomButtons = ({
 
   // Hàm xử lý zoom với logic snap to 100%
   const handleZoom = (direction: 'in' | 'out') => {
-    // Tính toán giá trị zoom tiếp theo dựa trên logic thực tế của zoomEditAreaController
+    // Tính toán giá trị zoom tiếp theo dựa trên logic thực tế của controls
     // zoomIn: scale * 1.2, zoomOut: scale * 0.8
     const nextScale = direction === 'in' ? scale * 1.2 : scale * 0.8
 
@@ -121,55 +122,53 @@ export const LivePreview = ({
   pickedSurfaceId,
   printedImages,
 }: TLivePreviewProps) => {
-  const prevProductIdRef = useRef<TBaseProduct['id'] | null>(null)
-
-  const printAreaInfo = useMemo(() => {
-    return pickedProduct.printAreaList.find(
+  const prePrintAreaIdRef = useRef<TPrintAreaInfo['id'] | null>(null)
+  const prePickedProductIdRef = useRef<TBaseProduct['id'] | null>(null)
+  const handleSetPrintAreaInfo = () => {
+    const printAreaInfo = pickedProduct.printAreaList.find(
       (printArea) => printArea.id === pickedSurfaceId && printArea.variantId === editedVariantId
     )!
+    prePrintAreaIdRef.current = printAreaInfo.id
+    prePickedProductIdRef.current = pickedProduct.id
+    return printAreaInfo
+  }
+  const [printAreaInfo, setPrintAreaInfo] = useState<TPrintAreaInfo>(handleSetPrintAreaInfo)
+  useEffect(() => {
+    setPrintAreaInfo(handleSetPrintAreaInfo())
   }, [pickedProduct.id, pickedProduct.printAreaList, pickedSurfaceId, editedVariantId])
-
+  // const printAreaInfo = useMemo(() => {
+  //   return pickedProduct.printAreaList.find(
+  //     (printArea) => printArea.id === pickedSurfaceId && printArea.variantId === editedVariantId
+  //   )!
+  // }, [pickedProduct.id, pickedProduct.printAreaList, pickedSurfaceId, editedVariantId])
   const minZoom = 0.8
   const maxZoom = 3
-  const {
-    scale,
-    controls: zoomEditAreaController,
-    translate,
-    printAreaContainerWrapperRef,
-    allowedPrintAreaRef,
-  } = useZoomEditBackground(minZoom, maxZoom)
+  const { scale, controls, translate, printAreaContainerWrapperRef, allowedPrintAreaRef } =
+    useZoomEditBackground(minZoom, maxZoom)
 
   const handlePrintAreaUpdated = () => {
-    const currentProductId = pickedProduct.id
-    const isProductChanged = prevProductIdRef.current !== currentProductId
-    prevProductIdRef.current = currentProductId
     setTimeout(() => {
-      if (isProductChanged) {
-        // nếu print area thay đổi do đổi sản phẩm
-        printAreaContainerWrapperRef.current
-          ?.querySelector<HTMLElement>('.NAME-print-area-container')
-          ?.style.setProperty('transform', 'translate(0px, 0px) scale(1)')
-        zoomEditAreaController.reset()
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            const defaultTemplate = buildDefaultTemplateLayout(
-              printAreaContainerRef.current!,
-              allowedPrintAreaRef.current!,
-              printedImages,
-              4
-            )
-            useEditedElementStore.getState().initBuiltPrintedImageElements(defaultTemplate.elements)
-            eventEmitter.emit(EInternalEvents.ELEMENTS_OUT_OF_BOUNDS_CHANGED)
-          })
-        })
-      } else {
-        eventEmitter.emit(EInternalEvents.ELEMENTS_OUT_OF_BOUNDS_CHANGED)
+      eventEmitter.emit(EInternalEvents.ELEMENTS_OUT_OF_BOUNDS_CHANGED)
+      if (
+        prePrintAreaIdRef.current !== printAreaInfo.id &&
+        prePickedProductIdRef.current !== pickedProduct.id
+      ) {
+        controls.reset()
+        const defaultTemplate = buildDefaultTemplateLayout(
+          printAreaContainerRef.current!,
+          allowedPrintAreaRef.current!,
+          printedImages,
+          4
+        )
+        useEditedElementStore.getState().setPrintedImageElements(defaultTemplate.elements)
+        useEditedElementStore.getState().resetPrintedImagesBuildId()
       }
     }, createCommonConstants<number>('ANIMATION_DURATION_PRINT_AREA_BOUNDS_CHANGE') + 50)
+    adjustSizeOfPlacedImageOnPlaced()
   }
 
   const { printAreaRef, printAreaContainerRef, checkIfAnyElementOutOfBounds, isOutOfBounds } =
-    usePrintArea(printAreaInfo, handlePrintAreaUpdated, scale, pickedProduct.id)
+    usePrintArea(printAreaInfo, handlePrintAreaUpdated, scale)
 
   const displayedImage = useMemo<TDisplayedImage>(() => {
     const variantSurface = pickedProduct.printAreaList.find(
@@ -234,6 +233,8 @@ export const LivePreview = ({
   useEffect(() => {
     useEditAreaStore.getState().setEditAreaScaleValue(scale)
   }, [scale])
+
+  useEffect(() => {}, [pickedProduct.id])
 
   return (
     <div
@@ -304,9 +305,9 @@ export const LivePreview = ({
 
       <ZoomButtons
         scale={scale}
-        onZoomIn={zoomEditAreaController.zoomIn}
-        setZoom={zoomEditAreaController.setZoom}
-        onZoomOut={zoomEditAreaController.zoomOut}
+        onZoomIn={controls.zoomIn}
+        setZoom={controls.setZoom}
+        onZoomOut={controls.zoomOut}
         minZoom={minZoom}
         maxZoom={maxZoom}
       />

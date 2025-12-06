@@ -79,7 +79,7 @@ export const TextElement = ({
       },
       isShown: true,
     })
-    requestAnimationFrame(updateInteractiveButtonsVisual)
+    // requestAnimationFrame(updateInteractiveButtonsVisual)
   }
 
   useEffect(() => {

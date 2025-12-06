@@ -1,5 +1,6 @@
 import { createInitialConstants } from '@/utils/contants'
 import { generateUniqueId } from '@/utils/helpers'
+import { TLayoutType } from '@/utils/types/default-template'
 import { TPrintedImage, TPrintedImageVisualState, TSizeInfo } from '@/utils/types/global'
 
 // ============================================================================
@@ -8,7 +9,6 @@ import { TPrintedImage, TPrintedImageVisualState, TSizeInfo } from '@/utils/type
 
 type TMatchOrientation = 'width' | 'height'
 
-type TLayoutType = 'full' | 'half-width' | 'half-height'
 // TODO: Mở rộng thêm các layout khác: 'quarter' | 'three-left' | 'three-right' | 'three-top' | 'three-bottom'
 
 type TLayoutCandidate = {
@@ -57,17 +57,20 @@ const createPrintedImageElement = (
 /**
  * Lấy thông tin kích thước của print area
  */
-const getPrintAreaDimensions = (allowedPrintArea: HTMLElement): TPrintAreaDimensions => {
+const getPrintAreaDimensions = (
+  allowedPrintArea: HTMLElement,
+  printAreaPadding: number = 0
+): TPrintAreaDimensions => {
   const rect = allowedPrintArea.getBoundingClientRect()
-  const paddedWidth: number = rect.width - 8 // cho padding để tránh tràn ra ngoài
-  const paddedHeight: number = rect.height - 8 // cho padding để tránh tràn ra ngoài
+  const paddedWidth: number = rect.width - printAreaPadding * 2 // cho padding để tránh tràn ra ngoài
+  const paddedHeight: number = rect.height - printAreaPadding * 2 // cho padding để tránh tràn ra ngoài
   return {
     width: paddedWidth,
     height: paddedHeight,
     area: paddedWidth * paddedHeight,
     ratio: paddedWidth / paddedHeight,
-    offsetLeft: allowedPrintArea.offsetLeft + 4,
-    offsetTop: allowedPrintArea.offsetTop + 4,
+    offsetLeft: allowedPrintArea.offsetLeft + printAreaPadding,
+    offsetTop: allowedPrintArea.offsetTop + printAreaPadding,
   }
 }
 
@@ -324,13 +327,14 @@ export type TBuildLayoutResult = {
 export const buildDefaultTemplateLayout = (
   _printAreaContainer: HTMLElement, // Reserved for future use (e.g., constraints, boundaries)
   allowedPrintArea: HTMLElement,
-  printedImages: TPrintedImage[]
+  printedImages: TPrintedImage[],
+  printAreaPadding: number = 0
 ): TBuildLayoutResult => {
   console.log('>>> [bui] params:', {
     allowedPrintArea,
     allowedPrintAreaRect: allowedPrintArea.getBoundingClientRect(),
   })
-  const printArea = getPrintAreaDimensions(allowedPrintArea)
+  const printArea = getPrintAreaDimensions(allowedPrintArea, printAreaPadding)
   const optimalLayout = findOptimalLayout(printedImages, printArea)
 
   // Gán position cho các elements

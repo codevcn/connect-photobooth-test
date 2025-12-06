@@ -1,3 +1,4 @@
+import { generateUniqueId } from '@/utils/helpers'
 import {
   TElementType,
   TPrintedImageVisualState,
@@ -17,6 +18,7 @@ type TUseElementStore = {
   stickerElements: TStickerVisualState[]
   textElements: TTextVisualState[]
   printedImages: TPrintedImageVisualState[]
+  printedImagesBuildId: string | null
 
   // Actions
   selectElement: (elementId: string, elementType: TElementType, elementURL?: string) => void
@@ -32,6 +34,7 @@ type TUseElementStore = {
   setPrintedImageElements: (printedImages: TPrintedImageVisualState[]) => void
   addPrintedImageElements: (printedImages: TPrintedImageVisualState[]) => void
   removePrintedImageElement: (printedImageId: string) => void
+  initBuiltPrintedImageElements: (printedImages: TPrintedImageVisualState[]) => void
 }
 
 export const useEditedElementStore = create<TUseElementStore>((set, get) => ({
@@ -39,7 +42,14 @@ export const useEditedElementStore = create<TUseElementStore>((set, get) => ({
   stickerElements: [],
   textElements: [],
   printedImages: [],
+  printedImagesBuildId: null,
 
+  initBuiltPrintedImageElements: (printedImages) => {
+    set({
+      printedImages,
+      printedImagesBuildId: generateUniqueId(),
+    })
+  },
   removePrintedImageElement: (printedImageId) => {
     const { printedImages, selectedElement } = get()
     // Chỉ set selectedElement = null nếu printed image đang xóa chính là printed image đang được chọn
@@ -73,6 +83,7 @@ export const useEditedElementStore = create<TUseElementStore>((set, get) => ({
       stickerElements: [],
       textElements: [],
       printedImages: [],
+      printedImagesBuildId: null,
     })
   },
   addTextElement: (addedTextElements) => {

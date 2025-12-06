@@ -1,7 +1,7 @@
 import { useRotateElement } from '@/hooks/element/use-rotate-element'
 import { useZoomElement } from '@/hooks/element/use-zoom-element'
 import { useDragElement } from '@/hooks/element/use-drag-element'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { createInitialConstants } from '@/utils/contants'
 import { TElementMountType, TElementVisualBaseState, TPosition } from '@/utils/types/global'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
@@ -182,13 +182,14 @@ export const useElementControl = (
     currentZoom: scale,
     setCurrentZoom: setScale,
   })
+  const handleSetElementPositionCallback = useCallback((pos: TPosition) => {
+    handleSetElementPosition(pos.x, pos.y)
+  }, [])
   const { containerRef: refForDrag, dragButtonRef } = useDragElement({
     disabled: isRotating || isZooming,
     currentPosition: position,
     scaleFactor,
-    setCurrentPosition: (pos) => {
-      handleSetElementPosition(pos.x, pos.y)
-    },
+    setCurrentPosition: handleSetElementPositionCallback,
     postFunctionDrag: () => {
       const element = elementRootRef.current
       if (!element) return

@@ -1,0 +1,51 @@
+[
+  {
+    "elementId": "d660f059-ee5b-4368-b72c-bfbd0f6183fc",
+    "index": 10,
+    "elementType": "printed-image",
+    "isLayoutImage": true
+  },
+  {
+    "elementId": "256d0aff-746a-413d-95a8-720d03a75032",
+    "index": 20,
+    "elementType": "printed-image",
+    "isLayoutImage": true
+  },
+  {
+    "elementId": "7c4b0c32-cff6-4c47-b6d3-301064d3fef6",
+    "index": 40,
+    "elementType": "printed-image",
+    "isLayoutImage": true
+  },
+  {
+    "elementId": "bf58beec-eac4-4787-8473-b18140a715e9",
+    "index": 60,
+    "elementType": "printed-image",
+    "isLayoutImage": true
+  },
+  {
+    "elementId": "635463ab-3e90-4e06-9480-d6ce02fa2017",
+    "index": 30,
+    "elementType": "printed-image"
+  },
+  {
+    "elementId": "8cff4732-4874-400c-a621-6c9aa30266bd",
+    "index": 50,
+    "elementType": "sticker"
+  },
+  {
+    "elementId": "8bb943b9-0ccb-4cdf-b54c-a5c00cc476dd",
+    "index": 70,
+    "elementType": "text"
+  },
+  {
+    "elementId": "c65e5b9d-7659-4634-8bc5-1e189e8fcc5f",
+    "index": 80,
+    "elementType": "printed-image"
+  },
+  {
+    "elementId": "ed67b85e-08cd-4900-8515-a1846513a5e0",
+    "index": 90,
+    "elementType": "text"
+  }
+]

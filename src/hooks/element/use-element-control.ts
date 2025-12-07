@@ -282,15 +282,6 @@ export const useElementControl = (
     if (maxZoom && parsedScale > maxZoom) parsedScale = maxZoom
     // debug
     handleSetElementState(initialPosition?.x, initialPosition?.y, parsedScale, initialAngle)
-    if (initialZindex) {
-      useElementLayerStore.getState().initElementLayersWithIndex([
-        {
-          elementId,
-          elementType,
-          index: initialZindex,
-        },
-      ])
-    }
   }
 
   const stayElementVisualOnAllowedPrintArea = () => {

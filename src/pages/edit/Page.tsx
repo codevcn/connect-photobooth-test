@@ -1,5 +1,6 @@
 import {
   TBaseProduct,
+  TElementType,
   TMockupData,
   TPrintedImage,
   TProductVariantInCart,
@@ -112,13 +113,6 @@ const restoreMockupVisualStates = (mockupId: string) => {
       useEditedElementStore
         .getState()
         .setTextElements(restoredTextElements.map((text) => ({ ...text, isFromSaved: true })))
-      useElementLayerStore.getState().addElementLayers(
-        restoredTextElements.map((text) => ({
-          elementId: text.id,
-          index: text.zindex,
-          elementType: 'text',
-        }))
-      )
     }
 
     // Restore printed image elements
@@ -129,14 +123,6 @@ const restoreMockupVisualStates = (mockupId: string) => {
         restoredPrintedImageElements.map((printedImage) => ({
           ...printedImage,
           isFromSaved: true,
-        }))
-      )
-      useElementLayerStore.getState().addElementLayers(
-        restoredPrintedImageElements.map((printedImage) => ({
-          elementId: printedImage.id,
-          index: printedImage.zindex,
-          elementType: 'printed-image',
-          isLayoutImage: printedImage.isInitWithLayout,
         }))
       )
     }
@@ -150,14 +136,31 @@ const restoreMockupVisualStates = (mockupId: string) => {
         .setStickerElements(
           restoredStickerElements.map((sticker) => ({ ...sticker, isFromSaved: true }))
         )
-      useElementLayerStore.getState().addElementLayers(
-        restoredStickerElements.map((sticker) => ({
-          elementId: sticker.id,
-          index: sticker.zindex,
-          elementType: 'sticker',
-        }))
-      )
     }
+
+    useElementLayerStore.getState().addElementLayersOnRestore(
+      restoredTextElements
+        .map((text) => ({
+          elementId: text.id,
+          index: text.zindex,
+          elementType: 'text' as TElementType,
+        }))
+        .concat(
+          restoredPrintedImageElements.map((printedImage) => ({
+            elementId: printedImage.id,
+            index: printedImage.zindex,
+            elementType: 'printed-image' as TElementType,
+            isLayoutImage: printedImage.isInitWithLayout,
+          }))
+        )
+        .concat(
+          restoredStickerElements.map((sticker) => ({
+            elementId: sticker.id,
+            index: sticker.zindex,
+            elementType: 'sticker' as TElementType,
+          }))
+        )
+    )
 
     // Restore product, variant, surface, and template
     const product = useProductStore.getState().getProductById(foundProductId)

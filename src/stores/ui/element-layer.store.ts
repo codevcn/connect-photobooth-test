@@ -15,6 +15,7 @@ type TUseElementLayerStore = {
   resetData: () => void
   removeImageLayoutElements: () => void
   addLayoutImageLayers: (layoutImageLayers: TElementLayerState[]) => void
+  addElementLayersOnRestore: (newElementLayers: TElementLayerState[]) => void
 }
 
 export const useElementLayerStore = create<TUseElementLayerStore>((set, get) => ({
@@ -29,6 +30,17 @@ export const useElementLayerStore = create<TUseElementLayerStore>((set, get) => 
   },
   resetData: () => {
     set({ elementLayers: [] })
+  },
+  addElementLayersOnRestore: (newElementLayers) => {
+    const layersToRestore = [...newElementLayers]
+
+    // Sắp xếp: layoutImage ở dưới cùng (index thấp nhất)
+    const layoutImageLayers = layersToRestore.filter((layer) => layer.isLayoutImage)
+    layoutImageLayers.sort((a, b) => a.index - b.index)
+    const normalLayers = layersToRestore.filter((layer) => !layer.isLayoutImage)
+    normalLayers.sort((a, b) => a.index - b.index)
+
+    set({ elementLayers: [...layoutImageLayers, ...normalLayers] })
   },
   addLayoutImageLayers: (layers) => {
     const { elementLayers } = get()
@@ -50,6 +62,7 @@ export const useElementLayerStore = create<TUseElementLayerStore>((set, get) => 
       currentIndex++
     }
 
+    console.log('>>> [idx] addLayoutImageLayers:', layersToAdd)
     set({ elementLayers: [...layoutImageLayers, ...normalLayers] })
   },
   addElementLayers: (newElementLayers) => {

@@ -467,19 +467,17 @@ export const handlePutPrintedImagesInLayout = (
     allowedPrintArea,
     createInitialConstants('LAYOUT_PADDING')
   )
-  useEditedElementStore.getState().initBuiltPrintedImageElements(
-    printedImages.map((img) => {
-      return { ...img, isInitWithLayout: true }
-    })
-  )
+  const imageVisualStates = printedImages.map((img) => {
+    return { ...img, isInitWithLayout: true }
+  })
+  useEditedElementStore.getState().initBuiltPrintedImageElements(imageVisualStates)
   useElementLayerStore.getState().removeImageLayoutElements()
   useElementLayerStore.getState().addElementLayers(
-    printedImages.map((printedImage) => ({
-      elementId: generateUniqueId(),
-      index: printedImage.zindex,
+    imageVisualStates.map((visualState) => ({
+      elementId: visualState.id,
+      index: visualState.zindex,
       elementType: 'printed-image',
       isLayoutImage: true,
-      printedImageId: printedImage.id,
     }))
   )
 }

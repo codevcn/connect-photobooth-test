@@ -52,7 +52,7 @@ export const PrintedImageElement = ({
     position: element.position,
     zindex: element.zindex,
     mountType,
-  })
+  }, path)
   const [interactiveBtns, setInteractiveBtns] = useState<TInteractiveButtonsState>({
     buttonsContainerStyle: { top: 0, left: 0, width: 0, height: 0 },
     isShown: false,
@@ -97,6 +97,15 @@ export const PrintedImageElement = ({
     posY?: number,
     zindex?: number
   ) => {
+    console.log('>>> [con] listenSubmitEleProps:', {
+      elementId,
+      id,
+      scale,
+      angle,
+      posX,
+      posY,
+      zindex,
+    })
     if (elementId === id) {
       handleSetElementState(posX, posY, scale, angle, zindex)
     }

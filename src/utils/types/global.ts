@@ -153,7 +153,6 @@ export type TElementLayerState = {
   index: number
   elementType: TElementType
   isLayoutImage?: boolean
-  printedImageId?: string
 }
 
 export type TPreSentMockupImageLink = {

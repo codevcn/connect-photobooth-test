@@ -137,7 +137,6 @@ const restoreMockupVisualStates = (mockupId: string) => {
           index: printedImage.zindex,
           elementType: 'printed-image',
           isLayoutImage: printedImage.isInitWithLayout,
-          printedImageId: printedImage.id,
         }))
       )
     }

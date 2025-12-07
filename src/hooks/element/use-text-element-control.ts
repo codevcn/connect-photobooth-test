@@ -201,8 +201,8 @@ export const useTextElementControl = (
   }
 
   useEffect(() => {
-    handleSetFontSize(undefined, baseState.scale / scaleFactor)
-  }, [baseState.scale, scaleFactor])
+    handleSetFontSize(undefined, baseState.scale)
+  }, [baseState.scale])
 
   useEffect(() => {
     setupVisualData()

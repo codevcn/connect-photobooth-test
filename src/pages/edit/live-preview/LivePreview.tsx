@@ -308,7 +308,6 @@ export const LivePreview = ({
           }}
           isOutOfBounds={isOutOfBounds}
           displayWarningOverlay
-          printedImages={printedImages}
           frameDisplayerOptions={{
             classNames: { container: 'NAME-frames-displayer-print-area' },
           }}

@@ -1,5 +1,5 @@
 import { TBaseProduct, TPrintAreaInfo, TPrintedImage } from '@/utils/types/global'
-import { PrintAreaOverlayPreview } from './live-preview/PrintAreaOverlay'
+import { PrintAreaOverlay, PrintAreaOverlayPreview } from './live-preview/PrintAreaOverlay'
 import { usePrintArea } from '@/hooks/use-print-area'
 import { usePrintedImageStore } from '@/stores/printed-image/printed-image.store'
 import { useEffect, useState } from 'react'
@@ -51,7 +51,7 @@ const Product = ({
           printAreaContainerRef.current,
           printAreaRef.current,
           printedImages,
-          createInitialConstants('LAYOUT_PADDING')
+          2
         )
         const initialLayout: TPrintLayout = {
           ...hardCodedLayoutData(layout.type)[0],

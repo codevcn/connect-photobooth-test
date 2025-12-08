@@ -106,7 +106,7 @@ export const PrintAreaOverlayPreview = ({
 
 type TPrintAreaOverlayProps = {
   isOutOfBounds: boolean
-  printedImages: TPrintedImage[]
+  // printedImages: TPrintedImage[]
 } & Partial<{
   printAreaOptions: {
     className: string
@@ -131,8 +131,8 @@ export const PrintAreaOverlay = ({
   isOutOfBounds,
   printAreaOptions,
   displayWarningOverlay = true,
-  printedImages,
-  frameDisplayerOptions,
+  // printedImages,
+  // frameDisplayerOptions,
   registerRef,
 }: TPrintAreaOverlayProps) => {
   // const pickedLayout = useLayoutStore((s) => s.pickedLayout)

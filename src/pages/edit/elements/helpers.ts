@@ -1,29 +1,63 @@
 import { TPosition, TSizeInfo } from '@/utils/types/global'
 
 export const snapshotPersistElementPosition = (printAreaContainer: HTMLElement) => {
-  console.log('>>> [fx] start func snapshotPersistElementPosition:', printAreaContainer)
   for (const ele of printAreaContainer.querySelectorAll<HTMLElement>('.NAME-root-element')) {
     const persistData = ele.getAttribute('data-persist-position')
     if (persistData) {
+      // Copy ngay lập tức
       ele.setAttribute('data-persist-position-snapshot', persistData)
     }
   }
 }
 
 const calculateElementPositionRelativeToPrintArea = (
+  printAreaContainer: HTMLElement,
   element: HTMLElement,
   allowedPrintArea: HTMLElement,
-  elementXPercent: number,
-  elementYPercent: number
+  allowedPrintAreaX: number,
+  allowedPrintAreaY: number,
+  allowedPrintAreaWidth: number,
+  allowedPrintAreaHeight: number
 ): TPosition => {
-  console.log('>>> [fx][2] start func calculateElementPositionRelativeToPrintArea:', {
-    element,
-    allowedPrintArea,
-    elementXPercent,
-    elementYPercent,
-  })
+  const vungin_moi = allowedPrintArea.getBoundingClientRect()
   // Lấy bounding rect của B
-  const rectB = allowedPrintArea.getBoundingClientRect()
+
+  const rong_moi = vungin_moi.width
+  const cao_moi = vungin_moi.height
+  const x_moi = vungin_moi.left
+  const y_moi = vungin_moi.top
+
+  const phantu = element.getBoundingClientRect()
+  const rong_cu = phantu.width
+  const cao_cu = phantu.height
+  const x_cu = phantu.left
+  const y_cu = phantu.top
+
+  const phan_tram_so_voi_rong_cu = ((x_cu - allowedPrintAreaX) * 100) / allowedPrintAreaWidth
+  const phan_tram_so_voi_cao_cu = ((y_cu - allowedPrintAreaY) * 100) / allowedPrintAreaHeight
+  const toa_do_x_moi = x_moi + (phan_tram_so_voi_rong_cu * rong_moi) / 100
+  const toa_do_y_moi = y_moi + (phan_tram_so_voi_cao_cu * cao_moi) / 100
+  const containerRect = printAreaContainer.getBoundingClientRect()
+  const containerStyle = window.getComputedStyle(printAreaContainer)
+  const padL = parseFloat(containerStyle.paddingLeft) || 0
+  const padT = parseFloat(containerStyle.paddingTop) || 0
+  const borderL = printAreaContainer.clientLeft || 0
+  const borderT = printAreaContainer.clientTop || 0
+  const matrix = new DOMMatrix(containerStyle.transform)
+  const containerScale = matrix.a || 1
+  const transX = matrix.e || 0
+  const transY = matrix.f || 0
+
+  const xInContainerViewport = toa_do_x_moi - containerRect.left
+  const yInContainerViewport = toa_do_y_moi - containerRect.top
+
+  const xContent = (xInContainerViewport - borderL - padL - transX) / containerScale
+  const yContent = (yInContainerViewport - borderT - padT - transY) / containerScale
+
+  return {
+    x: xContent,
+    y: yContent,
+  }
 
   // Lấy scale factor của A
   // const styleA = window.getComputedStyle(element)
@@ -31,87 +65,75 @@ const calculateElementPositionRelativeToPrintArea = (
   // const scale = matrix.a // scale đồng đều nên chỉ cần matrix.a
 
   // Lấy kích thước của A sau khi scale
-  const rectA = element.getBoundingClientRect()
-  console.log('>>> [fx][2] rects:', { rectA, rectB })
+  // const rectA = element.getBoundingClientRect() // x, y lúc có thay đổi hay chưa.
 
-  // Tính kích thước gốc và scale offset
-  const originalWidth = element.offsetWidth
-  const originalHeight = element.offsetHeight
-  console.log('>>> [fx][2] original sizes:', { originalWidth, originalHeight })
-  const scaleOffsetX = (rectA.width - originalWidth) / 2
-  const scaleOffsetY = (rectA.height - originalHeight) / 2
-  console.log('>>> [fx][2] scale offsets:', { scaleOffsetX, scaleOffsetY })
+  // snapshot : copy elA từ A sang B. {x,y,scale, xpe, yper} // bouding box cũ.
 
-  // Lấy vị trí CSS của B
-  // const styleB = window.getComputedStyle(allowedPrintArea)
-  // const bCssLeft = parseFloat(styleB.left) || 0
-  // const bCssTop = parseFloat(styleB.top) || 0
-  const bCssLeft = allowedPrintArea.offsetLeft
-  const bCssTop = allowedPrintArea.offsetTop
-  console.log('>>> [fx][2] allowedPrintArea offsets:', { bCssLeft, bCssTop })
+  // console.log('>>> [fx][2] rects:', { rectA, rectB })
 
-  // Tính offset mong muốn theo pixel
-  const offsetX = (elementXPercent / 100) * rectB.width
-  const offsetY = (elementYPercent / 100) * rectB.height
-  console.log('>>> [fx][2] offsets:', { offsetX, offsetY, elementXPercent, elementYPercent })
+  // // Tính kích thước gốc và scale offset
+  // const originalWidth = element.offsetWidth
+  // const originalHeight = element.offsetHeight
+  // console.log('>>> [fx][2] original sizes:', { originalWidth, originalHeight })
+  // const scaleOffsetX = (rectA.width - originalWidth) / 2
+  // const scaleOffsetY = (rectA.height - originalHeight) / 2
+  // console.log('>>> [fx][2] scale offsets:', { scaleOffsetX, scaleOffsetY })
 
-  // Vị trí thực tế mong muốn (vị trí hiển thị của góc top-left A)
-  const targetActualLeft = bCssLeft + offsetX
-  const targetActualTop = bCssTop + offsetY
-  console.log('>>> [fx][2] target actuals:', { targetActualLeft, targetActualTop })
+  // // Lấy vị trí CSS của B
+  // // const styleB = window.getComputedStyle(allowedPrintArea)
+  // // const bCssLeft = parseFloat(styleB.left) || 0
+  // // const bCssTop = parseFloat(styleB.top) || 0
+  // const bCssLeft = allowedPrintArea.offsetLeft
+  // const bCssTop = allowedPrintArea.offsetTop
+  // console.log('>>> [fx][2] allowedPrintArea offsets:', { bCssLeft, bCssTop })
 
-  // Compensate cho scale offset để tính CSS left/top
-  // Vì transform-origin: center, element "lùi lại" khi scale
-  const targetCssLeft = targetActualLeft + scaleOffsetX
-  const targetCssTop = targetActualTop + scaleOffsetY
-  console.log('>>> [fx][2] target css:', { targetCssLeft, targetCssTop })
+  // // Tính offset mong muốn theo pixel
+  // const offsetX = (elementXPercent / 100) * rectB.width
+  // const offsetY = (elementYPercent / 100) * rectB.height
+  // console.log('>>> [fx][2] offsets:', { offsetX, offsetY, elementXPercent, elementYPercent })
 
-  // Set vị trí CSS
-  // element.style.left = `${targetCssLeft}px`
-  // element.style.top = `${targetCssTop}px`
-  // console.log('>>> [fx][2] targets final:', {
-  //   targetCssLeft,
-  //   targetCssTop,
-  // })
-  // handleSetElementPosition(targetCssLeft, targetCssTop)
-  return {
-    x: targetCssLeft,
-    y: targetCssTop,
-  }
+  // // Vị trí thực tế mong muốn (vị trí hiển thị của góc top-left A)
+  // const targetActualLeft = bCssLeft + offsetX
+  // const targetActualTop = bCssTop + offsetY
+  // console.log('>>> [fx][2] target actuals:', { targetActualLeft, targetActualTop })
+
+  // // Compensate cho scale offset để tính CSS left/top
+  // // Vì transform-origin: center, element "lùi lại" khi scale
+  // const targetCssLeft = targetActualLeft + scaleOffsetX
+  // const targetCssTop = targetActualTop + scaleOffsetY
+  // console.log('>>> [fx][2] target css:', { targetCssLeft, targetCssTop })
+
+  // // Set vị trí CSS
+  // // element.style.left = `${targetCssLeft}px`
+  // // element.style.top = `${targetCssTop}px`
+  // // console.log('>>> [fx][2] targets final:', {
+  // //   targetCssLeft,
+  // //   targetCssTop,
+  // // })
+  // // handleSetElementPosition(targetCssLeft, targetCssTop)
+  // return {
+  //   x: targetCssLeft,
+  //   y: targetCssTop,
+  // }
 }
 
 const calculateElementScaleRelativeToPrintArea = (
   printArea: HTMLElement,
   prePrintAreaSize: TSizeInfo
 ) => {
-  console.log('>>> [fx] start func calculateElementScaleRelativeToPrintArea:', {
-    printArea,
-    prePrintAreaSize,
-  })
-  const rectPrintArea = printArea.getBoundingClientRect()
-  console.log('>>> [fx] current rect PrintArea:', { rectPrintArea })
+  const rectPrintArea = printArea.getBoundingClientRect() // vùng in mới
   const rectPrintAreaWidth = rectPrintArea.width
   const rectPrintAreaHeight = rectPrintArea.height
-  const prePrintAreaWidth = prePrintAreaSize.width
-  const prePrintAreaHeight = prePrintAreaSize.height
+  const prePrintAreaWidth = prePrintAreaSize.width // vùng in cũ
+  const prePrintAreaHeight = prePrintAreaSize.height // vùng in cũ
   const prePrintAreaRatio = prePrintAreaWidth / prePrintAreaHeight
   if (prePrintAreaRatio > rectPrintAreaWidth / rectPrintAreaHeight) {
     const newPrePrintAreaHeight = rectPrintAreaWidth / prePrintAreaRatio
     const scaleFactor = newPrePrintAreaHeight / prePrintAreaHeight
-    console.log('>>> [fx] scale Factor return:', {
-      scaleFactor,
-      newPrePrintAreaHeight,
-      prePrintAreaHeight,
-    })
     return scaleFactor
   }
   const newPrePrintAreaWidth = rectPrintAreaHeight * prePrintAreaRatio
   const scaleFactor = newPrePrintAreaWidth / prePrintAreaWidth
-  console.log('>>> [fx] scale Factor return:', {
-    scaleFactor,
-    newPrePrintAreaWidth,
-    prePrintAreaWidth,
-  })
   return scaleFactor
 }
 
@@ -128,10 +150,6 @@ export const stayElementsRelativeToPrintArea = (
   allowedPrintArea: HTMLElement,
   callback: (persistElementPositionPayloads: TPersistElementPositionPayload) => void
 ) => {
-  console.log('>>> [fx] start func stayElementsRelativeToPrintArea:', {
-    printAreaContainer,
-    allowedPrintArea,
-  })
   const elements = printAreaContainer.querySelectorAll<HTMLElement>('.NAME-root-element')
   // console.log('>>> [fx] elements:', elements)
   const persistElementPositionPayloads: TPersistElementPositionPayload = {}
@@ -142,27 +160,33 @@ export const stayElementsRelativeToPrintArea = (
     // console.log('>>> [fx] ele:', { ele, persistData })
     if (!persistData) continue
     const parsedPersistData = JSON.parse(persistData) as TPersistElementPositionReturn
-    console.log('>>> [fx] parsed Persist Data:', { ele, parsedPersistData })
+    console.log('>>> [fx] parsed Persist snapshot:', { ele, parsedPersistData })
     const {
       elementXPercent,
       elementYPercent,
       elementScale,
       allowedPrintAreaHeight,
       allowedPrintAreaWidth,
+      allowedPrintAreaX,
+      allowedPrintAreaY,
     } = parsedPersistData
     const newPos = calculateElementPositionRelativeToPrintArea(
+      printAreaContainer,
       ele,
       allowedPrintArea,
-      elementXPercent,
-      elementYPercent
+      allowedPrintAreaX,
+      allowedPrintAreaY,
+      allowedPrintAreaWidth,
+      allowedPrintAreaHeight
     )
     persistElementPositionPayloads[elementId] = {
       posXPixel: newPos.x,
       posYPixel: newPos.y,
-      scale: calculateElementScaleRelativeToPrintArea(allowedPrintArea, {
-        width: allowedPrintAreaWidth,
-        height: allowedPrintAreaHeight,
-      }),
+      // scale: calculateElementScaleRelativeToPrintArea(allowedPrintArea, {
+      //   width: allowedPrintAreaWidth,
+      //   height: allowedPrintAreaHeight,
+      // }),
+      scale: 1,
     }
   }
   callback(persistElementPositionPayloads)
@@ -174,6 +198,8 @@ type TPersistElementPositionReturn = {
   elementScale: number
   allowedPrintAreaHeight: number
   allowedPrintAreaWidth: number
+  allowedPrintAreaX: number
+  allowedPrintAreaY: number
 }
 
 export const persistElementPositionToPrintArea = (
@@ -181,11 +207,6 @@ export const persistElementPositionToPrintArea = (
   allowedPrintArea: HTMLElement | null,
   elementScale: number
 ): TPersistElementPositionReturn => {
-  console.log('>>> [fx] start func persistElementPositionToPrintArea:', {
-    rootElement,
-    allowedPrintArea,
-    elementScale,
-  })
   if (!rootElement || !allowedPrintArea) {
     return {
       elementXPercent: 0,
@@ -193,6 +214,8 @@ export const persistElementPositionToPrintArea = (
       elementScale: 1,
       allowedPrintAreaHeight: 0,
       allowedPrintAreaWidth: 0,
+      allowedPrintAreaX: 0,
+      allowedPrintAreaY: 0,
     }
   }
 
@@ -258,5 +281,7 @@ export const persistElementPositionToPrintArea = (
     elementScale,
     allowedPrintAreaHeight: rectB.height,
     allowedPrintAreaWidth: rectB.width,
+    allowedPrintAreaX: rectB.left,
+    allowedPrintAreaY: rectB.top,
   }
 }

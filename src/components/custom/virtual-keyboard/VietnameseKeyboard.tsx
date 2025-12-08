@@ -7,12 +7,13 @@ import { AutoSizeTextField } from '../AutoSizeTextField'
 
 type TVietnameseKeyboardProps = {
   textDisplayerRef: React.RefObject<HTMLTextAreaElement | null>
+  currentInputRef: React.RefObject<HTMLInputElement | HTMLTextAreaElement | null>
 } & Partial<{
   onKeyPress: (button: string) => void
   onChange: (inputValue: string) => void
   onClose: () => void
   onSubmit: (value: string) => void
-  inputValue: string
+  initialInputValue: string
   placeholder: string
   theme: 'light' | 'dark'
   maxLength: number
@@ -26,7 +27,7 @@ export const VietnameseKeyboard = ({
   onChange,
   onClose,
   onSubmit,
-  inputValue = '',
+  initialInputValue = '',
   placeholder = 'Nhập văn bản...',
   theme = 'light',
   maxLength,
@@ -34,8 +35,9 @@ export const VietnameseKeyboard = ({
   keyboardRef: externalKeyboardRef,
   keyboardName = 'NAME-vietnamese-virtual-keyboard',
   textDisplayerRef,
+  currentInputRef,
 }: TVietnameseKeyboardProps) => {
-  const [input, setInput] = useState(inputValue)
+  const [input, setInput] = useState(initialInputValue)
   const [layoutName, setLayoutName] = useState('default')
   const internalKeyboardRef = useRef<any>(null)
   const keyboardRef = externalKeyboardRef || internalKeyboardRef
@@ -54,10 +56,12 @@ export const VietnameseKeyboard = ({
   }
 
   useEffect(() => {
-    setInput(inputValue)
+    setInput(initialInputValue)
     // Reset caret to end when input value changes externally
-    caretPositionRef.current = { start: inputValue.length, end: inputValue.length }
-  }, [inputValue])
+    caretPositionRef.current = { start: initialInputValue.length, end: initialInputValue.length }
+    // Set caret position to end after component mounts or input changes
+    setCaretPosition(initialInputValue.length)
+  }, [initialInputValue])
 
   // Helper to get current caret position from textarea
   const getCaretPosition = () => {
@@ -126,14 +130,13 @@ export const VietnameseKeyboard = ({
       onChange?.(newInput)
       resetBuffer()
     } else if (button === '{enter}') {
-      // Require double tap for enter
-      const now = Date.now()
-      if (now - lastTapTimeRef.current.enter < DOUBLE_TAP_DELAY) {
-        onSubmit?.(input)
-        onClose?.()
-        lastTapTimeRef.current.enter = 0 // Reset after successful double tap
+      if (currentInputRef.current?.tagName === 'INPUT') {
+        submitInputValue()
       } else {
-        lastTapTimeRef.current.enter = now
+        const newInput = insertAtCaret('\n')
+        setInput(newInput)
+        onChange?.(newInput)
+        resetBuffer()
       }
     } else if (button === '{toggle}') {
       toggleInputMethod()
@@ -143,14 +146,7 @@ export const VietnameseKeyboard = ({
       resetBuffer()
       setCaretPosition(0)
     } else if (button === '{done}') {
-      // Require double tap for done
-      const now = Date.now()
-      if (now - lastTapTimeRef.current.done < DOUBLE_TAP_DELAY) {
-        submitInputValue()
-        lastTapTimeRef.current.done = 0 // Reset after successful double tap
-      } else {
-        lastTapTimeRef.current.done = now
-      }
+      submitInputValue()
     } else {
       if (maxLength && input.length >= maxLength) {
         return
@@ -158,18 +154,18 @@ export const VietnameseKeyboard = ({
 
       // Process Vietnamese input with caret position
       const { start, end } = getCaretPosition()
-      
+
       // Get the text before caret for Vietnamese processing
       const textBeforeCaret = input.slice(0, start)
       const textAfterCaret = input.slice(end)
-      
+
       // Process Vietnamese input on the text before caret
       const processedBeforeCaret = processVietnameseInput(button, textBeforeCaret)
-      
+
       const newInput = processedBeforeCaret + textAfterCaret
       // New caret position is at the end of the processed text before caret
       const newCaretPos = processedBeforeCaret.length
-      
+
       setInput(newInput)
       onChange?.(newInput)
       setCaretPosition(newCaretPos)
@@ -187,6 +183,27 @@ export const VietnameseKeyboard = ({
         end: textarea.selectionEnd ?? 0,
       }
     }
+  }
+
+  const catchEnterKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Allow Enter for new line, use Ctrl+Enter or Cmd+Enter to submit
+    if (e.shiftKey) {
+      if (currentInputRef.current?.tagName === 'INPUT') {
+        e.preventDefault()
+      }
+    } else {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        submitInputValue()
+      }
+    }
+  }
+
+  // Handle keyboard input from textarea (when user types with real keyboard)
+  const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Update caret position after key press
+    setTimeout(handleTextAreaSelect, 0)
+    catchEnterKey(e)
   }
 
   const vietnameseLayout = {
@@ -337,19 +354,6 @@ export const VietnameseKeyboard = ({
     },
   ]
 
-  const catchEnterKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter') {
-      submitInputValue()
-    }
-  }
-
-  // Handle keyboard input from textarea (when user types with real keyboard)
-  const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Update caret position after key press
-    setTimeout(handleTextAreaSelect, 0)
-    catchEnterKey(e)
-  }
-
   return (
     <div className={`${keyboardName} 5xl:text-[26px] w-full shadow-[0_3px_10px_rgba(0,0,0,0.8)]`}>
       {/* Display area - hiển thị nội dung đang nhập */}
@@ -375,6 +379,7 @@ export const VietnameseKeyboard = ({
           onSelect={handleTextAreaSelect}
           onClick={handleTextAreaSelect}
           textfieldRef={textDisplayerRef}
+          maxHeight={150}
           className="w-full outline-transparent focus:outline-main-cl overflow-y-auto px-2 py-1.5 text-[1em] border border-gray-200 rounded-lg bg-gray-50 whitespace-pre-wrap wrap-break-word"
         />
       </div>

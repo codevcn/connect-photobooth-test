@@ -6,6 +6,7 @@ import { typeToObject } from '@/utils/helpers'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
 import { useEditAreaStore } from '@/stores/ui/edit-area.store'
 import { createPortal } from 'react-dom'
+import { persistElementPositionToPrintArea } from '../helpers'
 
 const MAX_TEXT_FONT_SIZE: number = 128
 const MIN_TEXT_FONT_SIZE: number = 8
@@ -238,6 +239,9 @@ export const TextElement = ({
           fontWeight,
           scale,
         })
+      )}
+      data-persist-position={JSON.stringify(
+        persistElementPositionToPrintArea(rootRef.current, allowedPrintAreaRef.current, scale)
       )}
       onDragStart={(e) => e.preventDefault()}
       onDrop={(e) => e.preventDefault()}

@@ -1,7 +1,6 @@
-import { useRotateElement } from '@/hooks/element/use-rotate-element'
 import { useZoomElement } from '@/hooks/element/use-zoom-element'
 import { useDragElement } from '@/hooks/element/use-drag-element'
-import { useEffect, useState, useRef, useCallback, useImperativeHandle } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { createInitialConstants } from '@/utils/contants'
 import {
   TElementMountType,
@@ -347,7 +346,6 @@ export const useElementControl = (
       // stayElementVisualOnAllowedPrintArea()
     })
     containerObserver.observe(container)
-    eventEmitter.on
     return () => {
       containerObserver.unobserve(container)
     }

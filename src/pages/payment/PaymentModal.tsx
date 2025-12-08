@@ -157,9 +157,25 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
     }
   }
 
+  const handleHideShowModal = (show: boolean) => {
+    if (!show) {
+      const virtualKeyboardWrapper = document.body.querySelector<HTMLElement>(
+        '.NAME-virtual-keyboard-wrapper'
+      )
+      if (virtualKeyboardWrapper) {
+        if (virtualKeyboardWrapper.getAttribute('data-virtual-keyboard-shown') === 'false') {
+          onHideShow(false)
+        }
+      }
+    }
+  }
+
   return (
     <div className="5xl:text-[1em] md:px-4 px-2 py-4 fixed inset-0 flex items-center justify-center z-50 animate-pop-in">
-      <div onClick={() => onHideShow(false)} className="bg-black/50 absolute inset-0 z-10"></div>
+      <div
+        onClick={() => handleHideShowModal(false)}
+        className="bg-black/50 absolute inset-0 z-10"
+      ></div>
       <div className="flex flex-col pt-12 bg-white rounded-2xl z-20 overflow-hidden relative shadow-2xl w-fit max-w-[98vw] max-h-[95vh] animate-in slide-in-from-bottom duration-200">
         {confirming && (
           <div className="absolute flex justify-center items-center w-full h-full top-0 text-white left-0 bg-black/50 z-30">

@@ -226,7 +226,7 @@ export const StickerElement = ({
           grayscale: grayscale || 0,
         })
       )}
-      data-perist-element-position={JSON.stringify(
+      data-persist-position={JSON.stringify(
         persistElementPositionToPrintArea(rootRef.current!, allowedPrintAreaRef.current!, scale)
       )}
       onDragStart={(e) => e.preventDefault()}

@@ -200,13 +200,30 @@ export const GlobalKeyboardProvider = () => {
     if (currentInput && keyboardRef.current) {
       keyboardRef.current.setInput(currentInput.value || '')
     }
+    if (!isVisible) {
+      // khi ẩn bàn phím thì set data attribute về false sau 2s (để tránh làm modal ở trang thanh toán bị ảnh hưởng)
+      setTimeout(() => {
+        const virtualKeyboardWrapper = document.querySelector<HTMLElement>(
+          '.NAME-virtual-keyboard-wrapper'
+        )
+        if (virtualKeyboardWrapper) {
+          virtualKeyboardWrapper.setAttribute('data-virtual-keyboard-shown', 'false')
+        }
+      }, 1000)
+    }
   }, [isVisible])
 
   return (
     <>
-      {isVisible &&
-        createPortal(
-          <div className="animate-fade-in fixed left-0 bottom-0 w-full h-fit z-9999">
+      {createPortal(
+        <div
+          style={{
+            display: isVisible ? 'block' : 'none',
+          }}
+          data-virtual-keyboard-shown={isVisible ? 'true' : 'unknown'}
+          className="NAME-virtual-keyboard-wrapper animate-fade-in fixed left-0 bottom-0 w-full h-fit z-9999"
+        >
+          {isVisible && (
             <div className="bg-white border-t border-gray-200 shadow-2xl">
               <VietnameseKeyboard
                 onChange={handleKeyboardEditing}
@@ -214,12 +231,14 @@ export const GlobalKeyboardProvider = () => {
                 keyboardRef={keyboardRef}
                 keyboardName={keyboardName}
                 textDisplayerRef={textDisplayerRef}
-                inputValue={initialInputValue}
+                initialInputValue={initialInputValue}
+                currentInputRef={currentInputRef}
               />
             </div>
-          </div>,
-          document.body
-        )}
+          )}
+        </div>,
+        document.body
+      )}
     </>
   )
 }

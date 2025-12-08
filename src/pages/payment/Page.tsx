@@ -18,6 +18,7 @@ import { useProductStore } from '@/stores/product/product.store'
 import { toast } from 'react-toastify'
 import { createInitialConstants } from '@/utils/contants'
 import { useQueryFilter } from '@/hooks/extensions'
+import { useKeyboardStore } from '@/stores/keyboard/keyboard.store'
 
 interface IPaymentModalProps {
   imgSrc?: string
@@ -232,15 +233,17 @@ const PaymentPage = () => {
   const backToEditPage = () => {
     if (queryFilter.isPhotoism) {
       navigate('/edit' + fillQueryStringToURL())
-    } else if (queryFilter.dev) {
-      navigate('/' + fillQueryStringToURL())
     } else {
       navigate('/' + fillQueryStringToURL())
     }
   }
 
   const handleEditMockup = (mockupDataId: string) => {
-    navigate(`/edit${fillQueryStringToURL()}&mockupId=${mockupDataId}`)
+    if (queryFilter.isPhotoism) {
+      navigate(`/edit${fillQueryStringToURL()}&mockupId=${mockupDataId}`)
+    } else {
+      navigate('/' + fillQueryStringToURL())
+    }
   }
 
   const [subtotal, discount, total] = useMemo(() => {
@@ -258,6 +261,21 @@ const PaymentPage = () => {
     window.requestIdleCallback(() => {
       loadCartItems()
     })
+    const listenPointerDownOnPage = (e: PointerEvent) => {
+      const target = e.target
+      if (target instanceof Element) {
+        if (
+          !target.closest('.NAME-vietnamese-virtual-keyboard') &&
+          !target.classList.contains('hg-button')
+        ) {
+          useKeyboardStore.getState().hideKeyboard()
+        }
+      }
+    }
+    document.body.addEventListener('pointerdown', listenPointerDownOnPage)
+    return () => {
+      document.body.removeEventListener('pointerdown', listenPointerDownOnPage)
+    }
   }, [])
 
   return (

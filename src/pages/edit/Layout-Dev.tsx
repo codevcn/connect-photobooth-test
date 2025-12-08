@@ -78,8 +78,8 @@ const LayoutDev = () => {
   }
 
   useEffect(() => {
-    fetchPrintedImages()
-  }, [isReady])
+    if (printedImages.length === 0) fetchPrintedImages()
+  }, [isReady, printedImages.length])
 
   const fetchProducts = async () => {
     try {
@@ -99,7 +99,7 @@ const LayoutDev = () => {
   }, [products, printedImages])
 
   useEffect(() => {
-    fetchProducts()
+    if (products.length === 0) fetchProducts()
   }, [])
 
   return error ? (
@@ -128,7 +128,7 @@ const LayoutDev = () => {
         Quay lại trang chủ
       </button>
     </div>
-  ) : fetched > 1 && products.length > 0 && printedImages.length > 0 ? (
+  ) : products.length > 0 && printedImages.length > 0 ? (
     <EditPage products={products} printedImages={printedImages} />
   ) : (
     <PageLoading message="Đang tải dữ liệu..." />

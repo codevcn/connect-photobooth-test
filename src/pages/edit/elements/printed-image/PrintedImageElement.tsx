@@ -8,8 +8,8 @@ import { useEditAreaStore } from '@/stores/ui/edit-area.store'
 import { createPortal } from 'react-dom'
 import { persistElementPositionToPrintArea } from '../helpers'
 
-const MAX_ZOOM: number = 4
-const MIN_ZOOM: number = 0.4
+const MAX_ZOOM: number = 20
+const MIN_ZOOM: number = 0.5
 const DEFAULT_ELEMENT_DIMENSION_SIZE: number = 80
 
 type TInteractiveButtonsState = {

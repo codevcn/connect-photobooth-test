@@ -9,7 +9,7 @@ import { createPortal } from 'react-dom'
 import { persistElementPositionToPrintArea } from '../helpers'
 
 const MAX_TEXT_FONT_SIZE: number = 128
-const MIN_TEXT_FONT_SIZE: number = 8
+const MIN_TEXT_FONT_SIZE: number = 10
 
 type TInteractiveButtonsState = {
   buttonsContainerStyle: { top: number; left: number; width: number; height: number }

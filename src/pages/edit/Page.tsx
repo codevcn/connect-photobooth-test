@@ -224,12 +224,12 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
     }
 
     const listenWindowResize = () => {
-      cancelSelectingElement()
+      // cancelSelectingElement()
       cancelSelectingZoomingImages()
     }
 
     const listenWindowScroll = () => {
-      cancelSelectingElement()
+      // cancelSelectingElement()
       cancelSelectingZoomingImages()
     }
 

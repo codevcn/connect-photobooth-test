@@ -72,6 +72,29 @@ export const TextElement = ({
     isShown: false,
   })
 
+  // const updateInteractiveButtonsOnFrame = () => {
+  //   if (!interactiveBtns.isShown) return
+  //   if (!isSelected) return
+  //   const root = rootRef.current
+  //   if (!root) return
+  //   const rootRect = root.getBoundingClientRect()
+  //   const { left, top } = rootRect
+  //   const buttonContainer = dragButtonRef.current
+  //   if (buttonContainer) {
+  //     const widthAfterScale = fontSize * content.length * 0.59 * scaleFactor // 0.59 là giá trị chiều dài trung bình cho 1 ký tự trong font chữ Arial (font chữ mặc định của ứng dụng)
+  //     const heightAfterScale = fontSize * scaleFactor // 1.2 là line-height mặc định
+  //     buttonContainer.style.top = `${top + rootRect.height / 2 - heightAfterScale / 2}px`
+  //     buttonContainer.style.left = `${left + rootRect.width / 2 - widthAfterScale / 2}px`
+  //     buttonContainer.style.width = `${widthAfterScale}px`
+  //     buttonContainer.style.height = `${heightAfterScale}px`
+  //   }
+  //   requestAnimationFrame(updateInteractiveButtonsOnFrame)
+  // }
+
+  // useEffect(() => {
+  //   updateInteractiveButtonsOnFrame()
+  // }, [interactiveBtns.isShown])
+
   const updateInteractiveButtonsVisual = () => {
     if (!isSelected) return
     const root = rootRef.current

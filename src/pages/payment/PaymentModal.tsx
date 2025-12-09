@@ -166,6 +166,8 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
         if (virtualKeyboardWrapper.getAttribute('data-virtual-keyboard-shown') === 'false') {
           onHideShow(false)
         }
+      } else {
+        onHideShow(false)
       }
     }
   }

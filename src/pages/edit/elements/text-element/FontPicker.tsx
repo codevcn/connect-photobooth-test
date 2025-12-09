@@ -92,7 +92,7 @@ export const TextFontPicker = ({ onHideShow, onSelectFont }: TextFontPickerProps
       <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-3 h-[95vh] flex flex-col relative z-20 overflow-hidden">
         {/* Header với gradient */}
         <div className="bg-main-cl px-3 py-2.5 flex items-center gap-2">
-          <div className="flex items-center gap-2 flex-1">
+          <div className="flex items-center gap-2 grow">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -109,7 +109,7 @@ export const TextFontPicker = ({ onHideShow, onSelectFont }: TextFontPickerProps
               type="text"
               onChange={onSearchFont}
               placeholder="Tìm kiếm font chữ..."
-              className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} text-[1em] flex-1 px-2.5 py-1.5 text-black bg-white/95 rounded outline-none text-sm placeholder:text-gray-400`}
+              className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} text-[1em] grow w-full flex-1 px-2.5 py-1.5 text-black bg-white/95 rounded outline-none text-sm placeholder:text-gray-400`}
               disabled={isLoading}
             />
           </div>

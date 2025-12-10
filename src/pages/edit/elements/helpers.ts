@@ -285,3 +285,103 @@ export const persistElementPositionToPrintArea = (
     allowedPrintAreaY: rectB.top,
   }
 }
+
+export const DEFAULT_ELEMENT_DIMENSION_SIZE = () => {
+  if (window.innerWidth < 1500) {
+    return 80
+  }
+  return 120
+}
+
+export const calculateInitialImageElementPosition = (
+  imageNaturalSize: TSizeInfo,
+  scaleFactor: number
+): TPosition => {
+  const allowedPrintArea = document.querySelector<HTMLElement>('.NAME-print-area-allowed')
+  if (!allowedPrintArea) return { x: 0, y: 0 }
+  const printAreaContainer = document.querySelector<HTMLElement>('.NAME-print-area-container')
+  if (!printAreaContainer) return { x: 0, y: 0 }
+  const allowedPrintAreaRect = allowedPrintArea.getBoundingClientRect()
+  const printAreaContainerRect = printAreaContainer.getBoundingClientRect()
+  const imgRatio = imageNaturalSize.width / imageNaturalSize.height
+  let imgHeight: number
+  let imgWidth: number
+  if (imageNaturalSize.width > allowedPrintAreaRect.width) {
+    imgWidth = DEFAULT_ELEMENT_DIMENSION_SIZE()
+    imgHeight = imgWidth / imgRatio
+  } else {
+    imgHeight = DEFAULT_ELEMENT_DIMENSION_SIZE()
+    imgWidth = imgHeight * imgRatio
+  }
+  return {
+    x:
+      (allowedPrintAreaRect.left +
+        (allowedPrintAreaRect.width - imgWidth) / 2 -
+        printAreaContainerRect.left) /
+      scaleFactor,
+    y:
+      (allowedPrintAreaRect.top +
+        (allowedPrintAreaRect.height - imgHeight) / 2 -
+        printAreaContainerRect.top) /
+      scaleFactor,
+  }
+}
+
+export function measureTextBlock(
+  textContent: string,
+  fontSize?: string,
+  lineHeight?: number,
+  fontFamily?: string,
+  fontWeight?: string
+): TSizeInfo {
+  const div = document.createElement('div')
+  if (!fontSize || !lineHeight || !fontFamily || !fontWeight) return { width: 0, height: 0 }
+
+  div.style.position = 'absolute'
+  div.style.visibility = 'hidden'
+  div.style.whiteSpace = 'nowrap' // không wrap → đo width thực
+  div.style.fontSize = fontSize
+  div.style.lineHeight = `${lineHeight}`
+  div.style.fontFamily = fontFamily
+  div.style.fontWeight = fontWeight
+
+  div.textContent = textContent
+  document.body.appendChild(div)
+
+  const box: TSizeInfo = {
+    width: div.offsetWidth,
+    height: div.offsetHeight,
+  }
+
+  div.remove()
+  return box
+}
+
+export const calculateInitialTextElementPosition = (
+  scaleFactor: number,
+  textContent: string,
+  fontSize?: string,
+  lineHeight?: number,
+  fontFamily?: string,
+  fontWeight?: string
+): TPosition => {
+  const textBox = measureTextBlock(textContent, fontSize, lineHeight, fontFamily, fontWeight)
+  const allowedPrintArea = document.querySelector<HTMLElement>('.NAME-print-area-allowed')
+  if (!allowedPrintArea) return { x: 0, y: 0 }
+  const printAreaContainer = document.querySelector<HTMLElement>('.NAME-print-area-container')
+  if (!printAreaContainer) return { x: 0, y: 0 }
+  const allowedPrintAreaRect = allowedPrintArea.getBoundingClientRect()
+  const printAreaContainerRect = printAreaContainer.getBoundingClientRect()
+  return {
+    x:
+      (allowedPrintAreaRect.left +
+        (allowedPrintAreaRect.width - textBox.width) / 2 -
+        printAreaContainerRect.left) /
+      scaleFactor,
+    y:
+      (allowedPrintAreaRect.top +
+        (allowedPrintAreaRect.height - textBox.height) / 2 -
+        printAreaContainerRect.top) /
+      scaleFactor,
+  }
+}

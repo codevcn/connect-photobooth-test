@@ -31,9 +31,11 @@ const TemplateFrameMenuResponsive = () => {
   const selectedElement = useEditedElementStore((s) => s.selectedElement)
   const { elementId, elementType, elementURL } = selectedElement || {}
   const cancelSelectingElement = useEditedElementStore((s) => s.cancelSelectingElement)
+  const mobileScreen = window.innerWidth < 662
 
   return (
-    elementId && (
+    elementId &&
+    mobileScreen && (
       <div className="smd:hidden block">
         {elementType === 'template-frame' && elementURL ? (
           <TemplateFrameMenu
@@ -191,7 +193,9 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
   useEffect(() => {
     const listenPointerDownOnPage = (e: PointerEvent) => {
       const target = e.target
+      console.log('>>> [poi] target:', target)
       if (target instanceof Element) {
+        console.log('>>> [poi] closest:', target.closest('.NAME-menu-section'))
         if (
           !(
             target.closest('.NAME-root-element') ||

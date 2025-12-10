@@ -3,6 +3,7 @@ import { createInitialConstants } from '@/utils/contants'
 import {
   TPlacedImage,
   TPlacedImageMetaData,
+  TPosition,
   TPrintedImage,
   TPrintTemplate,
   TShapeOrientationType,
@@ -19,6 +20,7 @@ import { useEditedElementStore } from '@/stores/element/element.store'
 import { TPrintLayout } from '@/utils/types/print-layout'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
 import { reAssignElementsByLayoutData } from './customize/print-layout/builder'
+import { DEFAULT_ELEMENT_DIMENSION_SIZE } from './elements/helpers'
 
 export const initFramePlacedImageByPrintedImage = (
   frameIndexProperty: TTemplateFrame['index'],

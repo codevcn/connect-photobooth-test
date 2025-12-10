@@ -86,7 +86,7 @@ export const TextFontPicker = ({ onHideShow, onSelectFont }: TextFontPickerProps
   return (
     <div
       ref={pickerContainerRef}
-      className="NAME-text-font-picker 5xl:text-3xl fixed inset-0 flex items-center justify-center z-99 animate-pop-in"
+      className="NAME-text-font-picker 5xl:text-3xl fixed inset-0 flex items-center justify-center z-101 animate-pop-in"
     >
       <div onClick={() => onHideShow(false)} className="bg-black/60 absolute inset-0 z-10"></div>
       <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-3 h-[95vh] flex flex-col relative z-20 overflow-hidden">

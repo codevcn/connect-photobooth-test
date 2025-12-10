@@ -111,69 +111,6 @@ export const StickerElement = ({
     }
   }
 
-  const moveElementIntoCenter = (
-    root: HTMLElement,
-    allowedPrintArea: HTMLElement,
-    printAreaContainer: HTMLElement
-  ) => {
-    const allowedPrintAreaRect = allowedPrintArea.getBoundingClientRect()
-    const rootRect = root.getBoundingClientRect()
-    const printAreaContainerRect = printAreaContainer.getBoundingClientRect()
-    handleSetElementState(
-      (allowedPrintAreaRect.left +
-        (allowedPrintAreaRect.width - rootRect.width) / 2 -
-        printAreaContainerRect.left) /
-        scaleFactor,
-      (allowedPrintAreaRect.top +
-        (allowedPrintAreaRect.height - rootRect.height) / 2 -
-        printAreaContainerRect.top) /
-        scaleFactor
-    )
-  }
-
-  const initElementDisplaySize = (
-    root: HTMLElement,
-    allowedPrintArea: HTMLElement,
-    moveToCenter?: boolean
-  ) => {
-    const display = root.querySelector<HTMLImageElement>('.NAME-element-display')
-    if (!display) return
-    display.onload = () => {
-      const { naturalWidth, naturalHeight } = display
-      if (naturalWidth > naturalHeight) {
-        root.style.width = `${DEFAULT_ELEMENT_DIMENSION_SIZE()}px`
-        root.style.aspectRatio = `${naturalWidth} / ${naturalHeight}`
-        root.style.height = 'auto'
-      } else {
-        root.style.height = `${DEFAULT_ELEMENT_DIMENSION_SIZE()}px`
-        root.style.aspectRatio = `${naturalWidth} / ${naturalHeight}`
-        root.style.width = 'auto'
-      }
-      if (moveToCenter) {
-        requestAnimationFrame(() => {
-          if (printAreaContainerRef.current) {
-            moveElementIntoCenter(root, allowedPrintArea, printAreaContainerRef.current)
-          }
-        })
-      }
-    }
-    display.src = path
-  }
-
-  const initElement = () => {
-    requestAnimationFrame(() => {
-      const root = rootRef.current
-      if (!root) return
-      const allowedPrintArea = allowedPrintAreaRef.current
-      if (!allowedPrintArea) return
-      const printAreaContainer = printAreaContainerRef.current
-      if (!printAreaContainer) return
-      if (mountType === 'from-new') {
-        initElementDisplaySize(root, allowedPrintArea, true)
-      }
-    })
-  }
-
   const removeElement = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation()
     e.preventDefault()
@@ -187,7 +124,6 @@ export const StickerElement = ({
   }, [scale, angle, position.x, position.y, isSelected, id])
 
   useEffect(() => {
-    initElement()
     eventEmitter.on(EInternalEvents.SUBMIT_STICKER_ELE_PROPS, listenSubmitEleProps)
     window.addEventListener('resize', updateInteractiveButtonsVisual)
     return () => {

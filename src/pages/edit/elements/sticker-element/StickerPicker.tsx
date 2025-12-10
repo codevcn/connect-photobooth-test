@@ -2,11 +2,12 @@ import { useEditedElementStore } from '@/stores/element/element.store'
 import { createInitialConstants } from '@/utils/contants'
 import { useState, useEffect } from 'react'
 import { StickerElementMenu } from './Menu'
-import { generateUniqueId } from '@/utils/helpers'
-import { cancelSelectingZoomingImages } from '../../helpers'
+import { generateUniqueId, getNaturalSizeOfImage } from '@/utils/helpers'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
-import { EditorModalWrapper } from '../text-element/TextEditor'
 import { createPortal } from 'react-dom'
+import { useEditAreaStore } from '@/stores/ui/edit-area.store'
+import { calculateInitialImageElementPosition } from '../helpers'
+import { StickerElementMenuForDesktop } from './Menu-ForDesktop'
 
 type TStickerGroup = {
   name: string
@@ -93,29 +94,33 @@ const StickersModal = ({ onClose }: TStickersModalProps) => {
   // Xử lý chọn sticker
   const handleSelectSticker = (path: string) => {
     const elementId = generateUniqueId()
-    useEditedElementStore.getState().addStickerElement([
-      {
-        id: elementId,
-        path,
-        position: {
-          x: createInitialConstants<number>('ELEMENT_X'),
-          y: createInitialConstants<number>('ELEMENT_Y'),
-        },
-        angle: createInitialConstants<number>('ELEMENT_ROTATION'),
-        scale: createInitialConstants<number>('ELEMENT_ZOOM'),
-        zindex: createInitialConstants<number>('ELEMENT_ZINDEX'),
-        mountType: 'from-new',
+    getNaturalSizeOfImage(
+      path,
+      (width, height) => {
+        const scaleFactor = useEditAreaStore.getState().editAreaScaleValue
+        useEditedElementStore.getState().addStickerElement([
+          {
+            id: elementId,
+            path,
+            position: calculateInitialImageElementPosition({ height, width }, scaleFactor),
+            angle: createInitialConstants<number>('ELEMENT_ROTATION'),
+            scale: createInitialConstants<number>('ELEMENT_ZOOM'),
+            zindex: createInitialConstants<number>('ELEMENT_ZINDEX'),
+            mountType: 'from-new',
+          },
+        ])
+        useElementLayerStore.getState().addElementLayers([
+          {
+            elementId,
+            elementType: 'sticker',
+            index: createInitialConstants<number>('ELEMENT_ZINDEX'),
+          },
+        ])
+        useEditedElementStore.getState().selectElement(elementId, 'sticker', path)
+        onClose()
       },
-    ])
-    useElementLayerStore.getState().addElementLayers([
-      {
-        elementId,
-        elementType: 'sticker',
-        index: createInitialConstants<number>('ELEMENT_ZINDEX'),
-      },
-    ])
-    useEditedElementStore.getState().selectElement(elementId, 'sticker', path)
-    onClose()
+      (error) => {}
+    )
   }
 
   const selectedGroup = stickerGroups[selectedGroupIndex]
@@ -333,7 +338,7 @@ export const StickerMenuWrapper = () => {
     elementType === 'sticker' &&
     elementId && (
       <div className="smd:block hidden w-full">
-        <StickerElementMenu elementId={elementId} onClose={cancelSelectingElement} />
+        <StickerElementMenuForDesktop elementId={elementId} onClose={cancelSelectingElement} />
       </div>
     )
   )

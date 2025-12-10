@@ -72,29 +72,6 @@ export const TextElement = ({
     isShown: false,
   })
 
-  // const updateInteractiveButtonsOnFrame = () => {
-  //   if (!interactiveBtns.isShown) return
-  //   if (!isSelected) return
-  //   const root = rootRef.current
-  //   if (!root) return
-  //   const rootRect = root.getBoundingClientRect()
-  //   const { left, top } = rootRect
-  //   const buttonContainer = dragButtonRef.current
-  //   if (buttonContainer) {
-  //     const widthAfterScale = fontSize * content.length * 0.59 * scaleFactor // 0.59 là giá trị chiều dài trung bình cho 1 ký tự trong font chữ Arial (font chữ mặc định của ứng dụng)
-  //     const heightAfterScale = fontSize * scaleFactor // 1.2 là line-height mặc định
-  //     buttonContainer.style.top = `${top + rootRect.height / 2 - heightAfterScale / 2}px`
-  //     buttonContainer.style.left = `${left + rootRect.width / 2 - widthAfterScale / 2}px`
-  //     buttonContainer.style.width = `${widthAfterScale}px`
-  //     buttonContainer.style.height = `${heightAfterScale}px`
-  //   }
-  //   requestAnimationFrame(updateInteractiveButtonsOnFrame)
-  // }
-
-  // useEffect(() => {
-  //   updateInteractiveButtonsOnFrame()
-  // }, [interactiveBtns.isShown])
-
   const updateInteractiveButtonsVisual = () => {
     if (!isSelected) return
     const root = rootRef.current
@@ -156,61 +133,6 @@ export const TextElement = ({
     }
   }
 
-  const moveElementIntoCenter = (
-    root: HTMLElement,
-    allowedPrintArea: HTMLElement,
-    printAreaContainer: HTMLElement
-  ) => {
-    const allowedPrintAreaRect = allowedPrintArea.getBoundingClientRect()
-    const rootRect = root.getBoundingClientRect()
-    const printAreaContainerRect = printAreaContainer.getBoundingClientRect()
-    handleSetElementState(
-      (allowedPrintAreaRect.left +
-        (allowedPrintAreaRect.width - rootRect.width) / 2 -
-        printAreaContainerRect.left) /
-        scaleFactor,
-      (allowedPrintAreaRect.top +
-        (allowedPrintAreaRect.height - rootRect.height) / 2 -
-        printAreaContainerRect.top) /
-        scaleFactor
-    )
-  }
-
-  const initElementDisplaySize = (
-    root: HTMLElement,
-    allowedPrintArea: HTMLElement,
-    moveToCenter?: boolean
-  ) => {
-    // const editorContainerRect = allowedPrintArea.getBoundingClientRect()
-    // const mainBox = root.querySelector<HTMLElement>('.NAME-element-main-box')
-    // if (!mainBox) return
-    // mainBox.style.cssText = `max-width: ${editorContainerRect.width - 16}px; max-height: ${
-    //   editorContainerRect.height - 16
-    // }px;`
-
-    // Di chuyển vào giữa sau khi element đã được render hoàn toàn
-    if (moveToCenter) {
-      requestAnimationFrame(() => {
-        const printAreaContainer = printAreaContainerRef.current
-        if (printAreaContainer) {
-          moveElementIntoCenter(root, allowedPrintArea, printAreaContainer)
-        }
-      })
-    }
-  }
-
-  const initElement = () => {
-    requestAnimationFrame(() => {
-      const root = rootRef.current
-      if (!root) return
-      const allowedPrintArea = allowedPrintAreaRef.current
-      if (!allowedPrintArea) return
-      if (mountType === 'from-new') {
-        initElementDisplaySize(root, allowedPrintArea, true)
-      }
-    })
-  }
-
   const removeElement = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation()
     e.preventDefault()
@@ -224,7 +146,6 @@ export const TextElement = ({
   }, [fontSize, angle, position, isSelected, id])
 
   useEffect(() => {
-    initElement()
     eventEmitter.on(EInternalEvents.SUBMIT_TEXT_ELE_PROPS, listenSubmitEleProps)
     window.addEventListener('resize', updateInteractiveButtonsVisual)
     return () => {

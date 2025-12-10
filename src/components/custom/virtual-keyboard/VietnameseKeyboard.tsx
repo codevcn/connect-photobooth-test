@@ -360,20 +360,10 @@ export const VietnameseKeyboard = ({
     <div className={`${keyboardName} 5xl:text-[26px] w-full shadow-[0_3px_10px_rgba(0,0,0,0.8)]`}>
       {/* Display area - hiển thị nội dung đang nhập */}
       <div className="px-3 py-2 bg-white border-b border-gray-200">
-        {/* <input
-          type="text"
-          value={input}
-          placeholder={placeholder}
-          className="w-full outline-transparent focus:outline-main-cl overflow-y-auto px-2 py-1.5 text-[1em] border border-gray-200 rounded-lg bg-gray-50 whitespace-pre-wrap wrap-break-word"
-          onChange={(e) => setInput(e.target.value)}
-          ref={textDisplayerRef}
-          onKeyDown={catchEnterKey}
-        /> */}
         <AutoSizeTextField
           value={input}
           onChange={(e) => {
             setInput(e.target.value)
-            // Update caret position after change
             setTimeout(handleTextAreaSelect, 0)
           }}
           onEnter={catchEnterKey}

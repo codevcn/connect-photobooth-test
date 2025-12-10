@@ -124,7 +124,7 @@ export const ColorPickerModal = ({
   }, [])
 
   return (
-    <div className="NAME-color-picker-modal 5xl:text-3xl fixed inset-0 flex items-center justify-center z-99 animate-pop-in p-4">
+    <div className="NAME-color-picker-modal 5xl:text-3xl fixed inset-0 flex items-center justify-center z-101 animate-pop-in p-4">
       <div onClick={() => onHideShow(false)} className="bg-black/50 absolute inset-0 z-10"></div>
       <div className="bg-white rounded-2xl p-4 w-full max-w-md shadow-2xl max-h-[95vh] overflow-y-auto relative z-20">
         {/* Header */}

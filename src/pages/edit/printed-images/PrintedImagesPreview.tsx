@@ -8,6 +8,8 @@ import { createInitialConstants } from '@/utils/contants'
 import { PrintedImagesModal } from './PrintedImagesModal'
 import { CustomScrollbar } from '@/components/custom/CustomScrollbar'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
+import { useEditAreaStore } from '@/stores/ui/edit-area.store'
+import { calculateInitialImageElementPosition } from '../elements/helpers'
 
 type ImageProps = {
   img: TPrintedImage
@@ -62,29 +64,33 @@ const PrintedImagePreviewModal = ({ printedImage, onClose }: PrintedImageProps) 
 
   const handleAddImageToPrintArea = (printedImg: TPrintedImage) => {
     const elementId = generateUniqueId()
-    useEditedElementStore.getState().addPrintedImageElements([
-      {
-        id: elementId,
-        path: printedImg.url,
-        position: {
-          x: createInitialConstants<number>('ELEMENT_X'),
-          y: createInitialConstants<number>('ELEMENT_Y'),
-        },
-        angle: createInitialConstants<number>('ELEMENT_ROTATION'),
-        scale: createInitialConstants<number>('ELEMENT_ZOOM'),
-        zindex: createInitialConstants<number>('ELEMENT_ZINDEX'),
-        mountType: 'from-new',
+    getNaturalSizeOfImage(
+      printedImg.url,
+      (width, height) => {
+        const scaleFactor = useEditAreaStore.getState().editAreaScaleValue
+        useEditedElementStore.getState().addPrintedImageElements([
+          {
+            id: elementId,
+            path: printedImg.url,
+            position: calculateInitialImageElementPosition({ height, width }, scaleFactor),
+            angle: createInitialConstants<number>('ELEMENT_ROTATION'),
+            scale: createInitialConstants<number>('ELEMENT_ZOOM'),
+            zindex: createInitialConstants<number>('ELEMENT_ZINDEX'),
+            mountType: 'from-new',
+          },
+        ])
+        useElementLayerStore.getState().addElementLayers([
+          {
+            elementId,
+            elementType: 'printed-image',
+            index: createInitialConstants<number>('ELEMENT_ZINDEX'),
+          },
+        ])
+        useEditedElementStore.getState().selectElement(elementId, 'printed-image', printedImg.url)
+        onClose()
       },
-    ])
-    useElementLayerStore.getState().addElementLayers([
-      {
-        elementId,
-        elementType: 'printed-image',
-        index: createInitialConstants<number>('ELEMENT_ZINDEX'),
-      },
-    ])
-    useEditedElementStore.getState().selectElement(elementId, 'printed-image', printedImg.url)
-    onClose()
+      (error) => {}
+    )
   }
 
   return (
@@ -190,11 +196,14 @@ const PrintedImagesForTemplate = ({ printedImages }: PrintedImageForTemplateProp
 
   return (
     <div className="5xl:text-[1.5em] w-full text-[1em]">
-      <h3 className="5xl:text-[1em] smd:text-sm text-xs font-bold text-gray-800">Thêm ảnh vào vùng in</h3>
+      <h3 className="5xl:text-[1em] smd:text-sm text-xs font-bold text-gray-800">
+        Thêm ảnh vào vùng in
+      </h3>
       <CustomScrollbar
         classNames={{
           container: 'w-full pb-1',
-          content: 'flex flex-nowrap gap-3 py-1.5 items-center overflow-x-auto gallery-scroll w-full',
+          content:
+            'flex flex-nowrap gap-3 py-1.5 pl-1.5 items-center overflow-x-auto gallery-scroll w-full',
         }}
       >
         {printedImages.length > 0 &&

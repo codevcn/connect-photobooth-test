@@ -8,6 +8,9 @@ import { ETextFieldNameForKeyBoard } from '@/providers/GlobalKeyboardProvider'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { createPortal } from 'react-dom'
+import { calculateInitialTextElementPosition } from '../helpers'
+import { useEditAreaStore } from '@/stores/ui/edit-area.store'
+import { TextElementMenuForDesktop } from './Menu-ForDesktop'
 
 type TEditorModalProps = {
   onClose: () => void
@@ -19,19 +22,27 @@ const EditorModal = ({ onClose }: TEditorModalProps) => {
   const handleAddText = () => {
     if (text.trim()) {
       const elementId = generateUniqueId()
+      const scaleFactor = useEditAreaStore.getState().editAreaScaleValue
+      const fontSize = createInitialConstants<number>('ELEMENT_TEXT_FONT_SIZE')
+      const fontFamily = createInitialConstants<string>('ELEMENT_TEXT_FONT_FAMILY')
+      const fontWeight = createInitialConstants<number>('ELEMENT_TEXT_FONT_WEIGHT')
       useEditedElementStore.getState().addTextElement([
         {
           id: elementId,
           content: text,
           angle: createInitialConstants<number>('ELEMENT_ROTATION'),
-          position: {
-            x: createInitialConstants<number>('ELEMENT_X'),
-            y: createInitialConstants<number>('ELEMENT_Y'),
-          },
-          fontSize: createInitialConstants<number>('ELEMENT_TEXT_FONT_SIZE'),
+          position: calculateInitialTextElementPosition(
+            scaleFactor,
+            text,
+            `${fontSize}px`,
+            1,
+            fontFamily,
+            `${fontWeight}`
+          ),
+          fontSize,
           textColor: createInitialConstants<string>('ELEMENT_TEXT_COLOR'),
-          fontFamily: createInitialConstants<string>('ELEMENT_TEXT_FONT_FAMILY'),
-          fontWeight: createInitialConstants<number>('ELEMENT_TEXT_FONT_WEIGHT'),
+          fontFamily,
+          fontWeight,
           zindex: createInitialConstants<number>('ELEMENT_ZINDEX'),
           mountType: 'from-new',
           scale: createInitialConstants<number>('ELEMENT_ZOOM'),
@@ -219,7 +230,7 @@ export const TextMenuWrapper = () => {
     elementType === 'text' &&
     elementId && (
       <div className="smd:block hidden w-full">
-        <TextElementMenu elementId={elementId} onClose={cancelSelectingElement} />
+        <TextElementMenuForDesktop elementId={elementId} onClose={cancelSelectingElement} />
       </div>
     )
   )

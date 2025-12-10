@@ -99,8 +99,8 @@ export const Actions = () => {
       </div>
 
       {/* Fixed Actions Bar - Bottom Right */}
-      <div className="NAME-actions-bar fixed shadow-[0_0_10px_rgba(0,0,0,0.1)] bottom-0 right-2 z-40 smd:block hidden">
-        <div className="px-3 py-4 5xl:text-[1.3em] bg-white rounded-t-lg">
+      <div className="NAME-actions-bar fixed shadow-[0_0_10px_rgba(0,0,0,0.1)] rounded-t-lg bg-white bottom-0 right-2 z-40 smd:block hidden">
+        <div className="px-3 py-4 5xl:text-[1.3em]">
           {/* Action Buttons */}
           <div className="flex gap-1.5">
             {/* Preview Button */}
@@ -155,7 +155,7 @@ export const Actions = () => {
               title="Xem giỏ hàng"
             >
               {cartCount > 0 && (
-                <span className="5xl:text-[25px] 5xl:h-5 5xl:w-5 text-white text-[20px] leading-none font-bold rounded-full flex items-center justify-center">
+                <span className="5xl:text-[25px] h-5 w-5 5xl:h-5 5xl:w-5 text-main-cl bg-white rounded-full text-[20px] leading-none font-bold flex items-center justify-center">
                   {cartCount}
                 </span>
               )}

@@ -2,6 +2,7 @@ import { useEditedElementStore } from '@/stores/element/element.store'
 import { useEffect } from 'react'
 import { PrintedImageElementMenu } from './Menu'
 import { cancelSelectingZoomingImages } from '../../helpers'
+import { PrintedImageElementMenuForDesktop } from './Menu-ForDesktop'
 
 export const PrintedImageMenuWrapper = () => {
   const selectedElement = useEditedElementStore((state) => state.selectedElement)
@@ -30,7 +31,7 @@ export const PrintedImageMenuWrapper = () => {
     elementType === 'printed-image' &&
     elementId && (
       <div className="smd:block hidden w-full">
-        <PrintedImageElementMenu elementId={elementId} onClose={cancelSelectingElement} />
+        <PrintedImageElementMenuForDesktop elementId={elementId} onClose={cancelSelectingElement} />
       </div>
     )
   )

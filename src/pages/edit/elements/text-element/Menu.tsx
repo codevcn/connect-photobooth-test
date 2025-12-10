@@ -1,12 +1,13 @@
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { TElementType, TTextVisualState } from '@/utils/types/global'
 import { useEffect, useRef, useState } from 'react'
-import { ColorPickerModal } from './ColorPicker'
+import { ColorPickerModal, initColorOnShow } from './ColorPicker'
 import { TextFontPicker } from './FontPicker'
 import { createInitialConstants } from '@/utils/contants'
 import { createPortal } from 'react-dom'
-import { getContrastColor } from '@/utils/helpers'
+import { detectColorFormat, getContrastColor, rgbStringToHex } from '@/utils/helpers'
 import { ETextFieldNameForKeyBoard } from '@/providers/GlobalKeyboardProvider'
+import { useEditedElementStore } from '@/stores/element/element.store'
 
 type TPropertyType = 'font-size' | 'angle' | 'posXY' | 'zindex-up' | 'zindex-down'
 
@@ -234,6 +235,10 @@ export const TextElementMenu = ({ elementId, onClose }: TPrintedImageMenuProps) 
       eventEmitter.off(EInternalEvents.SYNC_ELEMENT_PROPS, listenElementProps)
     }
   }, [elementId])
+
+  useEffect(() => {
+    initColorOnShow(setCurrentColor)
+  }, [])
 
   return (
     <div

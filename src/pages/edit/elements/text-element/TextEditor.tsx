@@ -120,7 +120,10 @@ const EditorModal = ({ onClose }: TEditorModalProps) => {
           />
 
           <button
-            onClick={handleAddText}
+            onClick={(e) => {
+              e.stopPropagation()
+              handleAddText()
+            }}
             disabled={!text.trim()}
             className="5xl:text-[1em] sm:text-base smd:text-lg text-sm w-full bg-primary active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded-xl shadow-lg touch-target flex items-center justify-center gap-2 transition"
             id="NAME-add-text-element-confirm-button"

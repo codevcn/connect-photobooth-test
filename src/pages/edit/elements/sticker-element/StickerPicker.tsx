@@ -164,7 +164,10 @@ const StickersModal = ({ onClose }: TStickersModalProps) => {
               return (
                 <button
                   key={group.name}
-                  onClick={() => handleSelectGroup(index)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleSelectGroup(index)
+                  }}
                   className={`shrink-0 cursor-pointer flex flex-col items-center gap-1 p-2 rounded-lg transition-all ${
                     isSelected
                       ? 'bg-orange-100 border-2 border-orange-500'
@@ -223,7 +226,10 @@ const StickersModal = ({ onClose }: TStickersModalProps) => {
               {selectedGroup.stickers.map((path, index) => (
                 <button
                   key={index}
-                  onClick={() => handleSelectSticker(path)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleSelectSticker(path)
+                  }}
                   className="aspect-square cursor-pointer flex items-center justify-center bg-gray-50 hover:bg-orange-50 border-2 border-gray-200 hover:border-orange-300 rounded-xl active:scale-95 transition-all p-2"
                 >
                   <img

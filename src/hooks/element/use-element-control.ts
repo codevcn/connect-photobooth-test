@@ -340,13 +340,13 @@ export const useElementControl = (
   }, [position.x, position.y, angle, scale, zindex])
 
   useEffect(() => {
-    eventEmitter.on(EInternalEvents.EDITED_PRINT_AREA_CHANGED, stayElementVisualOnAllowedPrintArea)
-    return () => {
-      eventEmitter.off(
-        EInternalEvents.EDITED_PRINT_AREA_CHANGED,
-        stayElementVisualOnAllowedPrintArea
-      )
-    }
+    // eventEmitter.on(EInternalEvents.EDITED_PRINT_AREA_CHANGED, stayElementVisualOnAllowedPrintArea)
+    // return () => {
+    //   eventEmitter.off(
+    //     EInternalEvents.EDITED_PRINT_AREA_CHANGED,
+    //     stayElementVisualOnAllowedPrintArea
+    //   )
+    // }
   }, [])
 
   useEffect(() => {

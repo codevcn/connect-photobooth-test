@@ -51,9 +51,9 @@ export const createInitialConstants = <R>(type: TInitialContentsType): R => {
     case 'ELEMENT_ZOOM':
       return 1 as R
     case 'ELEMENT_TEXT_FONT_SIZE':
-      return 24 as R
+      return 33 as R
     case 'ELEMENT_TEXT_COLOR':
-      return '#000000' as R
+      return '#ffffff' as R
     case 'ELEMENT_ROUND_ZOOMING_FIXED':
       return 12 as R
     case 'ELEMENT_TEXT_FONT_WEIGHT':

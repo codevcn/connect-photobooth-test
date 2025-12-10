@@ -16,7 +16,6 @@ import { AdditionalInformation } from './product/AdditionalInformation'
 import { Actions } from './Actions'
 import { useFontLoader } from '@/hooks/use-font'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
-import { useTemplateStore } from '@/stores/ui/template.store'
 import { useSearchParams } from 'react-router-dom'
 import { useProductStore } from '@/stores/product/product.store'
 import { LocalStorageHelper } from '@/utils/localstorage'
@@ -25,10 +24,8 @@ import { StickerElementMenu } from './elements/sticker-element/Menu'
 import { TextElementMenu } from './elements/text-element/Menu'
 import { PrintedImageElementMenu } from './elements/printed-image/Menu'
 import { cancelSelectingZoomingImages } from './helpers'
-import { toast } from 'react-toastify'
 import { useKeyboardStore } from '@/stores/keyboard/keyboard.store'
 import { useLayoutStore } from '@/stores/ui/print-layout.store'
-import { generateUniqueId } from '@/utils/helpers'
 
 const TemplateFrameMenuResponsive = () => {
   const selectedElement = useEditedElementStore((s) => s.selectedElement)
@@ -206,7 +203,8 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
             target.closest('.NAME-printed-images-modal') ||
             target.closest('.NAME-remove-printed-element-modal') ||
             target.closest('.NAME-element-interaction-title') ||
-            target.closest('.NAME-element-interactive-buttons')
+            target.closest('.NAME-element-interactive-buttons') ||
+            target.closest('.NAME-vietnamese-virtual-keyboard')
           )
         ) {
           cancelSelectingElement()

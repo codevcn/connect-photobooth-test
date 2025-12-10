@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>9 Bong Bóng Sản Phẩm</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden; /* Ẩn thanh cuộn */
+        background-color: #f0f2f5; /* Màu nền nhẹ nhàng */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      #container {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      .bubble {
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f54900, #d43d00); /* Gradient màu cam đỏ */
+        box-shadow: 0 10px 20px rgba(245, 73, 0, 0.4), inset 0 5px 10px rgba(255, 255, 255, 0.3);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        text-align: center;
+        font-weight: bold;
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.2s;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        z-index: 10;
+      }
+
+      .bubble:hover {
+        transform: scale(1.1); /* Phóng to nhẹ khi di chuột vào */
+        z-index: 20;
+        box-shadow: 0 15px 30px rgba(255, 94, 98, 0.6);
+      }
+
+      .bubble-icon {
+        font-size: 24px;
+        margin-bottom: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .bubble-icon img {
+        max-width: 100px;
+        max-height: 100px;
+        object-fit: contain;
+      }
+
+      .bubble-text {
+        font-size: 18px;
+        padding: 0 10px;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Hiệu ứng bóng sáng trên bong bóng */
+      .bubble::after {
+        content: '';
+        position: absolute;
+        top: 15%;
+        left: 15%;
+        width: 25%;
+        height: 15%;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.6);
+        transform: rotate(-45deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+
+    <script>
+      // Danh sách 9 sản phẩm của bạn
+      const productList = [
+        { name: 'Móc Khóa', icon: 'images/SAMPLE/móc khóa.png' },
+        { name: 'Áo', icon: 'images/SAMPLE/Áo.png' },
+        { name: 'Túi', icon: 'images/SAMPLE/Túi.png' },
+        { name: 'Nến', icon: 'images/SAMPLE/nến .png' },
+        { name: 'Khung Gỗ', icon: 'images/SAMPLE/khung ảnh.png' },
+        { name: 'Bình Giữ Nhiệt', icon: 'images/SAMPLE/bình giữ nhiệt (3).png' },
+        { name: 'Áo Hoodie', icon: 'images/SAMPLE/áo hoodie .png' },
+        { name: 'Cốc', icon: 'images/SAMPLE/Cốc.png' },
+        { name: 'Ốp Lưng', icon: 'images/SAMPLE/Ốp lưng.png' },
+      ]
+
+      const container = document.getElementById('container')
+      const bubbles = []
+
+      class Bubble {
+        constructor(product) {
+          this.element = document.createElement('div')
+          this.element.className = 'bubble'
+
+          // Tạo nội dung bên trong bong bóng
+          this.element.innerHTML = `
+                <div class="bubble-icon"><img src="${product.icon}" alt="${product.name}" style="width: 100px; height: 100px; object-fit: contain;"></div>
+                <div class="bubble-text">${product.name}</div>
+            `
+
+          // Kích thước bong bóng (phải khớp với CSS)
+          this.size = 180
+
+          // Vị trí ngẫu nhiên ban đầu
+          this.x = Math.random() * (window.innerWidth - this.size)
+          this.y = Math.random() * (window.innerHeight - this.size)
+
+          // Tốc độ di chuyển ngẫu nhiên (vx: vận tốc ngang, vy: vận tốc dọc)
+          // Giá trị từ -2 đến 2
+          this.vx = (Math.random() - 0.5) * 4
+          this.vy = (Math.random() - 0.5) * 4
+
+          // Thêm vào DOM
+          container.appendChild(this.element)
+
+          // Sự kiện click (tùy chọn)
+          this.element.addEventListener('click', () => {
+            // alert(`Bạn đã chọn: ${product.name}`);
+          })
+        }
+
+        update() {
+          // Cập nhật vị trí
+          this.x += this.vx
+          this.y += this.vy
+
+          // Kiểm tra va chạm với cạnh màn hình
+          // Nếu chạm phải hoặc trái -> đảo ngược vận tốc X
+          if (this.x + this.size > window.innerWidth || this.x < 0) {
+            this.vx = -this.vx
+            // Giữ bong bóng trong khung hình nếu lỡ trượt ra ngoài
+            if (this.x < 0) this.x = 0
+            if (this.x + this.size > window.innerWidth) this.x = window.innerWidth - this.size
+          }
+
+          // Nếu chạm trên hoặc dưới -> đảo ngược vận tốc Y
+          if (this.y + this.size > window.innerHeight || this.y < 0) {
+            this.vy = -this.vy
+            if (this.y < 0) this.y = 0
+            if (this.y + this.size > window.innerHeight) this.y = window.innerHeight - this.size
+          }
+
+          // Áp dụng vị trí mới
+          this.element.style.transform = `translate(${this.x}px, ${this.y}px)`
+        }
+      }
+
+      // Khởi tạo các bong bóng
+      function init() {
+        productList.forEach((product) => {
+          bubbles.push(new Bubble(product))
+        })
+        animate()
+      }
+
+      // Vòng lặp animation
+      function animate() {
+        bubbles.forEach((bubble) => bubble.update())
+        requestAnimationFrame(animate)
+      }
+
+      // Xử lý khi thay đổi kích thước màn hình
+      window.addEventListener('resize', () => {
+        // Có thể thêm logic để reset vị trí nếu cần
+      })
+
+      // Bắt đầu
+      init()
+    </script>
+  </body>
+</html>

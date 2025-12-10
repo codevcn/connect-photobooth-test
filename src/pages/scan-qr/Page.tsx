@@ -37,21 +37,14 @@ const ScanQRPage = () => {
 
   return (
     <div className="relative flex items-center justify-center h-screen w-screen overflow-hidden">
-      {/* Video Background */}
+      {/* HTML Background with Bubbles */}
       <div className="absolute inset-0 z-0">
-        <video
-          className="w-full h-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          disablePictureInPicture
-          controlsList="nodownload"
-        >
-          <source src="/videos/scan-qr-page-background.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-black/30" />
+        <iframe
+          src="/scan-qr-background.html"
+          className="w-full h-full border-0"
+          title="Background Animation"
+        />
+        <div className="absolute inset-0 bg-black/20 pointer-events-none" />
       </div>
 
       {/* Main Content */}

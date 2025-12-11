@@ -15,9 +15,8 @@ export const PaymentMethodSelector = ({
         Phương thức thanh toán
       </h3>
 
-      <div className="grid-cols-1 grid smd:grid-cols-2 gap-x-2 gap-y-2 smd:gap-y-1">
-        {/* Momo */}
-        {selectedMethod === 'momo' ? (
+      <div className="grid-cols-1 grid smd:grid-cols-1 gap-x-2 gap-y-2 smd:gap-y-1">
+        {/* {selectedMethod === 'momo' ? (
           <div className="smd:row-span-2 flex items-center bg-linear-to-r from-pink-50 to-purple-50 border-2 border-pink-200 rounded-xl px-3 py-2">
             <div className="flex items-center justify-between gap-2 w-full">
               <div className="flex items-center gap-3">
@@ -57,7 +56,6 @@ export const PaymentMethodSelector = ({
           </button>
         )}
 
-        {/* Zalo */}
         {selectedMethod === 'zalo' ? (
           <div className="smd:row-span-2 flex items-center bg-linear-to-r from-pink-50 to-purple-50 border-2 border-pink-200 rounded-xl px-3 py-2">
             <div className="flex items-center justify-between gap-2 w-full">
@@ -96,11 +94,10 @@ export const PaymentMethodSelector = ({
             <img src="/images/logo/zalo.png" alt="Zalo" className="5xl:h-9 5xl:w-9 h-6 w-6" />
             <span className="5xl:text-[0.9em] font-medium">Thanh toán với Zalo</span>
           </button>
-        )}
+        )} */}
 
-        {/* Cash on Delivery */}
         {selectedMethod === 'cod' ? (
-          <div className="smd:col-span-2 bg-linear-to-r from-pink-50 to-purple-50 border-2 border-pink-200 rounded-xl px-3 py-2">
+          <div className="smd:col-span-1 bg-linear-to-r from-pink-50 to-purple-50 border-2 border-pink-200 rounded-xl px-3 py-2">
             <div className="flex items-center justify-between gap-2 w-full">
               <div className="flex items-center gap-3">
                 <div className="bg-green-600 rounded-lg p-2">
@@ -147,7 +144,7 @@ export const PaymentMethodSelector = ({
         ) : (
           <button
             onClick={() => onSelectMethod('cod')}
-            className="w-full h-[45px] bg-white text-gray-900 flex items-center justify-center gap-2 rounded-xl border-2 border-gray-300 shadow-sm transition hover:border-pink-200 active:scale-95"
+            className="w-full h-[55px] bg-white text-gray-900 flex items-center justify-center gap-2 rounded-xl border-2 border-gray-300 shadow-sm transition hover:border-main-cl active:scale-95"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

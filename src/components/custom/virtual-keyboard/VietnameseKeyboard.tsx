@@ -226,22 +226,30 @@ export const VietnameseKeyboard = ({
 
   const vietnameseLayout = {
     default: [
-      '1 2 3 4 5 6 7 8 9 0 - = {bksp} {clear}',
+      '1 2 3 4 5 6 7 8 9 0 - = {bksp}',
       'q w e r t y u i o p [ ] \\',
       "a s d f g h j k l ; ' {enter}",
       '{shift} z x c v b n m , . / {shift}',
-      '{space} {done}',
+      '{=\\<} @ {space} {done}',
     ],
     shift: [
-      '! @ # $ % ^ & * ( ) _ + {bksp} {clear}',
+      '1 2 3 4 5 6 7 8 9 0 _ + {bksp} {clear}',
       'Q W E R T Y U I O P { } |',
       'A S D F G H J K L : " {enter}',
       '{shift} Z X C V B N M < > ? {shift}',
-      '{space} {done}',
+      '{=\\<} {space} {done}',
+    ],
+    specialCharacters: [
+      '1 2 3 4 5 6 7 8 9 0 _ + {bksp} {clear}',
+      '~ ˋ | • √ π ÷ × ¶ Δ { } |',
+      '@ # $ % & ( ) : " {enter}',
+      '{shift} * " ! < > ? {shift}',
+      '{abc} @ {space} {done}',
     ],
   }
 
   const display: Record<string, string> = {
+    '{=\\<}': '<span>=\\<</span>',
     '{bksp}': `
       <svg
         xmlns="http://www.w3.org/2000/svg"

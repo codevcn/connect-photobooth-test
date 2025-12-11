@@ -32,7 +32,7 @@ import IntroPage from './pages/intro/Page'
 import { isHomePage } from './utils/helpers'
 import PaymentPage from './pages/payment/Page'
 import { usePrintedImageStore } from './stores/printed-image/printed-image.store'
-// import MaintainPage from './pages/maintain/Page'
+import MaintainPage from './pages/maintain/Page'
 import { AppTempContainer } from './components/custom/TempContainer'
 import { Dev } from './dev/pages/Dev'
 import { GlobalKeyboardProvider } from './providers/GlobalKeyboardProvider'
@@ -149,7 +149,7 @@ function App() {
 }
 
 function AppWrapper() {
-  return <App />
+  return <MaintainPage />
 }
 
 export default AppWrapper

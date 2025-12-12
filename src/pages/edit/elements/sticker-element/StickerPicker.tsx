@@ -350,7 +350,7 @@ export const StickerPicker = () => {
   return (
     <div
       onClick={() => setShowStickerPicker(true)}
-      className="5xl:text-[1.5em] 5xl:bg-gray-100 bg-white 5xl:py-4 smd:pb-3 flex px-1 pb-1 cursor-pointer items-center justify-center gap-2 flex-1 rounded-md"
+      className="5xl:text-[1.5em] smd:bg-gray-100 bg-white 5xl:py-4 flex px-1 py-2 cursor-pointer items-center justify-center gap-2 flex-1 rounded-md"
     >
       <PickerModalWrapper
         showStickerPicker={showStickerPicker}

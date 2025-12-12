@@ -14,7 +14,7 @@ export const PreviewImage = ({ printedImageVisualState }: TPrintedImageProps) =>
         width,
         height,
       }}
-      className="absolute pointer-events-none overflow-hidden select-none"
+      className="absolute z-50 pointer-events-none overflow-hidden select-none"
     >
       <img
         src={printedImageVisualState.path}

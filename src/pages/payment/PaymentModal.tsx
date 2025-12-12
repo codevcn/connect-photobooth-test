@@ -20,7 +20,7 @@ interface PaymentModalProps {
 }
 
 export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModalProps) => {
-  const [paymentMethod, setPaymentMethod] = useState<TPaymentType>('momo')
+  const [paymentMethod, setPaymentMethod] = useState<TPaymentType>('bank-transfer')
   const [confirming, setConfirming] = useState<boolean>(false)
   const [confirmingMessage, setConfirmingMessage] = useState<string>('Đang xử lý...')
   const [endOfPayment, setEndOfPayment] = useState<TEndOfPaymentData>()
@@ -198,7 +198,7 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
           </h2>
           <button
             onClick={() => onHideShow(false)}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors active:scale-90"
+            className="5xl:p-2 hover:bg-gray-100 rounded-full transition-colors active:scale-90"
             aria-label="Đóng hộp thoại"
           >
             <svg
@@ -221,7 +221,7 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
           style={{
             display: endOfPayment ? 'none' : 'block',
           }}
-          className="md:px-6 px-4 pt-6 pb-4 space-y-4 relative z-10 overflow-y-auto grow gallery-scroll"
+          className="md:px-6 px-4 pb-4 space-y-4 relative z-10 overflow-y-auto grow gallery-scroll"
         >
           {/* Shipping Information */}
           <ShippingInfoForm ref={formRef} errors={errors} />
@@ -235,7 +235,7 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
           <div className="space-y-3 pt-2">
             <button
               onClick={handleConfirmPayment}
-              className="5xl:text-[0.9em] md:text-lg text-base flex items-center justify-center gap-2 w-full h-[50px] bg-main-cl text-white font-bold rounded-lg shadow-lg active:scale-90 transition"
+              className="5xl:text-[0.9em] md:text-lg text-base flex items-center justify-center gap-2 w-full h-[45px] bg-main-cl text-white font-bold rounded-lg shadow-lg active:scale-90 transition"
             >
               <span>Xác nhận thanh toán</span>
               <svg
@@ -253,7 +253,7 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
             </button>
             <button
               onClick={() => onHideShow(false)}
-              className="5xl:text-[0.9em] md:text-lg text-base w-full h-[45px] text-gray-800 font-bold active:scale-90 transition"
+              className="5xl:text-[0.9em] md:text-lg text-base w-full h-[45px] rounded-md bg-gray-200 text-gray-800 font-bold active:scale-90 transition"
             >
               Hủy
             </button>

@@ -10,6 +10,7 @@ import { createCommonConstants } from '@/utils/contants'
 import { useEditModeStore } from '@/stores/ui/edit-mode.store'
 import { useEditAreaStore } from '@/stores/ui/edit-area.store'
 import { useLayoutStore } from '@/stores/ui/print-layout.store'
+import { checkIfMobileScreen } from '@/utils/helpers'
 
 type TFramesDisplayerProps = {
   template: TPrintTemplate
@@ -91,9 +92,9 @@ export const PrintAreaOverlayPreview = ({
     <div
       ref={registerPrintAreaRef}
       className={cn(
-        `z-5 flex justify-center items-center absolute`,
+        `z-49 flex justify-center items-center absolute`,
         printAreaOptions?.className,
-        displayMockupOnMobile ? '' : 'smd:block hidden'
+        displayMockupOnMobile && checkIfMobileScreen() ? '' : 'smd:block hidden'
       )}
     >
       {/* <FramesDisplayerForPreview

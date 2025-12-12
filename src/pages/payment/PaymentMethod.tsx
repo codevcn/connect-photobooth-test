@@ -96,7 +96,7 @@ export const PaymentMethodSelector = ({
           </button>
         )} */}
 
-        {selectedMethod === 'cod' ? (
+        {selectedMethod === 'bank-transfer' ? (
           <div className="smd:col-span-1 bg-linear-to-r from-pink-50 to-purple-50 border-2 border-pink-200 rounded-xl px-3 py-2">
             <div className="flex items-center justify-between gap-2 w-full">
               <div className="flex items-center gap-3">
@@ -132,7 +132,7 @@ export const PaymentMethodSelector = ({
                   strokeWidth="3"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="lucide lucide-check-icon lucide-check text-white"
+                  className="lucide lucide-check-icon lucide-check text-white w-4 h-4"
                 >
                   <path d="M20 6 9 17l-5-5" />
                 </svg>
@@ -141,13 +141,11 @@ export const PaymentMethodSelector = ({
           </div>
         ) : (
           <button
-            onClick={() => onSelectMethod('momo')}
-            className="w-full h-[55px] bg-white text-gray-900 flex items-center justify-center gap-2 rounded-xl border-2 border-gray-300 shadow-sm transition hover:border-main-cl active:scale-95"
+            onClick={() => onSelectMethod('bank-transfer')}
+            className="5xl:h-[55px] w-full h-10 bg-white text-gray-900 flex items-center justify-center gap-2 rounded-xl border-2 border-gray-300 shadow-sm transition hover:border-main-cl active:scale-95"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="26"
-              height="26"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"

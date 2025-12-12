@@ -1,0 +1,16 @@
+.NAME-gallery-parent-to-show .NAME-gallery-child-to-render {
+  display: block;
+}
+
+.NAME-gallery-parent-to-hide .NAME-gallery-child-to-render {
+  display: none;
+}
+
+.NAME-gallery-parent-to-show .NAME-gallery-child-to-rounded {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.NAME-gallery-parent-to-hide .NAME-gallery-child-to-rounded {
+  border-radius: 8px;
+}

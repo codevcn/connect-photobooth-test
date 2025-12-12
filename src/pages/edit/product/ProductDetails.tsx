@@ -10,7 +10,7 @@ type TProductDetailsProps = {
 export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetailsProps) => {
   return (
     <div className="smd:order-1 5xl:text-5xl order-2 w-full flex flex-col">
-      <div className="smd:block hidden smd:order-1 order-2 pl-1 pt-2">
+      <div className="smd:block hidden smd:order-1 order-2 pl-1 smd:pt-0 pt-2">
         <h1 className="sm:text-[1.5em] 5xl:text-[0.7em] smd:mt-0 mt-2 leading-tight text-[1.5em] font-bold text-slate-900 mb-2">
           {pickedProduct.name}
         </h1>
@@ -25,15 +25,6 @@ export const ProductDetails = ({ pickedProduct, pickedVariant }: TProductDetails
             {friendlyCurrency(pickedVariant.currency)}
           </span>
         </span>
-      </div>
-
-      <div className="smd:order-3 order-4 smd:p-3 p-2 bg-orange-50 border border-orange-100 rounded-lg space-y-2 my-2">
-        <div className="5xl:text-[0.5em] text-sm flex items-center justify-between gap-2">
-          <span className="text-gray-800 font-bold">Chăm sóc khách hàng</span>
-          <span className="font-semibold text-orange-600 text-end whitespace-nowrap">
-            090 136 6095
-          </span>
-        </div>
       </div>
 
       <VariantInfo pickedProduct={pickedProduct} pickedVariant={pickedVariant} />

@@ -245,7 +245,7 @@ export const LivePreview = ({
         // Lấy giá trị mới nhất từ store để tránh closure stale
         const currentLayout = useLayoutStore.getState().pickedLayout
         // Chỉ thực hiện nếu layout vẫn còn là layout đã trigger effect này
-        if (currentLayout && currentLayout.id === layoutIdAtCallTime) {
+        if (currentLayout) {
           handlePutPrintedImagesInLayout(currentLayout, allowedPrintAreaRef.current!)
         }
       })

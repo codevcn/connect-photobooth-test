@@ -91,7 +91,7 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
   }
 
   return (
-    <div className="5xl:text-[1.4em] order-4 flex flex-col gap-1 w-full bg-gray-100 rounded-lg shadow-sm p-2 border-border">
+    <div className="5xl:text-[1.4em] order-4 smd:mt-0 mt-2 flex flex-col gap-1 w-full bg-gray-100 rounded-lg shadow-sm p-2 border-border">
       <div className="w-full">
         <div
           className="w-full group flex items-center mobile-touch justify-between p-4 cursor-pointer hover:bg-white border-border rounded-md border-b border-transparent"
@@ -114,7 +114,7 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
                 />
               </svg>
             </div>
-            <span className="5xl:text-[1em] text-base text-gray-700 font-semibold">
+            <span className="5xl:text-[1em] text-sm text-gray-700 font-semibold">
               Mô tả sản phẩm
             </span>
           </div>
@@ -166,7 +166,7 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
                 />
               </svg>
             </div>
-            <span className="5xl:text-[1em] text-base text-gray-700 font-semibold">
+            <span className="5xl:text-[1em] text-sm text-gray-700 font-semibold">
               Vận chuyển & Trả hàng
             </span>
           </div>
@@ -190,6 +190,15 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
               className="5xl:text-[1em] px-2 py-2 text-sm text-black/80"
             ></div>
           )}
+        </div>
+      </div>
+
+      <div className="smd:order-3 order-4 smd:p-3 p-2 bg-white rounded-lg space-y-2 mt-2">
+        <div className="5xl:text-[0.5em] text-sm flex items-center justify-between gap-2">
+          <span className="text-gray-800 font-bold">Chăm sóc khách hàng</span>
+          <span className="font-semibold text-orange-600 text-end whitespace-nowrap">
+            090 136 6095
+          </span>
         </div>
       </div>
     </div>

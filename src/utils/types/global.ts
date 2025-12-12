@@ -172,7 +172,7 @@ export type TDetectCollisionWithViewportEdgesResult = {
   collidedEdge: 'left' | 'right' | 'top' | 'bottom' | null
 }
 
-export type TPaymentType = 'momo' | 'zalo' | 'cod'
+export type TPaymentType = 'momo' | 'zalo' | 'cod' | 'bank-transfer'
 
 export type TBrands = 'photoism'
 

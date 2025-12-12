@@ -2,7 +2,7 @@ import { TBaseProduct, TPrintAreaInfo, TPrintedImage } from '@/utils/types/globa
 import { PrintAreaOverlayPreview } from './live-preview/PrintAreaOverlay'
 import { usePrintArea } from '@/hooks/use-print-area'
 import { usePrintedImageStore } from '@/stores/printed-image/printed-image.store'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { buildDefaultLayout } from './customize/print-layout/builder'
@@ -54,7 +54,7 @@ const Product = ({
   const [initialLayout, setInitialLayout] = useState<TPrintLayout>()
   // const previewPrintAreaRef = useRef<HTMLDivElement | null>(null)
   // const previewPrintAreaContainerRef = useRef<HTMLDivElement | null>(null)
-  const isMobileScreen = window.innerWidth < 662
+  const isMobileScreen = checkIfMobileScreen()
 
   const buildInitialLayout = () => {
     requestAnimationFrame(() => {
@@ -95,7 +95,7 @@ const Product = ({
       data-is-picked={isPicked}
       className={`${
         isPicked ? 'outline-2 outline-main-cl' : 'outline-0'
-      } NAME-gallery-product spmd:w-full spmd:h-auto h-[110px] aspect-square cursor-pointer mobile-touch outline-0 hover:outline-2 hover:outline-main-cl relative`}
+      } NAME-gallery-product spmd:w-full spmd:h-auto smd:rounded-lg h-full rounded-lg aspect-square cursor-pointer mobile-touch outline-0 hover:outline-2 hover:outline-main-cl relative`}
       onClick={() => {
         if (initialLayout) onPickProduct(product, initialLayout, firstPrintAreaInProduct)
       }}
@@ -103,18 +103,11 @@ const Product = ({
       <div
         className={`${
           isPicked ? 'outline-2 outline-main-cl' : 'outline-0'
-        } w-full z-10 h-fit pb-2.5 px-2 whitespace-nowrap truncate rounded-t-lg absolute bottom-[90%] left-0 text-xs bg-gray-200`}
+        } NAME-gallery-child-to-render smd:hidden block w-full z-10 h-fit px-2 pt-1 rounded-b-lg whitespace-nowrap truncate absolute top-[96%] left-0 text-[12px] bg-gray-200`}
       >
         {product.name}
       </div>
-      <div
-        className={`${
-          isPicked ? 'outline-2 outline-main-cl' : 'outline-0'
-        } w-full z-10 h-fit pt-2.5 px-2 text-center leading-tight rounded-b-lg absolute top-[90%] left-0 text-[10px] bg-gray-200`}
-      >
-        Màu in giống 90% so với thực tế
-      </div>
-      <div className="w-full h-full border border-gray-200 bg-white relative z-30">
+      <div className="NAME-gallery-child-to-rounded smd:rounded-xl w-full h-full bg-white border border-gray-200 relative rounded-t-lg z-20">
         <img
           src={firstPrintAreaInProduct.imageUrl || '/images/placeholder.svg'}
           alt={product.name}
@@ -216,6 +209,8 @@ export const ProductGallery = ({ products }: TProductGalleryProps) => {
   const { collectMockupVisualStates } = useVisualStatesCollector()
   const navigate = useNavigate()
   const [showExitModal, setShowExitModal] = useState(false)
+  const galleryRef = useRef<HTMLDivElement | null>(null)
+  const initialGalleryHeight = useRef<number>(0)
 
   const resetAllStores = () => {
     // Reset tất cả stores
@@ -316,13 +311,52 @@ export const ProductGallery = ({ products }: TProductGalleryProps) => {
     scrollToPickedProduct()
   }, [pickedProduct?.id])
 
+  useEffect(() => {
+    const stayGalleryOnTopPage = () => {
+      if (!checkIfMobileScreen()) return
+      const galleryEle = galleryRef.current
+      if (!galleryEle) return
+      if (!initialGalleryHeight.current) {
+        initialGalleryHeight.current = galleryEle.getBoundingClientRect().height
+      }
+      const galleryWrapper = galleryEle.closest<HTMLElement>('.NAME-products-gallery-wrapper')
+      if (!galleryWrapper) return
+      if (window.scrollY > 170) {
+        galleryWrapper.style.height = `${initialGalleryHeight.current}px`
+        galleryWrapper.style.width = `${galleryEle.offsetWidth}px`
+        galleryEle.style.position = 'fixed'
+        galleryEle.style.width = '100vw'
+        galleryEle.style.zIndex = '999'
+        galleryEle.style.height = '70px'
+        galleryEle.style.padding = '8px 8px 8px'
+        galleryEle.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.2)'
+        galleryEle.classList.add('NAME-gallery-parent-to-hide')
+      } else {
+        galleryWrapper.style.height = `auto`
+        galleryWrapper.style.width = `auto`
+        galleryEle.style.position = 'relative'
+        galleryEle.style.width = '100%'
+        galleryEle.style.zIndex = '1'
+        galleryEle.style.height = '150px'
+        galleryEle.style.padding = '8px 12px 24px'
+        galleryEle.style.boxShadow = 'none'
+        galleryEle.classList.remove('NAME-gallery-parent-to-hide')
+      }
+    }
+
+    window.addEventListener('scroll', stayGalleryOnTopPage)
+    return () => {
+      window.removeEventListener('scroll', stayGalleryOnTopPage)
+    }
+  }, [])
+
   return (
-    <div className="spmd:pb-3 spmd:h-screen spmd:w-auto md:text-base text-sm w-full h-fit pb-1 flex flex-col bg-white border-r border-r-gray-200">
-      {/* <div className="bg-gray-100 z-40 rounded-lg px-1 text-xs text-gray-600 absolute top-1 right-1 shadow-md">
+    <div className="spmd:pb-3 spmd:h-screen spmd:w-auto md:text-base text-sm w-full h-fit flex flex-col bg-white border-r border-r-gray-200">
+      <div className="bg-gray-100 z-40 rounded py-0.5 px-1 text-xs text-gray-600 absolute top-2 right-2.5 shadow-md">
         {findProductIndex()}
         <span>/</span>
         {products.length}
-      </div> */}
+      </div>
       <ConfirmExitModal
         show={showExitModal}
         onConfirm={handleConfirmExit}
@@ -330,7 +364,7 @@ export const ProductGallery = ({ products }: TProductGalleryProps) => {
       />
       <button
         onClick={handleBackButtonClick}
-        className="smd:flex hidden gap-3 cursor-pointer mobile-touch items-center justify-center font-bold w-full py-2 px-1 border-b border-gray-300 bg-main-cl text-white"
+        className="smd:flex smd:py-1 hidden gap-3 cursor-pointer mobile-touch items-center justify-center font-bold w-full py-2 px-1 border-b border-gray-300 bg-main-cl text-white"
       >
         {/* <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -357,30 +391,35 @@ export const ProductGallery = ({ products }: TProductGalleryProps) => {
         >
           <path d="M13 9a1 1 0 0 1-1-1V5.061a1 1 0 0 0-1.811-.75l-6.835 6.836a1.207 1.207 0 0 0 0 1.707l6.835 6.835a1 1 0 0 0 1.811-.75V16a1 1 0 0 1 1-1h6a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1z" />
         </svg>
-        <span className="text-xl">Quay về</span>
+        <span className="5xl:text-xl smd:text-lg">Quay về</span>
       </button>
       <h2 className="5xl:text-[1.3em] text-[1em] pt-2 w-full text-center font-bold text-gray-800 flex items-center justify-center gap-2">
         Chọn sản phẩm
       </h2>
-      <div className="NAME-products-gallery spmd:overflow-y-auto spmd:max-h-full spmd:flex-col smpd:px-1.5 px-3 py-7 pb-8 border-b border-gray-200 overflow-x-auto gallery-scroll w-full h-fit flex items-center gap-2">
-        {products &&
-          products.length > 0 &&
-          products.map((product, index) => {
-            const firstPrintArea = product.printAreaList[0]
-            return (
-              <Product
-                key={product.id}
-                product={product}
-                firstPrintAreaInProduct={firstPrintArea}
-                isPicked={product.id === pickedProduct?.id}
-                onPickProduct={handlePickProduct}
-                onInitFirstProduct={handleSetFirstProduct}
-                printedImages={printedImages}
-                productIndex={index + 1}
-                productsCount={products.length}
-              />
-            )
-          })}
+      <div className="NAME-products-gallery-wrapper spmd:overflow-y-auto spmd:max-h-full">
+        <div
+          ref={galleryRef}
+          className="NAME-products-gallery spmd:overflow-y-auto spmd:max-h-full spmd:flex-col smpd:px-1.5 spmd:h-fit h-[150px] bg-white top-0 left-0 px-3 pt-2 pb-6 smd:py-2 smd:pb-2 smd:pt-4 overflow-x-auto gallery-scroll w-full flex items-center gap-2"
+        >
+          {products &&
+            products.length > 0 &&
+            products.map((product, index) => {
+              const firstPrintArea = product.printAreaList[0]
+              return (
+                <Product
+                  key={product.id}
+                  product={product}
+                  firstPrintAreaInProduct={firstPrintArea}
+                  isPicked={product.id === pickedProduct?.id}
+                  onPickProduct={handlePickProduct}
+                  onInitFirstProduct={handleSetFirstProduct}
+                  printedImages={printedImages}
+                  productIndex={index + 1}
+                  productsCount={products.length}
+                />
+              )
+            })}
+        </div>
       </div>
     </div>
   )

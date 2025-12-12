@@ -543,7 +543,7 @@ export const getFinalColorValue = () => {
 }
 
 export const checkIfMobileScreen = (): boolean => {
-  return window.innerWidth < 768
+  return window.innerWidth < 662
 }
 
 export const checkQueryString = () => {

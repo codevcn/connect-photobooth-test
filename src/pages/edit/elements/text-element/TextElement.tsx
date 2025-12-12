@@ -67,8 +67,9 @@ export const TextElement = ({
       mountType,
     }
   )
+  const interactionsRef = useRef<HTMLElement>(null)
 
-  const updateInteractiveButtonsVisual = (): React.CSSProperties => {
+  const updateInteractiveButtonsVisualDirectly = (): React.CSSProperties => {
     const root = rootRef.current
     if (!root) return {}
     const rootRect = root.getBoundingClientRect()
@@ -82,7 +83,22 @@ export const TextElement = ({
       width: widthAfterScale,
       height: heightAfterScale,
     }
-    // requestAnimationFrame(updateInteractiveButtonsVisual)
+  }
+
+  const updateInteractiveButtonsVisual = () => {
+    const root = rootRef.current
+    if (!root) return
+    const interactions = interactionsRef.current
+    if (!interactions) return
+    const rootRect = root.getBoundingClientRect()
+    const { left, top } = rootRect
+    const widthAfterScale = fontSize * content.length * 0.59 * scaleFactor // 0.59 là giá trị chiều dài trung bình cho 1 ký tự trong font chữ Arial (font chữ mặc định của ứng dụng)
+    const heightAfterScale = fontSize * scaleFactor // 1.2 là line-height mặc định
+    interactions.style.display = isSelected ? 'block' : 'none'
+    interactions.style.top = `${top + rootRect.height / 2 - heightAfterScale / 2}px`
+    interactions.style.left = `${left + rootRect.width / 2 - widthAfterScale / 2}px`
+    interactions.style.width = `${widthAfterScale}px`
+    interactions.style.height = `${heightAfterScale}px`
   }
 
   useEffect(() => {
@@ -139,10 +155,12 @@ export const TextElement = ({
 
   useEffect(() => {
     window.addEventListener('resize', updateInteractiveButtonsVisual)
+    window.addEventListener('scroll', updateInteractiveButtonsVisual)
     return () => {
       window.removeEventListener('resize', updateInteractiveButtonsVisual)
+      window.removeEventListener('scroll', updateInteractiveButtonsVisual)
     }
-  }, [isSelected])
+  }, [isSelected, fontSize, content, id, scaleFactor])
 
   useEffect(() => {
     eventEmitter.on(EInternalEvents.SUBMIT_TEXT_ELE_PROPS, listenSubmitEleProps)
@@ -209,9 +227,13 @@ export const TextElement = ({
         {createPortal(
           <div
             className="NAME-element-interactive-buttons fixed z-80 bg-transparent shadow-[0_0_0_2px_#f54900] touch-none"
-            style={{ ...updateInteractiveButtonsVisual(), transform: `rotate(${angle}deg)` }}
+            style={{
+              ...updateInteractiveButtonsVisualDirectly(),
+              transform: `rotate(${angle}deg)`,
+            }}
             ref={(node) => {
               dragButtonRef.current = node
+              interactionsRef.current = node
             }}
           >
             <div

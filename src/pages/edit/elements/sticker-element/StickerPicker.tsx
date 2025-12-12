@@ -98,15 +98,25 @@ const StickersModal = ({ onClose }: TStickersModalProps) => {
       path,
       (width, height) => {
         const scaleFactor = useEditAreaStore.getState().editAreaScaleValue
+        const elementRect = calculateInitialImageElementPosition(
+          { height, width },
+          scaleFactor,
+          'sticker'
+        )
         useEditedElementStore.getState().addStickerElement([
           {
             id: elementId,
             path,
-            position: calculateInitialImageElementPosition({ height, width }, scaleFactor),
+            position: {
+              x: elementRect.x,
+              y: elementRect.y,
+            },
             angle: createInitialConstants<number>('ELEMENT_ROTATION'),
             scale: createInitialConstants<number>('ELEMENT_ZOOM'),
             zindex: createInitialConstants<number>('ELEMENT_ZINDEX'),
             mountType: 'from-new',
+            height: elementRect.height,
+            width: elementRect.width,
           },
         ])
         useElementLayerStore.getState().addElementLayers([

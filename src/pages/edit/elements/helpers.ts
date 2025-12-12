@@ -1,4 +1,4 @@
-import { TPosition, TSizeInfo } from '@/utils/types/global'
+import { TElementType, TPosition, TRect, TSizeInfo } from '@/utils/types/global'
 
 export const snapshotPersistElementPosition = (printAreaContainer: HTMLElement) => {
   for (const ele of printAreaContainer.querySelectorAll<HTMLElement>('.NAME-root-element')) {
@@ -295,25 +295,29 @@ export const DEFAULT_ELEMENT_DIMENSION_SIZE = () => {
 
 export const calculateInitialImageElementPosition = (
   imageNaturalSize: TSizeInfo,
-  scaleFactor: number
-): TPosition => {
+  scaleFactor: number,
+  elementType: TElementType
+): TRect => {
   const printAreaContainer = document.body.querySelector<HTMLElement>('.NAME-print-area-container')
-  if (!printAreaContainer) return { x: 0, y: 0 }
+  if (!printAreaContainer) return { x: 0, y: 0, width: 0, height: 0 }
   const allowedPrintArea = printAreaContainer.querySelector<HTMLElement>('.NAME-print-area-allowed')
-  if (!allowedPrintArea) return { x: 0, y: 0 }
+  if (!allowedPrintArea) return { x: 0, y: 0, width: 0, height: 0 }
   const allowedPrintAreaRect = allowedPrintArea.getBoundingClientRect()
   const printAreaContainerRect = printAreaContainer.getBoundingClientRect()
   const imgRatio = imageNaturalSize.width / imageNaturalSize.height
   let imgHeight: number
   let imgWidth: number
+  const margin = elementType === 'sticker' ? 8 : 4
   if (imgRatio > allowedPrintAreaRect.width / allowedPrintAreaRect.height) {
-    imgWidth = allowedPrintAreaRect.width
-    imgHeight = imgWidth / imgRatio
+    imgWidth = allowedPrintAreaRect.width - margin
+    imgHeight = imgWidth / imgRatio - margin
   } else {
-    imgHeight = allowedPrintAreaRect.height
-    imgWidth = imgHeight * imgRatio
+    imgHeight = allowedPrintAreaRect.height - margin
+    imgWidth = imgHeight * imgRatio - margin
   }
   return {
+    height: imgHeight,
+    width: imgWidth,
     x:
       (allowedPrintAreaRect.left +
         (allowedPrintAreaRect.width - imgWidth) / 2 -

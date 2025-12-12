@@ -483,6 +483,8 @@ export type TPosition = {
   y: number
 }
 
+export type TRect = TPosition & TSizeInfo
+
 export type TElementMountType = 'from-new' | 'from-saved' | 'from-template' | 'from-layout'
 
 export type TElementRelativeProps = {

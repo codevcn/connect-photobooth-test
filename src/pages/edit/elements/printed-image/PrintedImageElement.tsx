@@ -152,12 +152,8 @@ export const PrintedImageElement = ({
         top: position.y,
         transform: `scale(${scale}) rotate(${angle}deg)`,
         zIndex: zindex,
-        ...(mountType === 'from-new'
-          ? { height: `${DEFAULT_ELEMENT_DIMENSION_SIZE()}px` }
-          : {
-              height: `${height}px`,
-              width: `${width}px`,
-            }),
+        height: `${height}px`,
+        width: `${width}px`,
       }}
       className={`NAME-root-element NAME-element-type-printed-image absolute h-fit w-fit touch-none z-6`}
       onPointerDown={pickElement}

@@ -8,8 +8,8 @@ import { useEditAreaStore } from '@/stores/ui/edit-area.store'
 import { createPortal } from 'react-dom'
 import { persistElementPositionToPrintArea } from '../helpers'
 
-const MAX_ZOOM: number = 20
-const MIN_ZOOM: number = 0.5
+const MAX_ZOOM: number = 12
+const MIN_ZOOM: number = 0.2
 const DEFAULT_ELEMENT_DIMENSION_SIZE = () => {
   if (window.innerWidth < 1500) {
     return 80
@@ -146,7 +146,7 @@ export const StickerElement = ({
           ? { height: `${DEFAULT_ELEMENT_DIMENSION_SIZE()}px` }
           : {
               height: `${height}px`,
-              aspectRatio: `${width} / ${height}`,
+              width: `${width}px`,
             }),
       }}
       className={`NAME-root-element NAME-element-type-sticker absolute h-fit w-fit touch-none z-6`}

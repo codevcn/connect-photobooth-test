@@ -63,6 +63,7 @@ const PrintedImagePreviewModal = ({ printedImage, onClose }: PrintedImageProps) 
   const imgsContainerRef = useRef<HTMLDivElement>(null)
 
   const handleAddImageToPrintArea = (printedImg: TPrintedImage) => {
+    console.log('>>> run this')
     const elementId = generateUniqueId()
     getNaturalSizeOfImage(
       printedImg.url,

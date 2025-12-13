@@ -2,7 +2,7 @@ import { createInitialConstants } from '@/utils/contants'
 import { generateUniqueId } from '@/utils/helpers'
 import { TLayoutSlotConfig, TLayoutType, TPrintLayout } from '@/utils/types/print-layout'
 import { TPrintedImage, TPrintedImageVisualState, TSizeInfo } from '@/utils/types/global'
-import { getSlotConfigs } from '@/configs/print-layout/print-layout-data'
+import { getSlotConfigs } from '@/configs/print-layout/print-layout-data-Ptm'
 
 // ============================================================================
 // Types

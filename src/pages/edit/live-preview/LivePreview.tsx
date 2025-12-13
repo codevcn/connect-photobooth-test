@@ -161,7 +161,7 @@ export const LivePreview = ({
           requestAnimationFrame(() => {
             // Lấy giá trị mới nhất từ store
             const currentLayout = useLayoutStore.getState().pickedLayout
-            if (currentLayout) {
+            if (currentLayout && currentLayout.mountType === 'suggested') {
               handlePutPrintedImagesInLayout(currentLayout, allowedPrintAreaRef.current!)
             }
             eventEmitter.emit(EInternalEvents.EDITED_PRINT_AREA_CHANGED)
@@ -239,14 +239,13 @@ export const LivePreview = ({
   useEffect(() => {
     if (!pickedLayout || pickedProduct.id !== prevProductIdRef.current) return
     // Lưu layout id để kiểm tra sau khi RAF hoàn thành
-    const layoutIdAtCallTime = pickedLayout.id
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         // Lấy giá trị mới nhất từ store để tránh closure stale
         const currentLayout = useLayoutStore.getState().pickedLayout
         // Chỉ thực hiện nếu layout vẫn còn là layout đã trigger effect này
         if (currentLayout) {
-          handlePutPrintedImagesInLayout(currentLayout, allowedPrintAreaRef.current!)
+          // handlePutPrintedImagesInLayout(currentLayout, allowedPrintAreaRef.current!)
         }
       })
     })
@@ -308,9 +307,6 @@ export const LivePreview = ({
           }}
           isOutOfBounds={isOutOfBounds}
           displayWarningOverlay
-          frameDisplayerOptions={{
-            classNames: { container: 'NAME-frames-displayer-print-area' },
-          }}
         />
         <EditedElementsArea
           allowedPrintAreaRef={printAreaRef}

@@ -57,7 +57,8 @@ interface IInternalEvents {
   [EInternalEvents.REPLACE_ELEMENT_IMAGE_URL]: (elementId: string, newUrl: string) => void
   [EInternalEvents.HIDE_SHOW_PRINTED_IMAGES_MODAL]: (
     show: boolean,
-    frameIdToAddPrintedImage?: string
+    slotId: string,
+    layoutId: string
   ) => void
   [EInternalEvents.ADD_TO_CART]: () => void
   [EInternalEvents.BEFORE_PRINT_AREA_CHANGE]: () => void

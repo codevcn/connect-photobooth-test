@@ -5,11 +5,11 @@ import { TemplateFrameMenu } from '../customize/template/TemplateFrameMenu'
 import { useEditedElementStore } from '@/stores/element/element.store'
 import { generateUniqueId, getNaturalSizeOfImage } from '@/utils/helpers'
 import { createInitialConstants } from '@/utils/contants'
-import { PrintedImagesModal } from './PrintedImagesModal'
 import { CustomScrollbar } from '@/components/custom/CustomScrollbar'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
 import { useEditAreaStore } from '@/stores/ui/edit-area.store'
 import { calculateInitialImageElementPosition } from '../elements/helpers'
+import { PrintedImagesModal } from '../customize/print-layout/PrintedImagesModal'
 
 type ImageProps = {
   img: TPrintedImage
@@ -223,11 +223,6 @@ const PrintedImagesForTemplate = ({ printedImages }: PrintedImageForTemplateProp
               key={printedImage.id}
               onClick={() => setPickedImage(printedImage)}
             >
-              <div className="bg-gray-100 z-40 rounded px-1 text-[10px] text-gray-600 absolute top-1 right-1 shadow-md">
-                {index + 1}
-                <span>/</span>
-                {printedImages.length}
-              </div>
               <img
                 className={`${
                   index === 0 ? 'aspect-video' : 'aspect-square'

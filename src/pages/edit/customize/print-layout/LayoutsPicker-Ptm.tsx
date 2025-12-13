@@ -7,13 +7,12 @@ import { PreviewImage } from './PreviewImage'
 import { buildLayoutByLayoutType } from './builder'
 import { createInitialConstants } from '@/utils/contants'
 import { CustomScrollbar } from '@/components/custom/CustomScrollbar'
-import { handlePutPrintedImagesInLayout } from '../../helpers'
 
 type TLayoutsPickerProps = {
   printedImages: TPrintedImage[]
 }
 
-export const LayoutsPicker = ({ printedImages }: TLayoutsPickerProps) => {
+export const LayoutsPicker_Ptm = ({ printedImages }: TLayoutsPickerProps) => {
   const allLayouts = useLayoutStore((s) => s.allLayouts)
   const updateLayoutElements = useLayoutStore((s) => s.updateLayoutElements)
 

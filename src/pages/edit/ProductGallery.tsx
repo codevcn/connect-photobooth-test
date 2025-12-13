@@ -7,7 +7,7 @@ import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { buildDefaultLayout } from './customize/print-layout/builder'
 import { TPrintLayout } from '@/utils/types/print-layout'
-import { hardCodedLayoutData } from '@/configs/print-layout/print-layout-data'
+import { hardCodedLayoutData } from '@/configs/print-layout/print-layout-data-Ptm'
 import { useLayoutStore } from '@/stores/ui/print-layout.store'
 import { PreviewImage } from './customize/print-layout/PreviewImage'
 import { createInitialConstants } from '@/utils/contants'
@@ -69,6 +69,7 @@ const Product = ({
         const initialLayout: TPrintLayout = {
           ...hardCodedLayoutData(layout.type)[0],
           printedImageElements: layout.elements,
+          mountType: 'suggested',
         }
         setInitialLayout(initialLayout)
         onInitFirstProduct(product, initialLayout, firstPrintAreaInProduct)

@@ -12,6 +12,7 @@ class OrderService {
     shippingInfo: TShippingInfo,
     voucherCode?: string
   ): Promise<TOrderResponse> {
+    console.log('>>> create order:', { cartItems, shippingInfo, voucherCode })
     // Sử dụng OrderAdapter để convert sang API format
     const requestBody = OrderAdapter.toCreateOrderRequestPayload(
       cartItems,

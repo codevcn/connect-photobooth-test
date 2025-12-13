@@ -55,31 +55,31 @@ export const useVisualStatesCollector = (): TUseVisualStatesCollectorReturn => {
         elementsVisualState.texts?.push(JSON.parse(visualState))
       }
 
-      const pickedTemplate = useTemplateStore.getState().pickedTemplate
-      if (pickedTemplate) {
-        elementsVisualState.storedTemplates?.push({
-          ...pickedTemplate,
-          frames: pickedTemplate.frames.map((frame) => {
-            const placedImageId = frame.placedImage?.id
-            if (!placedImageId) return frame
-            const placedImage = document.body.querySelector<HTMLElement>(
-              `.NAME-print-area-container .NAME-frame-placed-image[data-placed-image-id="${placedImageId}"]`
-            )
-            if (!placedImage) return frame
-            const imgVisualState = placedImage.getAttribute('data-visual-state')
-            if (imgVisualState && frame.placedImage) {
-              return {
-                ...frame,
-                placedImage: {
-                  ...frame.placedImage,
-                  initialVisualState: JSON.parse(imgVisualState).initialVisualState,
-                },
-              }
-            }
-            return frame
-          }),
-        })
-      }
+      // const pickedTemplate = useTemplateStore.getState().pickedTemplate
+      // if (pickedTemplate) {
+      //   elementsVisualState.storedTemplates?.push({
+      //     ...pickedTemplate,
+      //     frames: pickedTemplate.frames.map((frame) => {
+      //       const placedImageId = frame.placedImage?.id
+      //       if (!placedImageId) return frame
+      //       const placedImage = document.body.querySelector<HTMLElement>(
+      //         `.NAME-print-area-container .NAME-frame-placed-image[data-placed-image-id="${placedImageId}"]`
+      //       )
+      //       if (!placedImage) return frame
+      //       const imgVisualState = placedImage.getAttribute('data-visual-state')
+      //       if (imgVisualState && frame.placedImage) {
+      //         return {
+      //           ...frame,
+      //           placedImage: {
+      //             ...frame.placedImage,
+      //             initialVisualState: JSON.parse(imgVisualState).initialVisualState,
+      //           },
+      //         }
+      //       }
+      //       return frame
+      //     }),
+      //   })
+      // }
 
       // Clean up empty arrays
       if (elementsVisualState.texts?.length === 0) delete elementsVisualState.texts

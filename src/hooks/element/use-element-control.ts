@@ -79,9 +79,9 @@ export const useElementControl = (
     x: initialPosition?.x || createInitialConstants<number>('ELEMENT_X'),
     y: initialPosition?.y || createInitialConstants<number>('ELEMENT_Y'),
   })
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  // const timerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const edgesMargin: number = 10 // px
+  // const edgesMargin: number = 10 // px
   const handleSetElementPosition = (posX: TPosition['x'], posY: TPosition['y']) => {
     // const containerForElementAbsoluteTo = containerForElementAbsoluteToRef.current
     // const rootElement = elementRootRef.current
@@ -356,16 +356,16 @@ export const useElementControl = (
   }, [])
 
   useEffect(() => {
-    // Setup ResizeObserver to watch for print container size changes
-    const container = containerForElementAbsoluteToRef.current
-    if (!container) return
-    const containerObserver = new ResizeObserver((entries) => {
-      // stayElementVisualOnAllowedPrintArea()
-    })
-    containerObserver.observe(container)
-    return () => {
-      containerObserver.unobserve(container)
-    }
+    // // Setup ResizeObserver to watch for print container size changes
+    // const container = containerForElementAbsoluteToRef.current
+    // if (!container) return
+    // const containerObserver = new ResizeObserver((entries) => {
+    //   stayElementVisualOnAllowedPrintArea()
+    // })
+    // containerObserver.observe(container)
+    // return () => {
+    //   containerObserver.unobserve(container)
+    // }
   }, [elementId])
 
   useEffect(() => {
@@ -380,18 +380,18 @@ export const useElementControl = (
   }, [mountType, initialPosition?.x, initialPosition?.y, initialAngle, initialZoom, initialZindex])
 
   // Update clip polygon when position or scale changes
-  const updateClipPolygon = useCallback(() => {
+  const updateClipPolygon = () => {
     const element = elementRootRef.current
     const allowedArea = printAreaAllowedRef.current
     if (!element || !allowedArea) return
-
-    const polygon = calculateElementClipPolygon(element, allowedArea)
-    useEditedElementStore.getState().setElementInClipList(elementId, polygon)
-  }, [elementId, scale])
+    useEditedElementStore
+      .getState()
+      .setElementInClipList(elementId, calculateElementClipPolygon(element, allowedArea))
+  }
 
   useEffect(() => {
     updateClipPolygon()
-  }, [position.x, position.y, scale, angle, updateClipPolygon])
+  }, [position.x, position.y, scale, angle, elementId])
 
   return {
     // forPinch: {

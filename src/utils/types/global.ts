@@ -238,6 +238,7 @@ export type TPrintedImageVisualState = TStickerVisualState &
     isInitWithLayout: boolean
     matchOrientation: 'width' | 'height'
     grayscale: number // 0-100 percentage
+    clippath: string
   }>
 
 export type TStoredTemplate = TPrintTemplate

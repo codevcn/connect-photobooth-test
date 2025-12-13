@@ -103,14 +103,14 @@ const Product = ({
       <div
         className={`${
           isPicked ? 'outline-2 outline-main-cl' : 'outline-0'
-        } NAME-gallery-child-to-render smd:hidden block w-full z-10 h-fit px-2 pt-1.5 rounded-b-lg whitespace-nowrap truncate absolute top-[97%] left-0 text-[12px] text-black`}
+        } NAME-gallery-child-to-render smd:hidden block w-full z-10 h-fit px-2 pt-2.5 rounded-b-lg whitespace-nowrap truncate absolute top-[97%] left-0 text-[12px] text-black`}
         style={{
           backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 100%)`,
         }}
       >
         {product.name}
       </div>
-      <div className="spmd:hidden block h-1 w-full z-30 absolute top-[99%] left-0 bg-white"></div>
+      <div className="spmd:hidden block h-1 w-full z-30 absolute top-[98.5%] left-0 bg-white"></div>
       <div className="NAME-gallery-child-to-rounded smd:rounded-xl w-full h-full bg-white border border-gray-200 relative rounded-t-lg z-20">
         <img
           src={firstPrintAreaInProduct.imageUrl || '/images/placeholder.svg'}
@@ -342,7 +342,7 @@ export const ProductGallery = ({ products }: TProductGalleryProps) => {
         galleryEle.style.width = '100%'
         galleryEle.style.zIndex = '1'
         galleryEle.style.height = '150px'
-        galleryEle.style.padding = '8px 12px 24px'
+        galleryEle.style.padding = '8px 12px 32px'
         galleryEle.style.boxShadow = 'none'
         galleryEle.classList.remove('NAME-gallery-parent-to-hide')
       }
@@ -403,7 +403,7 @@ export const ProductGallery = ({ products }: TProductGalleryProps) => {
       <div className="NAME-products-gallery-wrapper spmd:overflow-y-auto spmd:max-h-full">
         <div
           ref={galleryRef}
-          className="NAME-products-gallery spmd:overflow-y-auto spmd:max-h-full spmd:flex-col smpd:px-1.5 spmd:h-fit h-[150px] bg-white top-0 left-0 px-3 pt-2 pb-6 smd:py-2 smd:pb-2 smd:pt-4 overflow-x-auto gallery-scroll w-full flex items-center gap-2"
+          className="NAME-products-gallery spmd:overflow-y-auto spmd:max-h-full spmd:flex-col smpd:px-1.5 spmd:h-fit h-[150px] bg-white top-0 left-0 px-3 pt-2 pb-8 smd:py-2 smd:pb-2 smd:pt-4 overflow-x-auto gallery-scroll w-full flex items-center gap-2"
         >
           {products &&
             products.length > 0 &&

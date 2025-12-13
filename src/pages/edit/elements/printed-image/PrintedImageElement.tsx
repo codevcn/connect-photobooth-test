@@ -168,6 +168,7 @@ export const PrintedImageElement = ({
           width,
           isInitWithLayout,
           matchOrientation,
+          clippath: clipPolygon || undefined,
         })
       )}
       data-persist-position={JSON.stringify(

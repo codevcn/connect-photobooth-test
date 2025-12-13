@@ -385,6 +385,7 @@ const PaymentPage = () => {
                     <button
                       onClick={() => {
                         // toast.info('Đang tạm khóa')
+                        console.log('>>> cart items (cart list):', cartItems)
                         setShowModal(true)
                       }}
                       className="5xl:text-[0.9em] 5xl:h-14 flex items-center justify-center gap-2 w-full mt-4 h-11 bg-main-cl hover:scale-95 text-white font-bold text-base rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition duration-200"

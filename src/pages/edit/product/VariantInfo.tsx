@@ -129,7 +129,7 @@ const SizesComponent = ({
         key={size}
         onClick={() => pickSize(isDisabled, size)}
         disabled={isDisabled}
-        className={`5xl:py-2 px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
+        className={`5xl:py-2 px-2 min-w-max py-1 font-bold rounded-lg transition-all mobile-touch ${
           isDisabled
             ? `bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed`
             : isSelected
@@ -290,14 +290,14 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
             <h3 className="5xl:text-[0.5em] text-sm text-slate-800 font-bold mb-2">
               {mergedAttributes.uniqueMaterialTitles[0]}
             </h3>
-            <div className="5xl:text-[0.4em] flex flex-wrap gap-2">
+            <div className="5xl:text-[0.4em] smd:text-base text-sm flex flex-wrap gap-2">
               {mergedAttributes.uniqueMaterials.map((material) => {
                 const isSelected = selectedAttributes.material === material
                 return (
                   <button
                     key={material}
                     onClick={() => pickMaterial(material)}
-                    className={`5xl:py-3 px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
+                    className={`5xl:py-3 px-2 py-1 font-bold rounded-lg transition-all mobile-touch ${
                       isSelected
                         ? 'bg-main-cl border-2 border-main-cl text-white shadow-md'
                         : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
@@ -317,7 +317,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
           <h3 className="5xl:text-[0.5em] text-sm text-slate-800 font-bold mb-2">
             {mergedAttributes.uniqueScentTitles[0]}
           </h3>
-          <div className=" 5xl:text-[0.4em] flex flex-wrap gap-2">
+          <div className=" 5xl:text-[0.4em] smd:text-base text-sm flex flex-wrap gap-2">
             {mergedAttributes.uniqueScents.map((scent) => {
               const isSelected = selectedAttributes.scent === scent
               const isDisabled =
@@ -329,7 +329,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
                   key={scent}
                   onClick={() => pickScent(isDisabled, scent)}
                   disabled={isDisabled}
-                  className={`5xl:py-3 px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
+                  className={`5xl:py-3 px-2 py-1 font-bold rounded-lg transition-all mobile-touch ${
                     isDisabled
                       ? 'bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                       : isSelected
@@ -356,7 +356,8 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
             showScrollbar={colorsCount > 0}
             dataToRerender={colorsCount}
             classNames={{
-              container: '5xl:text-[0.4em] font-bold py-2 text-sm w-full overflow-x-hidden',
+              container:
+                '5xl:text-[0.4em] smd:text-base text-sm font-bold py-2 w-full overflow-x-hidden',
               content: 'flex flex-nowrap gap-3 overflow-x-auto no-scrollbar p-1 pb-2',
             }}
           >
@@ -428,7 +429,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
                     key={color}
                     onClick={() => pickColor(isDisabled, color)}
                     disabled={isDisabled}
-                    className={`5xl:py-2 px-5 py-1 font-bold rounded-lg transition-all mobile-touch ${
+                    className={`5xl:py-2 px-2 py-1 font-bold rounded-lg transition-all mobile-touch ${
                       isDisabled
                         ? 'bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                         : isSelected
@@ -466,7 +467,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
             <CustomScrollbar
               classNames={{
                 container: 'flex flex-nowrap gap-2 w-full',
-                content: '5xl:text-[0.4em] text-base flex flex-nowrap pb-3 gap-2',
+                content: '5xl:text-[0.4em] smd:text-base text-sm flex flex-nowrap pb-3 gap-2',
               }}
             >
               <SizesComponent

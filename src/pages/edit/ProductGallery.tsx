@@ -454,13 +454,13 @@ export const ProductGallery = ({ products }: TProductGalleryProps) => {
           ref={(node) => {
             galleryRef.current = node
           }}
-          className="NAME-products-gallery spmd:overflow-y-auto spmd:max-h-full spmd:flex-col spmd:h-fit h-[150px] w-full bg-white/80 top-0 left-0"
+          className="NAME-products-gallery spmd:overflow-y-auto spmd:max-h-full spmd:flex-col spmd:h-fit no-scrollbar h-[150px] w-full bg-white/80 top-0 left-0"
         >
           <div
             ref={(node) => {
               containerRef.current = node
             }}
-            className="NAME-scrollable-box spmd:px-1.5 smd:py-2 smd:pb-2 smd:pt-4 flex items-center gap-2 w-full h-full overflow-x-auto gallery-scroll px-3 pt-2 pb-8"
+            className="NAME-scrollable-box spmd:px-1.5 smd:py-2 smd:pb-2 smd:pt-4 smd:flex-col flex items-center gap-2 w-full h-full overflow-x-auto gallery-scroll px-3 pt-2 pb-8"
           >
             {hasProducts &&
               products.map((product, index) => {

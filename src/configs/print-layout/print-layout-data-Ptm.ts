@@ -11,6 +11,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
     slotConfigs: [
       { containerWidth: 1, containerHeight: 1, id: 'slot-1', style: { gridColumn: 'span 1' } },
     ],
+    layoutContainerConfigs: { style: {} },
   }
   const template2: TPrintLayout = {
     id: 'template-2',
@@ -24,9 +25,9 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerHeight: 1,
         id: 'slot-2',
         style: { gridColumn: 'span 1' },
-        id: 'slot-2',
       },
     ],
+    layoutContainerConfigs: { style: {} },
   }
   const template3: TPrintLayout = {
     id: 'template-3',
@@ -37,6 +38,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
       { containerWidth: 1, containerHeight: 0.5, id: 'slot-1', style: { gridColumn: 'span 1' } },
       { containerWidth: 1, containerHeight: 0.5, id: 'slot-2', style: { gridColumn: 'span 1' } },
     ],
+    layoutContainerConfigs: { style: {} },
   }
   const template4: TPrintLayout = {
     id: 'template-4',
@@ -48,6 +50,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
       { containerWidth: 0.5, containerHeight: 0.5, id: 'slot-2', style: { gridColumn: 'span 1' } }, // small bottom-left
       { containerWidth: 0.5, containerHeight: 1, id: 'slot-3', style: { gridColumn: 'span 1' } }, // large right
     ],
+    layoutContainerConfigs: { style: {} },
   }
   const template5: TPrintLayout = {
     id: 'template-5',
@@ -59,6 +62,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
       { containerWidth: 0.5, containerHeight: 0.5, id: 'slot-2', style: { gridColumn: 'span 1' } }, // small top-right
       { containerWidth: 0.5, containerHeight: 0.5, id: 'slot-3', style: { gridColumn: 'span 1' } }, // small bottom-right
     ],
+    layoutContainerConfigs: { style: {} },
   }
   const template6: TPrintLayout = {
     id: 'template-6',
@@ -70,6 +74,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
       { containerWidth: 0.5, containerHeight: 0.5, id: 'slot-2', style: { gridColumn: 'span 1' } }, // small top-right
       { containerWidth: 1, containerHeight: 0.5, id: 'slot-3', style: { gridColumn: 'span 1' } }, // large bottom
     ],
+    layoutContainerConfigs: { style: {} },
   }
   const template7: TPrintLayout = {
     id: 'template-7',
@@ -81,6 +86,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
       { containerWidth: 0.5, containerHeight: 0.5, id: 'slot-2', style: { gridColumn: 'span 1' } }, // small bottom-left
       { containerWidth: 0.5, containerHeight: 0.5, id: 'slot-3', style: { gridColumn: 'span 1' } }, // small bottom-right
     ],
+    layoutContainerConfigs: { style: {} },
   }
   const template8: TPrintLayout = {
     id: 'template-8',
@@ -93,6 +99,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
       { containerWidth: 1, containerHeight: 0.25, id: 'slot-3', style: { gridColumn: 'span 1' } },
       { containerWidth: 1, containerHeight: 0.25, id: 'slot-4', style: { gridColumn: 'span 1' } },
     ],
+    layoutContainerConfigs: { style: {} },
   }
   const template9: TPrintLayout = {
     id: 'template-9',
@@ -105,6 +112,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
       { containerWidth: 0.25, containerHeight: 1, id: 'slot-3', style: { gridColumn: 'span 1' } },
       { containerWidth: 0.25, containerHeight: 1, id: 'slot-4', style: { gridColumn: 'span 1' } },
     ],
+    layoutContainerConfigs: { style: {} },
   }
   const template10: TPrintLayout = {
     id: 'template-10',
@@ -117,6 +125,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
       { containerWidth: 0.5, containerHeight: 0.5, id: 'slot-3', style: { gridColumn: 'span 1' } },
       { containerWidth: 0.5, containerHeight: 0.5, id: 'slot-4', style: { gridColumn: 'span 1' } },
     ],
+    layoutContainerConfigs: { style: {} },
   }
 
   if (layoutType) {

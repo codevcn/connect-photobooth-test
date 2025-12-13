@@ -110,7 +110,7 @@ type TChangePrintedImageProps = {
 
 const ChangePrintedImage = ({ frameId }: TChangePrintedImageProps) => {
   const handleShowPrintedImagesModal = () => {
-    eventEmitter.emit(EInternalEvents.HIDE_SHOW_PRINTED_IMAGES_MODAL, true, frameId)
+    // eventEmitter.emit(EInternalEvents.HIDE_SHOW_PRINTED_IMAGES_MODAL, true, frameId)
   }
 
   return (

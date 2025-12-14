@@ -57,19 +57,19 @@ export const VoucherSection = ({ cartItems, onVoucherApplied }: VoucherSectionPr
 
       if (result.success && result.voucher) {
         setAppliedVoucher(result.voucher)
-        setDiscountMessage({ message: result.message, status: 'success' })
+        setDiscountMessage({ message: 'Áp dụng mã giảm giá thành công', status: 'success' })
 
         // Get discount from API response (voucher already contains discount info)
         const discount = result.discount || 0
         onVoucherApplied(result.voucher, discount)
       } else {
         setAppliedVoucher(null)
-        setDiscountMessage({ message: result.message, status: 'error' })
+        setDiscountMessage({ message: 'Mã giảm giá không hợp lệ', status: 'error' })
         onVoucherApplied(null, 0)
       }
     } catch (error) {
       setAppliedVoucher(null)
-      setDiscountMessage({ message: 'Có lỗi xảy ra khi kiểm tra mã giảm giá', status: 'error' })
+      setDiscountMessage({ message: 'Mã giảm giá không hợp lệ', status: 'error' })
       onVoucherApplied(null, 0)
     } finally {
       setIsApplyingVoucher(false)

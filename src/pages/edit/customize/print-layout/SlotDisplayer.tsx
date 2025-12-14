@@ -45,6 +45,7 @@ export const SlotsDisplayer = ({
             onClickFrame={onClickFrame}
             scrollable={scrollable}
             layoutId={layout.id}
+            slotsCount={slotConfigs.length}
           />
         ))}
       </div>

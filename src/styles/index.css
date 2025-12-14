@@ -47,9 +47,9 @@
   --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
   --animate-slide-up: slide-up 0.3s ease-out;
 
-  /* Set Poppins làm font sans mặc định */
-  --font-sans: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, sans-serif;
+  /* Set Be Vietnam Pro làm font sans mặc định */
+  --font-sans: 'Be_Vietnam_Pro', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, sans-serif;
 }
 
 @keyframes slide-up {

@@ -1,27 +1,27 @@
 @font-face {
-  font-family: 'Poppins'; /* Tên bạn đặt để dùng trong CSS */
-  src: url('/fonts/Poppins/FZ-Poppins-Light.ttf') format('truetype');
+  font-family: 'Be_Vietnam_Pro'; /* Tên bạn đặt để dùng trong CSS */
+  src: url('/fonts/Be_Vietnam_Pro/BeVietnamPro-Light.ttf') format('truetype');
   font-weight: 300; /* có thể là normal, bold, 100-900 */
   font-style: normal; /* normal, italic, oblique */
   font-display: swap; /* swap giúp text hiển thị ngay, load font xong sẽ thay font */
 }
 @font-face {
-  font-family: 'Poppins'; /* Tên bạn đặt để dùng trong CSS */
-  src: url('/fonts/Poppins/FZ-Poppins-Regular.ttf') format('truetype');
+  font-family: 'Be_Vietnam_Pro'; /* Tên bạn đặt để dùng trong CSS */
+  src: url('/fonts/Be_Vietnam_Pro/BeVietnamPro-Regular.ttf') format('truetype');
   font-weight: 400; /* có thể là normal, bold, 100-900 */
   font-style: normal; /* normal, italic, oblique */
   font-display: swap; /* swap giúp text hiển thị ngay, load font xong sẽ thay font */
 }
 @font-face {
-  font-family: 'Poppins'; /* Tên bạn đặt để dùng trong CSS */
-  src: url('/fonts/Poppins/FZ-Poppins-Medium.ttf') format('truetype');
+  font-family: 'Be_Vietnam_Pro'; /* Tên bạn đặt để dùng trong CSS */
+  src: url('/fonts/Be_Vietnam_Pro/BeVietnamPro-Medium.ttf') format('truetype');
   font-weight: 500; /* có thể là normal, bold, 100-900 */
   font-style: normal; /* normal, italic, oblique */
   font-display: swap; /* swap giúp text hiển thị ngay, load font xong sẽ thay font */
 }
 @font-face {
-  font-family: 'Poppins'; /* Tên bạn đặt để dùng trong CSS */
-  src: url('/fonts/Poppins/FZ-Poppins-Bold.ttf') format('truetype');
+  font-family: 'Be_Vietnam_Pro'; /* Tên bạn đặt để dùng trong CSS */
+  src: url('/fonts/Be_Vietnam_Pro/BeVietnamPro-Bold.ttf') format('truetype');
   font-weight: 700; /* có thể là normal, bold, 100-900 */
   font-style: normal; /* normal, italic, oblique */
   font-display: swap; /* swap giúp text hiển thị ngay, load font xong sẽ thay font */

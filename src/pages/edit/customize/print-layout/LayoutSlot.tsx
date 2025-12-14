@@ -2,7 +2,9 @@ import { cn } from '@/configs/ui/tailwind-utils'
 import { TLayoutSlotConfig, TPrintLayout } from '@/utils/types/print-layout'
 import { PlacedImage } from './PlacedImage'
 
-type TAddImageIconProps = {} & Partial<{
+type TAddImageIconProps = {
+  slotsCount: number
+} & Partial<{
   classNames: Partial<{
     plusIconWrapper: string
   }>
@@ -12,12 +14,12 @@ type TAddImageIconProps = {} & Partial<{
   }>
 }>
 
-export const AddImageIcon = ({ styles, classNames }: TAddImageIconProps) => {
+export const AddImageIcon = ({ styles, classNames, slotsCount }: TAddImageIconProps) => {
   return (
     <div
       style={styles?.plusIconWrapper}
       className={cn(
-        'NAME-add-printed-image-to-slot flex items-center justify-center text-white h-full w-full bg-gray-400/90',
+        'NAME-add-printed-image-to-slot text-center p-1 flex flex-col items-center justify-center text-white h-full w-full bg-gray-400/90',
         classNames?.plusIconWrapper
       )}
     >
@@ -36,6 +38,13 @@ export const AddImageIcon = ({ styles, classNames }: TAddImageIconProps) => {
         <path d="M5 12h14" />
         <path d="M12 5v14" />
       </svg>
+      <span
+        style={{
+          fontSize: slotsCount < 3 ? (slotsCount < 2 ? '10px' : '8px') : '6px',
+        }}
+      >
+        Nhấn để chọn ảnh
+      </span>
     </div>
   )
 }
@@ -43,6 +52,7 @@ export const AddImageIcon = ({ styles, classNames }: TAddImageIconProps) => {
 type TemplateFrameProps = {
   layoutSlot: TLayoutSlotConfig
   layoutId: TPrintLayout['id']
+  slotsCount: number
 } & Partial<{
   styles: Partial<{
     container: React.CSSProperties
@@ -65,6 +75,7 @@ export const LayoutSlot = ({
   layoutSlot,
   layoutId,
   styles,
+  slotsCount,
   classNames,
   onClickFrame,
   scrollable = true,
@@ -86,7 +97,7 @@ export const LayoutSlot = ({
       {layoutSlot.placedImage ? (
         <PlacedImage placedImage={layoutSlot.placedImage} onImageLoad={onImageLoad} />
       ) : (
-        <AddImageIcon />
+        <AddImageIcon slotsCount={slotsCount} />
       )}
     </div>
   )

@@ -47,13 +47,13 @@ const LayoutFUN = () => {
             if (imagesToAdd.length === imageDataList.length) {
               imagesToAdd.sort((a, b) => b.width * b.height - a.width * a.height) // ảnh có kích thước lớn nhất PHẢI ở đầu tiên trong danh sách
               imagesToAdd[0].isOriginalImage = true
-              const largestSizeImage = imagesToAdd[0]
-              const largestArea = largestSizeImage.width * largestSizeImage.height
-              for (const img of imagesToAdd) {
-                if (img.width * img.height === largestArea) {
-                  img.isOriginalImage = true
-                }
-              }
+              // const largestSizeImage = imagesToAdd[0]
+              // const largestArea = largestSizeImage.width * largestSizeImage.height
+              // for (const img of imagesToAdd) {
+              // if (img.width * img.height === largestArea) {
+              // img.isOriginalImage = true
+              // }
+              // }
               resolve(imagesToAdd)
             }
           }

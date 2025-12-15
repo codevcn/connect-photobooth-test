@@ -155,13 +155,13 @@ export const LayoutsPicker_Fun = ({ printedImages }: TLayoutsPickerProps) => {
       <div className="smd:grid-cols-3 smd:overflow-x-hidden smd:grid-flow-row py-1 grid-rows-1 grid-flow-col overflow-x-auto grid-flow grid gap-2 w-full gallery-scroll">
         <div
           onClick={handlePickNoLayout}
-          className={`NAME-fix-aspect flex items-center justify-center aspect-square min-h-16 border border-gray-300 rounded bg-white mobile-touch cursor-pointer transition ${
+          className={`NAME-fix-aspect flex items-center justify-center h-16 w-16 border border-gray-300 rounded bg-white mobile-touch cursor-pointer transition ${
             layoutMode === 'no-layout' ? 'border-main-cl' : ''
           }`}
         >
           <div className="NAME-slots-displayer p-0.5 h-full w-full">
             <div
-              className={`NAME-fix-aspect relative flex justify-center items-center overflow-hidden h-full w-full aspect-square border border-gray-600 border-dashed ${
+              className={`NAME-fix-aspect relative flex justify-center items-center overflow-hidden h-full w-full border border-gray-600 border-dashed ${
                 layoutMode === 'no-layout' ? 'border-main-cl text-main-cl' : 'text-gray-500'
               }`}
             >
@@ -191,7 +191,7 @@ export const LayoutsPicker_Fun = ({ printedImages }: TLayoutsPickerProps) => {
             onClick={() => handlePickLayout(layout)}
             className={`${
               layoutMode !== 'no-layout' && pickedLayout?.id === layout.id ? 'border-main-cl' : ''
-            } NAME-fix-aspect flex justify-center items-center aspect-square min-h-16 border border-gray-300 rounded bg-white mobile-touch cursor-pointer transition`}
+            } NAME-fix-aspect flex justify-center items-center h-16 w-16 border border-gray-300 rounded bg-white mobile-touch cursor-pointer transition`}
           >
             <div
               style={layout.layoutContainerConfigs?.style}

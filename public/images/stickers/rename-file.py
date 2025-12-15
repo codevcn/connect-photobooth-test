@@ -1,6 +1,6 @@
 import os
 
-folder_path = r"D:/D-Documents/Testing/photobooth/public/images/stickers/ZapyCongSo"   # sửa lại đường dẫn của bạn
+folder_path = r"D:/D-Documents/Code_VCN/Photobooth/my-app/public/images/stickers/Jewery"   # sửa lại đường dẫn của bạn
 
 files = os.listdir(folder_path)
 

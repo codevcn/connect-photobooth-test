@@ -142,7 +142,7 @@ export const ColorPickerModal = ({
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-x-icon lucide-x w-5 h-5 5xl:w-8 5xl:h-8"
+              className="lucide lucide-x-icon lucide-x w-6 h-6 5xl:w-8 5xl:h-8"
             >
               <path d="M18 6 6 18" />
               <path d="m6 6 12 12" />
@@ -217,7 +217,7 @@ export const ColorPickerModal = ({
         </div>
 
         {/* Input Color */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label className="5xl:text-[0.8em] block text-sm font-semibold text-gray-800 mb-2">
             Hoặc nhập mã màu:
           </label>
@@ -229,13 +229,13 @@ export const ColorPickerModal = ({
             placeholder="Ví dụ: red, pink, #fe6e87"
             className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.9em] w-full px-3 text-gray-800 py-2.5 border-gray-300 border-2 rounded-lg focus:border-main-cl focus:ring-2 focus:ring-main-cl/20 outline-none transition-all`}
           />
-        </div>
+        </div> */}
 
         {/* Footer */}
         <div className="text-center">
           <button
             onClick={() => onHideShow(false)}
-            className="bg-main-cl hover:bg-dark-main-cl mobile-touch text-white font-bold px-6 py-3 rounded-xl transition w-full text-base 5xl:text-xl"
+            className="bg-main-cl hover:bg-dark-main-cl mobile-touch text-white font-bold px-6 py-2 rounded-xl transition w-full text-base 5xl:text-xl"
           >
             Xong
           </button>

@@ -84,6 +84,28 @@ const Product = ({
     })
   }
 
+  const displayProductName = (product: TBaseProduct): string => {
+    const productId = product.id
+    if (productId === 31) {
+      return 'Móc chìa khóa'
+    } else if (productId === 30) {
+      return 'Nến thơm thư giãn'
+    } else if (productId === 29) {
+      return 'Áo nỉ'
+    } else if (productId === 27) {
+      return 'Bình - cốc'
+    } else if (productId === 25) {
+      return 'Túi- vải'
+    } else if (productId === 23) {
+      return 'Khung tranh'
+    } else if (productId === 21) {
+      return 'Ốp điện thoại'
+    } else if (productId === 19) {
+      return 'Cốc nước'
+    }
+    return 'Áo thun'
+  }
+
   const { printAreaRef, printAreaContainerRef } = usePrintArea(
     firstPrintAreaInProduct,
     buildInitialLayout
@@ -111,13 +133,13 @@ const Product = ({
       <div
         className={`${
           isPicked ? 'outline-2 outline-main-cl' : 'outline-0'
-        } NAME-gallery-child-to-render smd:hidden block w-full z-10 h-fit px-2 pt-2.5 rounded-b-lg whitespace-nowrap truncate absolute top-[97%] left-0 text-[12px] text-black`}
+        } NAME-gallery-child-to-render smd:hidden block w-full text-center z-10 h-fit px-2 pt-2.5 rounded-b-lg whitespace-nowrap truncate absolute top-[97%] left-0 text-[12px] text-black`}
         style={{
           backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 100%)`,
         }}
       >
         <div className="w-full h-1.5 bg-white absolute top-0 left-0"></div>
-        {product.name}
+        {displayProductName(product)}
       </div>
       <div className="NAME-gallery-child-to-rounded smd:rounded-xl w-full h-full bg-white border border-gray-200 relative rounded-t-lg z-20">
         <img
@@ -271,7 +293,7 @@ export const ProductGallery = ({ products }: TProductGalleryProps) => {
     })
     if (checkSavedElementsVisualStateExists(product.id)) {
       useLayoutStore.getState().setLayoutForDefault(null)
-      useEditedElementStore.getState().recoverSavedElementsVisualStates(product.id)
+      // useEditedElementStore.getState().recoverSavedElementsVisualStates(product.id)
     } else {
       // useLayoutStore.getState().setLayoutForDefault(initialLayout)
     }

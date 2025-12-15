@@ -44,7 +44,9 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
               otherProvinces.push(province)
             }
           })
-          priorityProvinces.sort((a, b) => priorityCities.indexOf(a.name) - priorityCities.indexOf(b.name))
+          priorityProvinces.sort(
+            (a, b) => priorityCities.indexOf(a.name) - priorityCities.indexOf(b.name)
+          )
           const sortedData = [...priorityProvinces, ...otherProvinces]
           setProvinces(sortedData)
         } catch (error) {
@@ -158,7 +160,6 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
             <input
               id="fullName-input"
               name="fullName"
-              defaultValue={'lthloi'}
               type="text"
               placeholder="Nguyễn Văn A"
               className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
@@ -179,7 +180,6 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
               <input
                 id="phone-input"
                 name="phone"
-                defaultValue={'0976543210'}
                 type="tel"
                 placeholder="09xx xxx xxx"
                 className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
@@ -200,7 +200,6 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
                 id="email-input"
                 name="email"
                 type="email"
-                defaultValue={'lthloi@example.com'}
                 placeholder="email@domain.com"
                 className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
               />
@@ -221,7 +220,6 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
               <select
                 id="province-input"
                 name="province"
-                defaultValue={'Hà Nội'}
                 onChange={handleProvinceChange}
                 className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all bg-white`}
                 disabled={isLoadingProvinces}
@@ -252,7 +250,6 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
               <select
                 id="city-input"
                 name="city"
-                defaultValue={'Quận Hoàn Kiếm'}
                 onChange={handleDistrictChange}
                 className="5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all bg-white"
                 disabled={!selectedProvinceId || isLoadingDistricts}

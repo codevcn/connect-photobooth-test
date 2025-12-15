@@ -40,7 +40,7 @@ const StickersModal = ({ onClose }: TStickersModalProps) => {
   // Load nhóm Couple-cat đầu tiên khi component mount
   useEffect(() => {
     if (stickerGroups.length > 0) {
-      const coupleCatIndex = stickerGroups.findIndex((g) => g.name === 'Couple-cat')
+      const coupleCatIndex = stickerGroups.findIndex((g) => g.name === 'Jewery')
       if (coupleCatIndex !== -1 && !stickerGroups[coupleCatIndex].loaded) {
         loadStickerGroup(coupleCatIndex)
       }
@@ -172,7 +172,7 @@ const StickersModal = ({ onClose }: TStickersModalProps) => {
         </div>
 
         {/* Sticker Groups Tabs */}
-        <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+        {/* <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
           <div className="flex gap-2 overflow-x-auto gallery-scroll">
             {stickerGroups.map((group, index) => {
               const isSelected = selectedGroupIndex === index
@@ -191,7 +191,7 @@ const StickersModal = ({ onClose }: TStickersModalProps) => {
                 >
                   <div className="5xl:w-24 5xl:h-24 w-12 h-12 flex items-center justify-center">
                     <img
-                      src={`/images/stickers/${group.name}/st-1.png`}
+                      src={`/images/stickers/${group.name}/st-1.webp`}
                       alt={group.displayName}
                       className="w-full h-full object-contain"
                     />
@@ -207,7 +207,7 @@ const StickersModal = ({ onClose }: TStickersModalProps) => {
               )
             })}
           </div>
-        </div>
+        </div> */}
 
         {/* Stickers Grid */}
         <div className="flex-1 overflow-y-auto p-4">
@@ -275,13 +275,14 @@ type TStickerGroupsConfig = {
 
 // Cấu hình các nhóm sticker
 const initStickerGroupItems = (): TStickerGroupsConfig[] => [
-  { name: 'Couple-cat', displayName: 'Couple Cat', count: 6 },
-  { name: 'BabyWony', displayName: 'Baby Wony', count: 20 },
-  { name: 'BrownandFriends', displayName: 'Brown & Friends', count: 20 },
-  { name: 'MiMnYam', displayName: 'MiMn Yam', count: 20 },
-  { name: 'Piyomaru', displayName: 'Piyomaru', count: 20 },
-  { name: 'Pusheen', displayName: 'Pusheen', count: 20 },
-  { name: 'ZapyCongSo', displayName: 'Zapy Cồng Sô', count: 20 },
+  { name: 'Jewery', displayName: 'Jewery', count: 69 },
+  // { name: 'Couple-cat', displayName: 'Couple Cat', count: 6 },
+  // { name: 'BabyWony', displayName: 'Baby Wony', count: 20 },
+  // { name: 'BrownandFriends', displayName: 'Brown & Friends', count: 20 },
+  // { name: 'MiMnYam', displayName: 'MiMn Yam', count: 20 },
+  // { name: 'Piyomaru', displayName: 'Piyomaru', count: 20 },
+  // { name: 'Pusheen', displayName: 'Pusheen', count: 20 },
+  // { name: 'ZapyCongSo', displayName: 'Zapy Cồng Sô', count: 20 },
 ]
 
 type TPickerModalWrapperProps = {

@@ -89,7 +89,7 @@ export const TextFontPicker = ({ onHideShow, onSelectFont }: TextFontPickerProps
       className="NAME-text-font-picker 5xl:text-3xl fixed inset-0 flex items-center justify-center z-101 animate-pop-in"
     >
       <div onClick={() => onHideShow(false)} className="bg-black/60 absolute inset-0 z-10"></div>
-      <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-3 h-[95vh] flex flex-col relative z-20 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-3 h-[90vh] flex flex-col relative z-20 overflow-hidden">
         {/* Header với gradient */}
         <div className="bg-main-cl px-3 py-2.5 flex items-center gap-2">
           <div className="flex items-center gap-2 grow">

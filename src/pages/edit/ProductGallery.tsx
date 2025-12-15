@@ -89,7 +89,7 @@ const Product = ({
     if (productId === 31) {
       return 'Móc chìa khóa'
     } else if (productId === 30) {
-      return 'Nến thơm thư giãn'
+      return 'Nến thơm'
     } else if (productId === 29) {
       return 'Áo nỉ'
     } else if (productId === 27) {

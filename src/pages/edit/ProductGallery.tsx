@@ -99,7 +99,7 @@ const Product = ({
     } else if (productId === 29) {
       return 'Áo nỉ'
     } else if (productId === 27) {
-      return 'Bình'
+      return 'Bình giữ nhiệt'
     } else if (productId === 25) {
       return 'Túi vải'
     } else if (productId === 23) {

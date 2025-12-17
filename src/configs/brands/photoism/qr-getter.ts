@@ -238,7 +238,7 @@ class QRGetter {
     uuid: string,
     onProgress: TGetImageDataProgressCallback,
     imgURL: string
-  ): Promise<TGetCustomerMediaResponse> {
+  ): Promise<TGetCustomerMediaResponse_dev> {
     // let a = await fetch('https://cmsapi-apse.seobuk.kr/v1/etc/seq/resource', {
     //   headers: {
     //     accept: 'application/json, text/plain, */*',
@@ -257,23 +257,23 @@ class QRGetter {
     //   method: 'POST',
     // })
 
-    console.log('>>> [qr] result from QR scanning:', imgURL)
-    const strippedURL = this.removeProtocol(imgURL)
-    console.log('>>> [qr] stripped URL:', strippedURL)
-    let a = await fetch(`https://api.encycom.com/api/getimg/?u=${strippedURL}`)
-    onProgress(50, null, null)
-    return (await a.json()) as TGetCustomerMediaResponse
-
+    // console.log('>>> [qr] result from QR scanning:', imgURL)
+    // const strippedURL = this.removeProtocol(imgURL)
+    // console.log('>>> [qr] stripped URL:', strippedURL)
+    // let a = await fetch(`https://api.encycom.com/api/getimg/?u=${strippedURL}`)
     // onProgress(50, null, null)
-    // return {
-    //   content: {
-    //     fileInfo: {
-    //       picFile: {
-    //         path: getLinkByCount(),
-    //       },
-    //     },
-    //   },
-    // } as TGetCustomerMediaResponse_dev
+    // return (await a.json()) as TGetCustomerMediaResponse
+
+    onProgress(50, null, null)
+    return {
+      content: {
+        fileInfo: {
+          picFile: {
+            path: getLinkByCount(),
+          },
+        },
+      },
+    } as TGetCustomerMediaResponse_dev
   }
 
   private async fetchImageData(
@@ -326,8 +326,8 @@ class QRGetter {
       const data = await this.getFileInfo('', onProgress, url)
       console.log('>>> [qr] get file info:', data)
       try {
-        // await this.fetchImageData(data.content.fileInfo.picFile.path, onProgress)
-        await this.fetchImageData(data.data.picFile.path, onProgress)
+        await this.fetchImageData(data.content.fileInfo.picFile.path, onProgress)
+        // await this.fetchImageData(data.data.picFile.path, onProgress)
       } catch (err) {
         console.error('>>> Lỗi lấy dữ liệu hình ảnh tại local:', err)
         onProgress(0, null, err as Error)

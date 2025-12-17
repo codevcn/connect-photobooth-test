@@ -51,6 +51,7 @@ export const VietnameseKeyboard = ({
   // Track enter key press state
   const enterKeyPressedRef = useRef<boolean>(false)
   const doneKeyPressedRef = useRef<boolean>(false)
+
   const { inputMethod, toggleInputMethod, processVietnameseInput, resetBuffer } =
     useVietnameseKeyboard()
 
@@ -121,13 +122,22 @@ export const VietnameseKeyboard = ({
     return input
   }
 
+  const clearAll = () => {
+    setInput('')
+    onChange?.('')
+    resetBuffer()
+    setCaretPosition(0)
+  }
+
   const handleKeyPress = (button: string) => {
     if (button === '{abc}') {
       setLayoutName('default')
     } else if (button === '{?123}') {
       setLayoutName('specialCharacters')
     } else if (button === '{shift}' || button === '{lock}') {
-      if (layoutName === 'shift') setLayoutName('default')
+      if (layoutName === 'shift') {
+        setLayoutName('default')
+      }
       else setLayoutName('shift')
     } else if (button === '{bksp}') {
       const newInput = deleteAtCaret()
@@ -145,10 +155,7 @@ export const VietnameseKeyboard = ({
     } else if (button === '{toggle}') {
       toggleInputMethod()
     } else if (button === '{clear}') {
-      setInput('')
-      onChange?.('')
-      resetBuffer()
-      setCaretPosition(0)
+      clearAll()
     } else if (button === '{done}') {
       // Mark that done key is being pressed, wait for release
       doneKeyPressedRef.current = true
@@ -296,8 +303,8 @@ export const VietnameseKeyboard = ({
     '{shift}': `
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="26"
-        height="26"
+        width="28"
+        height="28"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"

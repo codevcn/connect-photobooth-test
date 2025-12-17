@@ -1,3 +1,4 @@
+import { initAllSupportedFonts } from '@/configs/fonts/fonts'
 import { TTextFont, TLoadFontStatus } from '@/utils/types/global'
 import { create } from 'zustand'
 
@@ -10,6 +11,7 @@ type TUseElementStylingStore = {
   checkIfFontLoaded: (fontFamily: TTextFont['fontFamily']) => boolean
   setStatus: (status: TLoadFontStatus) => void
   resetData: () => void
+  sortLoadedFontsByCommon: () => void
 }
 
 export const useElementStylingStore = create<TUseElementStylingStore>((set, get) => ({
@@ -18,6 +20,25 @@ export const useElementStylingStore = create<TUseElementStylingStore>((set, get)
 
   resetData: () => {
     set({ allLoadedFonts: [], status: 'idle' })
+  },
+  sortLoadedFontsByCommon: () => {
+    const base = initAllSupportedFonts()
+    const currentFonts = get().allLoadedFonts
+    
+    // Tạo map để tra cứu index của mỗi font trong base config
+    const orderMap = new Map<string, number>()
+    base.forEach((font, index) => {
+      orderMap.set(font.fontFamily, index)
+    })
+    
+    // Sắp xếp fonts theo thứ tự trong config
+    const sorted = [...currentFonts].sort((a, b) => {
+      const indexA = orderMap.get(a.fontFamily) ?? Infinity
+      const indexB = orderMap.get(b.fontFamily) ?? Infinity
+      return indexA - indexB
+    })
+    
+    set({ allLoadedFonts: sorted })
   },
   setStatus: (status: TLoadFontStatus) => {
     set({ status })

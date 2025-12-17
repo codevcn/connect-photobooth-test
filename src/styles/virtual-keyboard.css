@@ -7,13 +7,15 @@
   font-weight: 500;
   border-radius: 6px;
   transition: all 0.15s;
-  background: #f7fafc;
+  background-color: #f7fafc;
   border: 1px solid #e2e8f0;
   color: #2d3748;
 }
 
 .vietnamese-keyboard-drawer .hg-button:active {
   transform: scale(0.95);
+  background-color: var(--vcn-main-cl);
+  color: white;
 }
 
 .vietnamese-keyboard-drawer .hg-button-clear {
@@ -28,11 +30,14 @@
 }
 
 .vietnamese-keyboard-drawer .hg-button-bksp {
-  background: #e7000b;
+  background-color: #e7000b;
   color: white;
   border: none;
   font-weight: 600;
   font-size: 18px;
+}
+.vietnamese-keyboard-drawer .hg-button-bksp svg {
+  stroke-width: 2;
 }
 
 .vietnamese-keyboard-drawer .hg-button-bksp:active {
@@ -40,10 +45,14 @@
 }
 
 .vietnamese-keyboard-drawer .hg-button-enter {
-  background: #dbeafe;
+  background-color: #dbeafe;
   border: none;
   font-weight: 700;
   font-size: 14px;
+  border: 2px skyblue solid;
+}
+.vietnamese-keyboard-drawer .hg-button-enter svg {
+  stroke-width: 2;
 }
 
 .vietnamese-keyboard-drawer .hg-button-enter:active {
@@ -51,24 +60,38 @@
 }
 
 .vietnamese-keyboard-drawer .hg-button-shift {
-  background: #dbeafe;
+  background-color: #dbeafe;
   border: none;
   font-weight: 600;
   min-width: 60px;
+  border: 2px skyblue solid;
+}
+.vietnamese-keyboard-drawer .hg-button-shift svg {
+  font-size: 16px;
+  stroke-width: 2;
 }
 
-.vietnamese-keyboard-drawer .hg-button-shift:active {
-  transform: scale(0.95);
+.vietnamese-keyboard-drawer.hg-layout-shift .hg-button-shift svg {
+  fill: black;
 }
 
 .vietnamese-keyboard-drawer .hg-button-space {
   color: #374151;
   border: none;
-  width: 70%;
+  width: 65%;
+  font-weight: 700;
+}
+.vietnamese-keyboard-drawer .hg-button-space svg {
+  height: 70px;
+  width: 70px;
+  transform: translateY(-14px);
 }
 
 .vietnamese-keyboard-drawer .hg-button-done {
-  background: rgb(167, 255, 167);
+  background-color: rgb(167, 255, 167);
+}
+.vietnamese-keyboard-drawer .hg-button-done svg {
+  stroke-width: 3;
 }
 
 .vietnamese-keyboard-drawer .hg-button-space:active {

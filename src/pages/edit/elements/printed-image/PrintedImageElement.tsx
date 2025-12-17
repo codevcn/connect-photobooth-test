@@ -199,7 +199,7 @@ export const PrintedImageElement = ({
 
       {createPortal(
         <div
-          className="NAME-element-interactive-buttons hidden fixed z-99 bg-transparent shadow-[0_0_0_2px_#f54900] touch-none"
+          className="NAME-element-interactive-buttons hidden fixed z-99 bg-transparent shadow-[0_0_0_2px_var(--vcn-main-cl)] touch-none"
           style={{
             ...updateInteractiveButtonsVisualDirectly(),
             transform: `rotate(${angle}deg)`,

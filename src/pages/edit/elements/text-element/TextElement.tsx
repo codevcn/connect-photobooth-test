@@ -234,7 +234,7 @@ export const TextElement = ({
 
         {createPortal(
           <div
-            className="NAME-element-interactive-buttons fixed z-80 bg-transparent shadow-[0_0_0_2px_#f54900] touch-none"
+            className="NAME-element-interactive-buttons fixed z-80 bg-transparent shadow-[0_0_0_2px_var(--vcn-main-cl)] touch-none"
             style={{
               ...updateInteractiveButtonsVisualDirectly(),
               transform: `rotate(${angle}deg)`,

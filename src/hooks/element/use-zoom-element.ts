@@ -10,6 +10,7 @@ type UseElementZoomOptions = {
   currentZoom: number
   setCurrentZoom: React.Dispatch<React.SetStateAction<number>>
   scaleFactor: number // Hệ số nhân cho việc zoom (mặc định 1)
+  printAreaContainerRef: React.RefObject<HTMLElement | null>
 }
 
 type UseElementZoomReturn = {
@@ -27,6 +28,7 @@ export const useZoomElement = (options: UseElementZoomOptions): UseElementZoomRe
     currentZoom,
     setCurrentZoom,
     scaleFactor = 1,
+    printAreaContainerRef,
   } = options
   const [isZooming, setIsZooming] = useState(false)
   const isZoomingRef = useRef(false)

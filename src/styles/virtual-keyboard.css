@@ -89,6 +89,7 @@
 
 .vietnamese-keyboard-drawer .hg-button-done {
   background-color: rgb(167, 255, 167);
+  outline: 2px rgb(30, 216, 30) solid;
 }
 .vietnamese-keyboard-drawer .hg-button-done svg {
   stroke-width: 3;

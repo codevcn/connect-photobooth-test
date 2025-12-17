@@ -240,7 +240,7 @@ const CropImageElementModal = ({
           </div>
 
           <div className="NAME-sub-form-image-edit min-w-[200px] flex flex-col items-stretch w-1/3 max-h-[calc(90vh-0px)] overflow-y-auto p-3 bg-white rounded-lg text-gray-600">
-            <div className="p-2 bg-gray-100 rounded-lg">
+            {/* <div className="p-2 bg-gray-100 rounded-lg">
               <h3 className="5xl:text-[1em] text-sm font-semibold text-gray-800">
                 Kích thước vùng cắt
               </h3>
@@ -272,7 +272,7 @@ const CropImageElementModal = ({
                   />
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="mt-auto pt-4">
               <div className="5xl:text-2xl flex gap-y-2 gap-x-2 flex-col">

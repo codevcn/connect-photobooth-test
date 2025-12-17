@@ -137,8 +137,7 @@ export const VietnameseKeyboard = ({
     } else if (button === '{shift}' || button === '{lock}') {
       if (layoutName === 'shift') {
         setLayoutName('default')
-      }
-      else setLayoutName('shift')
+      } else setLayoutName('shift')
     } else if (button === '{bksp}') {
       const newInput = deleteAtCaret()
       setInput(newInput)
@@ -410,6 +409,7 @@ export const VietnameseKeyboard = ({
           onClick={handleTextAreaSelect}
           textfieldRef={textDisplayerRef}
           maxHeight={150}
+          minHeight={40}
           className="w-full outline-transparent focus:outline-main-cl overflow-y-auto px-2 py-1.5 text-[1em] border border-gray-200 rounded-lg bg-gray-50 whitespace-pre-wrap wrap-break-word"
         />
       </div>

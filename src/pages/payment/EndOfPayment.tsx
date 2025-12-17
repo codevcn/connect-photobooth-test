@@ -268,7 +268,7 @@ export const EndOfPayment: React.FC<EndOfPaymentProps> = ({ data }) => {
               </div>
 
               {/* Main Content: QR + Payment Details */}
-              <div className="md:gap-16 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:gap-16 5xl:gap-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Left Column: QR Code */}
                 <div className="flex flex-col items-center justify-center">
                   <div className="relative">
@@ -284,7 +284,7 @@ export const EndOfPayment: React.FC<EndOfPaymentProps> = ({ data }) => {
                     </div>
                     <button
                       onClick={downloadQRCode}
-                      className="top-1/2 -translate-y-1/2 left-[calc(100%+8px)] absolute p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors active:scale-95"
+                      className="5xl:hidden top-1/2 -translate-y-1/2 left-[calc(100%+8px)] absolute p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors active:scale-95"
                       title="Tải QR Code"
                     >
                       <svg

@@ -1,3 +1,4 @@
+import { fillQueryStringToURL } from '@/utils/helpers'
 import { Link } from 'react-router-dom'
 
 export default function NotFound() {
@@ -49,7 +50,7 @@ export default function NotFound() {
                 </button>
 
                 <Link
-                  to="/"
+                  to={'/' + fillQueryStringToURL()}
                   className="group flex items-center justify-center gap-2 px-8 py-4 bg-main-cl hover:bg-dark-main-cl text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 active:scale-95"
                 >
                   <svg

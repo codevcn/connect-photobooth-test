@@ -1,7 +1,7 @@
 import { createInitialConstants } from '@/utils/contants'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { TElementType, TPrintedImageVisualState, TStickerVisualState } from '@/utils/types/global'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { CropImageElement } from '../CropImageElement'
 
@@ -132,7 +132,7 @@ export const StickerElementMenuForDesktop = ({ elementId, onClose }: TStickerEle
     isVisible: boolean
   }>({ top: 0, left: 0, isVisible: false })
   const [isDragging, setIsDragging] = useState(false)
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+  const dragOffsetRef = useRef({ x: 0, y: 0 })
 
   const getPickedElementRoot = () => {
     return document.body.querySelector<HTMLElement>(
@@ -158,64 +158,36 @@ export const StickerElementMenuForDesktop = ({ elementId, onClose }: TStickerEle
     let top = (printAreaContainerRect.height - menuRect.height) / 2
     let left = printAreaContainerRect.right - menuRect.width - 10
 
-    // const element = pickedElementRootRef.current
-    // if (!element || !popoverRef.current) return
-
-    // const elementRect = element.getBoundingClientRect()
-    // const popoverRect = popoverRef.current.getBoundingClientRect()
-    // const viewportWidth = window.innerWidth
-    // const viewportHeight = window.innerHeight
-    // const margin = 12
-    // const offset = 8
-
-    // // Default position: below the element, centered
-    // let top = elementRect.bottom + offset
-    // let left = elementRect.left - Math.abs(elementRect.width - popoverRect.width)
-
-    // // Check if popover goes beyond bottom edge
-    // if (top + popoverRect.height > viewportHeight - margin) {
-    //   // Try positioning above the element
-    //   top = elementRect.top - popoverRect.height - offset
-    // }
-
-    // // If still goes beyond top edge, position inside viewport
-    // if (top < margin) {
-    //   top = margin
-    // }
-
-    // // Check horizontal position - if goes beyond right edge
-    // if (left + popoverRect.width > viewportWidth - margin) {
-    //   left = viewportWidth - popoverRect.width - margin
-    // }
-
-    // // If goes beyond left edge
-    // if (left < margin) {
-    //   left = margin
-    // }
-
     setPopoverPosition({ top, left, isVisible: true })
   }
 
-  // Drag handlers
-  const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
+  // Drag handlers - sử dụng useCallback để tránh stale closure
+  const handleDragMove = useCallback((e: PointerEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setPopoverPosition((prev) => ({
+      ...prev,
+      left: e.clientX - dragOffsetRef.current.x,
+      top: e.clientY - dragOffsetRef.current.y,
+    }))
+  }, [])
+
+  const handleDragEnd = useCallback((e: PointerEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+  }, [])
+
+  const handleDragStart = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    // Capture pointer để đảm bảo events tiếp tục được gửi đến element này
+    e.currentTarget.setPointerCapture(e.pointerId)
     setIsDragging(true)
-    setDragOffset({
+    dragOffsetRef.current = {
       x: e.clientX - popoverPosition.left,
       y: e.clientY - popoverPosition.top,
-    })
-  }
-
-  const handleDragMove = (e: MouseEvent) => {
-    if (!isDragging) return
-    setPopoverPosition({
-      ...popoverPosition,
-      left: e.clientX - dragOffset.x,
-      top: e.clientY - dragOffset.y,
-    })
-  }
-
-  const handleDragEnd = () => {
-    setIsDragging(false)
+    }
   }
 
   useEffect(() => {
@@ -236,16 +208,19 @@ export const StickerElementMenuForDesktop = ({ elementId, onClose }: TStickerEle
     if (isDragging) {
       window.addEventListener('pointermove', handleDragMove)
       window.addEventListener('pointerup', handleDragEnd)
+      window.addEventListener('pointercancel', handleDragEnd)
     } else {
       window.removeEventListener('pointermove', handleDragMove)
       window.removeEventListener('pointerup', handleDragEnd)
+      window.removeEventListener('pointercancel', handleDragEnd)
     }
 
     return () => {
       window.removeEventListener('pointermove', handleDragMove)
       window.removeEventListener('pointerup', handleDragEnd)
+      window.removeEventListener('pointercancel', handleDragEnd)
     }
-  }, [isDragging, dragOffset])
+  }, [isDragging, handleDragMove, handleDragEnd])
 
   const validateInputsPositiveNumber = (
     inputs: HTMLInputElement[],
@@ -400,14 +375,15 @@ export const StickerElementMenuForDesktop = ({ elementId, onClose }: TStickerEle
         transition: 'opacity 0.15s ease-in-out',
         maxWidth: '320px',
         width: 'max-content',
+        touchAction: 'none',
       }}
       onClick={(e) => e.stopPropagation()}
     >
       {/* Drag Handle */}
       <div
         className="5xl:py-2.5 flex items-center justify-center py-1.5 cursor-move bg-gray-100 rounded-t-lg border-b border-gray-200 hover:bg-gray-200 transition"
-        onMouseDown={handleDragStart}
-        style={{ userSelect: 'none' }}
+        onPointerDown={handleDragStart}
+        style={{ userSelect: 'none', touchAction: 'none' }}
       >
         <div className="flex flex-col gap-0.5">
           <div className="5xl:h-1.5 w-8 h-0.5 bg-gray-400 rounded"></div>

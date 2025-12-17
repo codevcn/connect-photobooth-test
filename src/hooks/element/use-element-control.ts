@@ -14,6 +14,7 @@ import { useSnapThresholdRotateElement } from './use-snap-threshold-rotate-eleme
 import { calculateElementClipPolygon } from '@/pages/edit/elements/clip-element-helper'
 import { useEditedElementStore } from '@/stores/element/element.store'
 import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
+import { useZoomElementCollision } from './use-zoom-element-collision'
 
 type TElementPreviousRelativeProps = {
   relativeOffsetLeft: number
@@ -185,12 +186,13 @@ export const useElementControl = (
     zoomButtonRef,
     containerRef: refForZoom,
     isZooming,
-  } = useZoomElement({
+  } = useZoomElementCollision({
     maxZoom: maxZoom,
     minZoom: minZoom,
     currentZoom: scale,
     setCurrentZoom: setScale,
     scaleFactor: scaleFactor,
+    printAreaContainerRef: containerForElementAbsoluteToRef,
   })
   const elementLayers = useElementLayerStore((s) => s.elementLayers)
 
@@ -384,7 +386,7 @@ export const useElementControl = (
 
   useEffect(() => {
     updateClipPolygon()
-  }, [position.x, position.y, scale, angle, elementId])
+  }, [position.x, position.y, scale, angle, elementId, scaleFactor])
 
   useEffect(() => {
     // eventEmitter.on(EInternalEvents.EDITED_PRINT_AREA_CHANGED, stayElementVisualOnAllowedPrintArea)
@@ -395,7 +397,7 @@ export const useElementControl = (
     //   )
     // }
     if (allowedPrintedAreaChangeId) updateClipPolygon()
-  }, [allowedPrintedAreaChangeId])
+  }, [allowedPrintedAreaChangeId, scaleFactor])
 
   return {
     // forPinch: {

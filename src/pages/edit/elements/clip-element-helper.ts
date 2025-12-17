@@ -11,7 +11,7 @@ const getTransformedCorners = (element: HTMLElement): Point[] => {
   const rect = element.getBoundingClientRect()
   const style = window.getComputedStyle(element)
   const matrix = new DOMMatrix(style.transform)
-
+console.log('>>> [kkk] matrix:', matrix)
   // Dimensions gốc (trước transform)
   const width = element.offsetWidth
   const height = element.offsetHeight
@@ -127,6 +127,7 @@ export const calculateElementClipPolygon = (
 
   // Get allowed area bounds
   const allowedRect = allowedPrintArea.getBoundingClientRect()
+  console.log('>>> [kkk] allowedRect:', allowedRect)
   const allowedLeft = allowedRect.left
   const allowedTop = allowedRect.top
   const allowedRight = allowedRect.right
@@ -134,7 +135,7 @@ export const calculateElementClipPolygon = (
 
   // Get transformed corners của element
   const corners = getTransformedCorners(element)
-
+console.log('>>> [kkk] corners:', corners)
   // Tìm tất cả điểm cần giữ lại (trong allowed area hoặc intersection points)
   const clippedPoints: Point[] = []
 

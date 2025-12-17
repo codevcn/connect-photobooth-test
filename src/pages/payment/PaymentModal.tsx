@@ -64,6 +64,10 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
     return isValid
   }
 
+  const resetEndOfPaymentData = () => {
+    setEndOfPayment(undefined)
+  }
+
   const handleConfirmPayment = async () => {
     const form = formRef.current
     if (!form) return
@@ -266,7 +270,9 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
             </button>
           </div>
         </div>
-        {endOfPayment && <EndOfPayment data={endOfPayment} />}
+        {endOfPayment && (
+          <EndOfPayment data={endOfPayment} resetEndOfPaymentData={resetEndOfPaymentData} />
+        )}
       </div>
     </div>
   )

@@ -56,9 +56,10 @@ type TPaymentStatus = {
 
 interface EndOfPaymentProps {
   data: TEndOfPaymentData
+  resetEndOfPaymentData: () => void
 }
 
-export const EndOfPayment: React.FC<EndOfPaymentProps> = ({ data }) => {
+export const EndOfPayment: React.FC<EndOfPaymentProps> = ({ data, resetEndOfPaymentData }) => {
   const {
     countdownInSeconds,
     QRCode,

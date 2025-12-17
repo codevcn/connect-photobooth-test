@@ -174,8 +174,53 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
   const mergedAttributes = pickedProduct.mergedAttributes
   const hintForSizeChart: string = 'none'
 
-  const sortedSizes: string[] = useMemo(() => {
-    return sortSizes(mergedAttributes.uniqueSizes)
+  const sortedSizes = useMemo<string[]>(() => {
+    function extractPrefix(productName: string) {
+      const trimmed = productName.trim()
+
+      // Tách phần chữ đầu tiên (prefix) và phần còn lại (suffix)
+      // Tìm vị trí đầu tiên có số hoặc khoảng trắng sau chữ cái
+      const match = trimmed.match(/^([a-zA-Z]+)(.*)$/)
+
+      if (match) {
+        return {
+          name: trimmed,
+          prefix: match[1].toLowerCase(),
+          suffix: match[2].trim(),
+        }
+      }
+
+      // Nếu không match được, coi toàn bộ là prefix
+      return {
+        name: trimmed,
+        prefix: trimmed.toLowerCase(),
+        suffix: '',
+      }
+    }
+    function sortProducts(products: string[]): string[] {
+      // Chuyển đổi các sản phẩm thành object với prefix và suffix
+      const productObjects = products.map((p) => extractPrefix(p))
+
+      // Sắp xếp theo prefix trước (thứ tự bảng chữ cái), sau đó theo suffix
+      productObjects.sort((a, b) => {
+        // So sánh prefix theo thứ tự bảng chữ cái
+        const prefixCompare = a.prefix.localeCompare(b.prefix)
+        if (prefixCompare !== 0) {
+          return prefixCompare
+        }
+
+        // Nếu cùng prefix, so sánh suffix
+        return a.suffix.localeCompare(b.suffix, undefined, {
+          numeric: true,
+          sensitivity: 'base',
+        })
+      })
+
+      // Trả về danh sách tên sản phẩm đã sắp xếp
+      return productObjects.map((p) => p.name)
+    }
+
+    return sortProducts(mergedAttributes.uniqueSizes)
   }, [mergedAttributes])
 
   const pickMaterial = (material: string) => {
@@ -286,7 +331,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
       {/* Material Section */}
       {mergedAttributes.uniqueMaterials.length > 0 &&
         mergedAttributes.uniqueMaterials[0] !== 'null' && (
-          <div className="mb-4">
+          <div className="NAME-material-variant-section mb-4">
             <h3 className="5xl:text-[0.5em] text-sm text-slate-800 font-bold mb-2">
               {mergedAttributes.uniqueMaterialTitles[0]}
             </h3>
@@ -313,7 +358,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
 
       {/* Scent Section */}
       {mergedAttributes.uniqueScents.length > 0 && mergedAttributes.uniqueScents[0] !== 'null' && (
-        <div className="mb-4">
+        <div className="NAME-scent-variant-section mb-4">
           <h3 className="5xl:text-[0.5em] text-sm text-slate-800 font-bold mb-2">
             {mergedAttributes.uniqueScentTitles[0]}
           </h3>
@@ -329,7 +374,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
                   key={scent}
                   onClick={() => pickScent(isDisabled, scent)}
                   disabled={isDisabled}
-                  className={`5xl:py-3 px-2 py-1 font-bold rounded-lg transition-all mobile-touch ${
+                  className={`5xl:py-2 px-2 py-1 font-bold rounded-lg transition-all mobile-touch ${
                     isDisabled
                       ? 'bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                       : isSelected
@@ -347,7 +392,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
 
       {/* Color Section */}
       {colorsCount > 0 && Object.keys(mergedAttributes.uniqueColors)[0] !== 'null' && (
-        <div className="mb-4">
+        <div className="NAME-color-variant-section mb-4">
           <h3 className="5xl:text-[0.5em] text-sm text-slate-800 font-bold mb-2">
             <span>{mergedAttributes.uniqueColorTitles[0]}</span>
             <span className="5xl:text-[0.9em] text-xs"> ({selectedAttributes.color})</span>
@@ -448,7 +493,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
 
       {/* Size Section */}
       {sortedSizes.length > 0 && sortedSizes[0] !== 'null' && (
-        <div className="">
+        <div className="NAME-size-variant-section">
           <div className="flex justify-between w-full mb-2">
             <label className="5xl:text-[0.5em] text-sm block font-bold text-slate-900">
               {mergedAttributes.uniqueSizeTitles[0]}

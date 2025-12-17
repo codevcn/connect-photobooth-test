@@ -22,7 +22,7 @@ if (new URLSearchParams(window.location.search).get('q') === 'ptm') {
   document.documentElement.style.setProperty('--vcn-main-cl', '#e60076')
 }
 
-import { Routes, Route, BrowserRouter } from 'react-router-dom'
+import { Routes, Route, BrowserRouter, useNavigate } from 'react-router-dom'
 import EditPagePTM from '@/pages/edit/Layout-Ptm'
 import EditPageFUN from '@/pages/edit/Layout-Fun'
 import EditPageDev from '@/pages/edit/Layout-Dev'
@@ -41,26 +41,28 @@ import { AppTempContainer } from './components/custom/TempContainer'
 import { Dev } from './dev/pages/Dev'
 import { GlobalKeyboardProvider } from './providers/GlobalKeyboardProvider'
 import { useQueryFilter } from './hooks/extensions'
+import { useIdleDetector } from './hooks/use-idle-detector'
+import { IdleWarningModal } from './components/custom/IdleWarningModal'
 
-// const IdleCountdown = () => {
-//   const navigate = useNavigate()
+const IdleCountdown = () => {
+  const navigate = useNavigate()
 
-//   const { showWarning, warningCountdown, confirmActive } = useIdleDetector({
-//     idleTimeout: 36000, // 36 giây không hoạt động
-//     warningTimeout: 10000, // 10 giây cảnh báo
-//     onIdle: () => {
-//       // Quay về trang chủ khi hết thời gian
-//       navigate('/')
-//       LocalStorageHelper.clearAllMockupData()
-//     },
-//   })
+  const { showWarning, warningCountdown, confirmActive } = useIdleDetector({
+    idleTimeout: 10000, // 10 giây không hoạt động
+    warningTimeout: 10000, // 10 giây cảnh báo
+    onIdle: () => {
+      // Quay về trang chủ khi hết thời gian
+      navigate('/')
+      LocalStorageHelper.clearAllMockupData()
+    },
+  })
 
-//   return (
-//     !isHomePage() && (
-//       <IdleWarningModal show={showWarning} countdown={warningCountdown} onConfirm={confirmActive} />
-//     )
-//   )
-// }
+  return (
+    !isHomePage() && (
+      <IdleWarningModal show={showWarning} countdown={warningCountdown} onConfirm={confirmActive} />
+    )
+  )
+}
 
 // Component để quản lý routes dựa trên query string
 function AppRoutes() {
@@ -88,6 +90,7 @@ function AppRoutes() {
   if (queryFilter.isPhotoism) {
     return (
       <>
+        {/* <IdleCountdown /> */}
         <Routes>
           <Route path="/" element={<IntroPage />} />
           <Route path="/qr" element={<ScanQRPage />} />

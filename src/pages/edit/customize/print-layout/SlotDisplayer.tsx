@@ -22,7 +22,7 @@ export const SlotsDisplayer = ({ layout, scrollable = true }: TFramesDisplayerPr
   }
 
   return (
-    <div className="flex justify-center items-center relative w-full h-full overflow-hidden">
+    <div className="inline-flex justify-center items-center relative w-full h-full overflow-hidden">
       <div
         style={{
           ...(layoutContainerConfigs.style || {}),

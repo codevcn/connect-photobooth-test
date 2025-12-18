@@ -6,6 +6,8 @@ import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 import { useLayoutStore } from '@/stores/ui/print-layout.store'
 import { createPortal } from 'react-dom'
 import { CropImageElementModal } from '../../elements/CropImageElementModal'
+import { useQueryFilter } from '@/hooks/extensions'
+import { toast } from 'react-toastify'
 
 type ImageProps = {
   img: TPrintedImage
@@ -78,6 +80,16 @@ export const PrintedImagesModal = ({ printedImages }: PrintedImagesProps) => {
     printdImage: undefined,
     showModal: false,
   })
+  const queryFilter = useQueryFilter()
+
+  const handleAddPrintedImageToLayout = (printedImg: TPrintedImage) => {
+    const pickedPrintSurface = useProductUIDataStore.getState().pickedSurface
+    if (!pickedPrintSurface) return
+    const { slotId, layoutId } = dataOnOpenRef.current
+    if (!slotId || !layoutId) return
+    useLayoutStore.getState().addPlacedImageToLayout(layoutId, slotId, printedImg)
+    setShowPrintedImagesModal(false)
+  }
 
   const addPrintedImageToLayout = (printedImage: TPrintedImage) => {
     const pickedPrintSurface = useProductUIDataStore.getState().pickedSurface
@@ -109,8 +121,19 @@ export const PrintedImagesModal = ({ printedImages }: PrintedImagesProps) => {
   }
 
   const handlePickPrintedImage = (printedImg: TPrintedImage) => {
-    // handleCropPrintedImageComplete(printedImg)
-    handleShowCropImageModal(printedImg)
+    toast.info(
+      'ptm: ' +
+        queryFilter.isPhotoism +
+        ' , dev: ' +
+        queryFilter.dev +
+        ' , fun:' +
+        queryFilter.funId
+    )
+    if (queryFilter.isPhotoism || queryFilter.dev) {
+      handleShowCropImageModal(printedImg)
+    } else {
+      handleAddPrintedImageToLayout(printedImg)
+    }
   }
 
   const handleShowCropImageModal = (printedImg: TPrintedImage) => {

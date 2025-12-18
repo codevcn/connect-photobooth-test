@@ -121,14 +121,6 @@ export const PrintedImagesModal = ({ printedImages }: PrintedImagesProps) => {
   }
 
   const handlePickPrintedImage = (printedImg: TPrintedImage) => {
-    toast.info(
-      'ptm: ' +
-        queryFilter.isPhotoism +
-        ' , dev: ' +
-        queryFilter.dev +
-        ' , fun:' +
-        queryFilter.funId
-    )
     if (queryFilter.isPhotoism || queryFilter.dev) {
       handleShowCropImageModal(printedImg)
     } else {

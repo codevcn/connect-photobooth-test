@@ -33,7 +33,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
               if (error) {
                 console.error('>>> [qr] Lỗi lấy dữ liệu mã QR:', error)
                 setError('Không thể lấy dữ liệu từ mã QR. Vui lòng thử lại.')
-                toast.error(error.message)
+                toast.error('Không thể lấy dữ liệu từ mã QR. Vui lòng thử lại')
                 return
               }
               if (images) {

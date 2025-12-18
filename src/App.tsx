@@ -41,27 +41,11 @@ import { AppTempContainer } from './components/custom/TempContainer'
 import { Dev } from './dev/pages/Dev'
 import { GlobalKeyboardProvider } from './providers/GlobalKeyboardProvider'
 import { useQueryFilter } from './hooks/extensions'
-import { useIdleDetector } from './hooks/use-idle-detector'
-import { IdleWarningModal } from './components/custom/IdleWarningModal'
+import { UserIdleTracker } from './components/custom/IdleWarningModal'
 
 const IdleCountdown = () => {
-  const navigate = useNavigate()
-
-  const { showWarning, warningCountdown, confirmActive } = useIdleDetector({
-    idleTimeout: 10000, // 10 giây không hoạt động
-    warningTimeout: 10000, // 10 giây cảnh báo
-    onIdle: () => {
-      // Quay về trang chủ khi hết thời gian
-      navigate('/')
-      LocalStorageHelper.clearAllMockupData()
-    },
-  })
-
-  return (
-    !isHomePage() && (
-      <IdleWarningModal show={showWarning} countdown={warningCountdown} onConfirm={confirmActive} />
-    )
-  )
+  // return <UserIdleTracker />
+  return <></>
 }
 
 // Component để quản lý routes dựa trên query string
@@ -91,6 +75,7 @@ function AppRoutes() {
     return (
       <>
         {/* <IdleCountdown /> */}
+        <IdleCountdown />
         <Routes>
           <Route path="/" element={<IntroPage />} />
           <Route path="/qr" element={<ScanQRPage />} />
@@ -118,6 +103,7 @@ function AppRoutes() {
   if (queryFilter.dev) {
     return (
       <>
+        <IdleCountdown />
         <Routes>
           <Route path="/" element={<EditPageDev />} />
           <Route path="/payment" element={<PaymentPage />} />

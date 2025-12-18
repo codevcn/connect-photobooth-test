@@ -1,5 +1,5 @@
 import { isHomePage } from '@/utils/helpers'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 
 type TUseIdleDetectorOptions = {
   idleTimeout: number // Thời gian không hoạt động (ms)
@@ -26,8 +26,20 @@ export const useIdleDetector = ({
   const warningCountdownIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const showWarningRef = useRef(false)
 
-  // Reset idle timer
-  const resetIdleTimer = () => {
+  // Sử dụng ref để lưu giá trị props mới nhất, tránh stale closure
+  const idleTimeoutRef = useRef(idleTimeout)
+  const warningTimeoutRef = useRef(warningTimeout)
+  const onIdleRef = useRef(onIdle)
+
+  // Cập nhật ref mỗi khi props thay đổi
+  useEffect(() => {
+    idleTimeoutRef.current = idleTimeout
+    warningTimeoutRef.current = warningTimeout
+    onIdleRef.current = onIdle
+  }, [idleTimeout, warningTimeout, onIdle])
+
+  // Reset idle timer - sử dụng useCallback để stable reference
+  const resetIdleTimer = useCallback(() => {
     // Clear existing timers
     if (idleTimerRef.current) {
       clearTimeout(idleTimerRef.current)
@@ -44,11 +56,15 @@ export const useIdleDetector = ({
     showWarningRef.current = false
     setWarningCountdown(0)
 
-    // Start new idle timer
-    idleTimerRef.current = setTimeout(() => {
+    // Start new idle timer - sử dụng giá trị từ ref
+    const timerId = setTimeout(() => {
+      // QUAN TRỌNG: Kiểm tra xem timer này có còn là timer active không
+      // Nếu đã bị cancel/replaced, không làm gì cả
+      if (idleTimerRef.current !== timerId) return
+
       setShowWarning(true)
       showWarningRef.current = true
-      const initialCountdown = Math.floor(warningTimeout / 1000)
+      const initialCountdown = Math.floor(warningTimeoutRef.current / 1000)
       setWarningCountdown(initialCountdown)
 
       // Start countdown interval
@@ -63,29 +79,36 @@ export const useIdleDetector = ({
         }
       }, 1000)
 
-      // Start warning timer
+      // Start warning timer - sử dụng giá trị từ ref
       warningTimerRef.current = setTimeout(() => {
-        onIdle()
+        onIdleRef.current() // ← Dùng ref để có callback mới nhất
         setShowWarning(false)
-      }, warningTimeout)
-    }, idleTimeout)
-  }
+      }, warningTimeoutRef.current) // ← Dùng ref
+    }, idleTimeoutRef.current)
+    
+    // Lưu timer ID
+    idleTimerRef.current = timerId
+  }, []) // Dependencies rỗng vì tất cả giá trị đều từ ref
 
   // User confirms they are still active
-  const confirmActive = () => {
+  const confirmActive = useCallback(() => {
     resetIdleTimer()
-  }
+  }, [resetIdleTimer])
 
-  // Setup event listeners - chỉ chạy 1 lần khi mount
+  // Setup event listeners
   useEffect(() => {
-    if (isHomePage()) {
-      return
-    }
+    // if (isHomePage()) {
+    //   return
+    // }
     const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click']
 
     const handleUserActivity = () => {
-      // Không reset nếu đang hiển thị warning
-      if (showWarningRef.current) return
+      // Reset timer khi user có hoạt động, bất kể đang hiển thị warning hay không
+      // Nếu đang hiển thị warning, ẩn nó đi vì user đã active
+      if (showWarningRef.current) {
+        setShowWarning(false)
+        showWarningRef.current = false
+      }
       resetIdleTimer()
     }
 
@@ -106,7 +129,7 @@ export const useIdleDetector = ({
       if (warningTimerRef.current) clearTimeout(warningTimerRef.current)
       if (warningCountdownIntervalRef.current) clearInterval(warningCountdownIntervalRef.current)
     }
-  }, []) // Chỉ chạy 1 lần khi mount
+  }, [resetIdleTimer]) // Thêm resetIdleTimer vào dependencies
 
   return {
     showWarning,

@@ -202,7 +202,7 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
         </div>
       </div>
 
-      <div className="smd:order-4 text-center text-xs text-gray-600 order-5 smd:p-3 p-2 bg-white rounded-lg space-y-2 mt-2">
+      <div className="5xl:hidden block smd:order-4 text-center text-xs text-gray-600 order-5 smd:p-3 p-2 bg-white rounded-lg space-y-2 mt-2">
         <span className="font-bold">Lưu ý:</span> Dịch vụ này được cung cấp và chịu trách nhiệm bởi
         <span className="font-extrabold -tracking-[1px] mt-1 leading-tight text-main-cl">
           {' '}

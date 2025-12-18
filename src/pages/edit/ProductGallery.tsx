@@ -260,7 +260,7 @@ export const ProductGallery = ({ products }: TProductGalleryProps) => {
 
   const handleConfirmExit = () => {
     resetAllStores()
-    AppNavigator.navTo(navigate, '/qr')
+    AppNavigator.navTo(navigate, '/')
   }
 
   const handleCancelExit = () => {

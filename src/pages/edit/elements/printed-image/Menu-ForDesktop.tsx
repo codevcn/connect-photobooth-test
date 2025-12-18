@@ -329,7 +329,7 @@ export const PrintedImageElementMenuForDesktop = ({
       {/* Drag Handle */}
       <div
         onPointerDown={handleDragStart}
-        className="5xl:py-2.5 flex items-center justify-center py-1.5 cursor-move bg-gray-100 rounded-t-lg border-b border-gray-200 hover:bg-gray-200 transition"
+        className="5xl:py-2.5 select-none touch-none flex items-center justify-center py-1.5 cursor-move bg-gray-100 rounded-t-lg border-b border-gray-200 hover:bg-gray-200 transition"
       >
         <div className="flex flex-col gap-0.5">
           <div className="5xl:h-1.5 w-8 h-0.5 bg-gray-400 rounded"></div>

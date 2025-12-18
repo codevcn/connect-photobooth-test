@@ -108,10 +108,6 @@ export const LayoutsPicker_Fun = ({ printedImages }: TLayoutsPickerProps) => {
     })
   }, [allLayouts])
 
-  const originalFrameImage = useMemo<TPrintedImage>(() => {
-    return printedImages.find((img) => img.isOriginalImage)!
-  }, [printedImages])
-
   const handlePickLayout = (layout: TPrintLayout) => {
     useLayoutStore.getState().pickLayout({ ...layout, mountType: 'picked' })
     useEditedElementStore.getState().resetData()
@@ -119,11 +115,6 @@ export const LayoutsPicker_Fun = ({ printedImages }: TLayoutsPickerProps) => {
 
   const handlePickNoLayout = () => {
     useLayoutStore.getState().pickNoLayout()
-  }
-
-  const handlePickFrameLayout = () => {
-    useLayoutStore.getState().pickFrameLayout(originalFrameImage)
-    useEditedElementStore.getState().resetData()
   }
 
   const findLayoutIndex = () => {
@@ -136,6 +127,27 @@ export const LayoutsPicker_Fun = ({ printedImages }: TLayoutsPickerProps) => {
     return [findLayoutIndex(), availableLayouts.length + 1]
   }, [layoutMode, availableLayouts, pickedLayout])
 
+  const scrollToPickedLayout = () => {
+    const container = containerRef.current
+    if (!container) return
+    const pickedLayoutElement = container.querySelector<HTMLElement>(
+      `.NAME-fix-aspect[data-layout-id="${pickedLayout?.id}"]`
+    )
+    if (pickedLayoutElement) {
+      const containerRect = container.getBoundingClientRect()
+      const pickedRect = pickedLayoutElement.getBoundingClientRect()
+      const offset =
+        pickedRect.left - containerRect.left - (containerRect.width - pickedRect.width) / 2
+      container.scrollTo({
+        left: container.scrollLeft + offset,
+        behavior: 'smooth',
+      })
+    }
+  }
+
+  useEffect(() => {
+    // scrollToPickedLayout()
+  }, [pickedLayout?.id])
   return (
     <div ref={containerRef} className="w-full relative">
       <div className="w-full flex justify-between pr-2">
@@ -161,20 +173,6 @@ export const LayoutsPicker_Fun = ({ printedImages }: TLayoutsPickerProps) => {
                 layoutMode === 'no-layout' ? 'border-main-cl text-main-cl' : 'text-gray-500'
               }`}
             >
-              {/* <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-circle-x-icon lucide-circle-x text-inherit h-0 w-0 smd:w-4 smd:h-4 5xl:w-12 5xl:h-12"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <path d="m15 9-6 6" />
-                <path d="m9 9 6 6" />
-              </svg> */}
               <p className="5xl:text-[1.3em] 5xl:p-1 5xl:font-bold text-inherit text-[0.7em] mt-1 text-center w-fit font-medium">
                 Custom
               </p>
@@ -188,6 +186,7 @@ export const LayoutsPicker_Fun = ({ printedImages }: TLayoutsPickerProps) => {
             className={`${
               layoutMode !== 'no-layout' && pickedLayout?.id === layout.id ? 'border-main-cl' : ''
             } NAME-fix-aspect 5xl:min-w-24 5xl:min-h-24 5xl:max-w-24 5xl:max-h-24 min-h-16 min-w-16 max-w-16 flex justify-center items-center max-h-16 border border-gray-300 rounded bg-white mobile-touch cursor-pointer transition`}
+            data-layout-id={layout.id}
           >
             <div
               style={layout.layoutContainerConfigs?.style}

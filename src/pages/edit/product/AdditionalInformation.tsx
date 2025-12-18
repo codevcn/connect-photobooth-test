@@ -201,6 +201,17 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
           </span>
         </div>
       </div>
+
+      <div className="smd:order-4 text-center text-xs text-gray-600 order-5 smd:p-3 p-2 bg-white rounded-lg space-y-2 mt-2">
+        <span className="font-bold">Lưu ý:</span> Dịch vụ này được cung cấp và chịu trách nhiệm bởi
+        <span className="font-extrabold -tracking-[1px] mt-1 leading-tight text-main-cl">
+          {' '}
+          Công ty Enc<span className="">ycom</span>{' '}
+        </span>{' '}
+        trên nền tảng ứng dụng chụp ảnh của{' '}
+        <span className=" font-bold whitespace-nowrap text-black">Fun Studio</span>. Bạn nhớ đọc kỹ
+        điều khoản dịch vụ nhé.
+      </div>
     </div>
   )
 }

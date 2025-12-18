@@ -154,6 +154,7 @@ export const useElementControl = (
   }
 
   const [scale, setScale] = useState<TElementVisualBaseState['scale']>(initialZoom)
+  console.log('>>> [uuu] scale:', scale)
   const [angle, setAngle] = useState<TElementVisualBaseState['angle']>(initialAngle)
   const [zindex, setZindex] = useState<TElementVisualBaseState['zindex']>(initialZindex)
   const scaleFactor = useEditAreaStore((s) => s.editAreaScaleValue)

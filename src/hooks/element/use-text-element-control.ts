@@ -100,6 +100,7 @@ export const useTextElementControl = (
 
   const [content, setContent] = useState<TTextVisualState['content']>(initialContent)
   const [fontSize, setFontSize] = useState<TTextVisualState['fontSize']>(initialFontSize)
+  console.log('>>> [uuu] fontSize:', fontSize)
   const [textColor, setTextColor] = useState<TTextVisualState['textColor']>(initialColor)
   const [fontFamily, setFontFamily] = useState<TTextVisualState['fontFamily']>(initialFontFamily)
   const [fontWeight, setFontWeight] = useState<TTextVisualState['fontWeight']>(initialFontWeight)

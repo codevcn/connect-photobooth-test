@@ -220,6 +220,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         gridTemplateRows: 'repeat(3, 1fr)', // 2 hàng thay vì 3
         placeItems: 'center', // Căn giữa các items
         width: 'fit-content',
+        maxWidth: 'fit-content',
       },
     },
   }
@@ -244,6 +245,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         gridTemplateColumns: 'repeat(1, 1fr)',
         gridTemplateRows: 'repeat(1, 1fr)',
         height: 'fit-content',
+        maxHeight: 'fit-content',
         width: '100%',
         aspectRatio: '1 / 1',
       },

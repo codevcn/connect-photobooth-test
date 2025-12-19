@@ -238,7 +238,7 @@ class QRGetter {
     uuid: string,
     onProgress: TGetImageDataProgressCallback,
     imgURL: string
-  ): Promise<TGetCustomerMediaResponse_dev> {
+  ): Promise<TGetCustomerMediaResponse> {
     // let a = await fetch('https://cmsapi-apse.seobuk.kr/v1/etc/seq/resource', {
     //   headers: {
     //     accept: 'application/json, text/plain, */*',
@@ -262,7 +262,7 @@ class QRGetter {
     console.log('>>> [qr] stripped URL:', strippedURL)
     let a = await fetch(`https://api.encycom.com/api/getimg/?u=${strippedURL}`)
     onProgress(50, null, null)
-    return (await a.json()) as TGetCustomerMediaResponse_dev
+    return (await a.json()) as TGetCustomerMediaResponse
 
     // onProgress(50, null, null)
     // return {
@@ -326,8 +326,8 @@ class QRGetter {
       const data = await this.getFileInfo('', onProgress, url)
       console.log('>>> [qr] get file info:', data)
       try {
-        await this.fetchImageData(data.content.fileInfo.picFile.path, onProgress)
-        // await this.fetchImageData(data.data.picFile.path, onProgress)
+        // await this.fetchImageData(data.content.fileInfo.picFile.path, onProgress)
+        await this.fetchImageData(data.data.picFile.path, onProgress)
       } catch (err) {
         console.error('>>> Lỗi lấy dữ liệu hình ảnh tại local:', err)
         onProgress(0, null, err as Error)

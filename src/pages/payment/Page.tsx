@@ -358,7 +358,7 @@ const PaymentPage = () => {
                 </div>
 
                 {/* Order Summary */}
-                <section className="bg-white rounded-2xl shadow-sm p-4 md:p-5 space-y-2 md:sticky md:top-4 mb-2">
+                <section className="bg-white rounded-2xl shadow-sm p-4 md:p-5 space-y-2 md:sticky md:top-4 mb-18">
                   <h3 className="5xl:text-[0.9em] text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">
                     Tổng đơn hàng
                   </h3>

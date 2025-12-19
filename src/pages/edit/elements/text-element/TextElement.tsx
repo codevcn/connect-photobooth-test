@@ -153,6 +153,7 @@ export const TextElement = ({
   }, [isSelected, content, id, scaleFactor, scale])
 
   useEffect(() => {
+    updateInteractiveButtonsVisual()
     eventEmitter.on(EInternalEvents.SUBMIT_TEXT_ELE_PROPS, listenSubmitEleProps)
     return () => {
       eventEmitter.off(EInternalEvents.SUBMIT_TEXT_ELE_PROPS, listenSubmitEleProps)

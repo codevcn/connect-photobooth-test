@@ -126,7 +126,7 @@ const StickersModal = ({ onClose }: TStickersModalProps) => {
             index: createInitialConstants<number>('ELEMENT_ZINDEX'),
           },
         ])
-        // useEditedElementStore.getState().selectElement(elementId, 'sticker', path)
+        useEditedElementStore.getState().selectElement(elementId, 'sticker', path)
         onClose()
       },
       (error) => {}

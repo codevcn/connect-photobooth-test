@@ -314,7 +314,7 @@ export const PrintedImageElementMenuForDesktop = ({
   return createPortal(
     <div
       ref={popoverRef}
-      className="NAME-menu-section NAME-menu-printed-image-element STYLE-hide-scrollbar smd:block hidden fixed z-100 bg-white border-2 border-main-cl rounded-lg shadow-xl"
+      className="NAME-menu-section NAME-menu-printed-image-element STYLE-hide-scrollbar smd:block hidden select-none fixed z-100 bg-white border-2 border-main-cl rounded-lg shadow-xl"
       style={{
         top: `${popoverPosition.top}px`,
         left: `${popoverPosition.left}px`,

@@ -361,7 +361,6 @@ export function measureTextBlock(
     width: div.offsetWidth,
     height: div.offsetHeight,
   }
-  console.log('>>> [mmm] fontsize:', { fontSize, box })
 
   div.remove()
   return box

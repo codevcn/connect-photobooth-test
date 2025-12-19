@@ -128,6 +128,7 @@ export const PrintedImageElement = ({
   }, [isSelected, id, scaleFactor, scale])
 
   useEffect(() => {
+    updateInteractiveButtonsVisual()
     eventEmitter.on(EInternalEvents.SUBMIT_PRINTED_IMAGE_ELE_PROPS, listenSubmitEleProps)
     return () => {
       eventEmitter.off(EInternalEvents.SUBMIT_PRINTED_IMAGE_ELE_PROPS, listenSubmitEleProps)

@@ -59,7 +59,7 @@ const EditorModal = ({ onClose }: TEditorModalProps) => {
           index: createInitialConstants<number>('ELEMENT_ZINDEX'),
         },
       ])
-      // useEditedElementStore.getState().selectElement(elementId, 'text')
+      useEditedElementStore.getState().selectElement(elementId, 'text')
       setText('')
       onClose()
     }

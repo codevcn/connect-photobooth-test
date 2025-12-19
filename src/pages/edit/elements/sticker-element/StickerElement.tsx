@@ -140,6 +140,7 @@ export const StickerElement = ({
   }, [isSelected, id, scaleFactor, scale])
 
   useEffect(() => {
+    updateInteractiveButtonsVisual()
     eventEmitter.on(EInternalEvents.SUBMIT_STICKER_ELE_PROPS, listenSubmitEleProps)
     return () => {
       eventEmitter.off(EInternalEvents.SUBMIT_STICKER_ELE_PROPS, listenSubmitEleProps)

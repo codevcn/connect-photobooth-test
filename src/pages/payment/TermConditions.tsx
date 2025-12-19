@@ -1,10 +1,8 @@
 type TTermConditionsProps = {
-  userAccepted: boolean
-  onAccepted: (accepted: boolean) => void
   closeModal: () => void
 }
 
-export const TermConditions = ({ userAccepted, onAccepted, closeModal }: TTermConditionsProps) => {
+export const TermConditions = ({ closeModal }: TTermConditionsProps) => {
   return (
     <div
       id="termsModal"
@@ -44,9 +42,9 @@ export const TermConditions = ({ userAccepted, onAccepted, closeModal }: TTermCo
                 strokeWidth={3}
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
@@ -112,9 +110,9 @@ export const TermConditions = ({ userAccepted, onAccepted, closeModal }: TTermCo
                     viewBox="0 0 24 24"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       d="M5 13l4 4L19 7"
                     ></path>
                   </svg>
@@ -132,9 +130,9 @@ export const TermConditions = ({ userAccepted, onAccepted, closeModal }: TTermCo
                     viewBox="0 0 24 24"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       d="M5 13l4 4L19 7"
                     ></path>
                   </svg>
@@ -152,9 +150,9 @@ export const TermConditions = ({ userAccepted, onAccepted, closeModal }: TTermCo
                     viewBox="0 0 24 24"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       d="M5 13l4 4L19 7"
                     ></path>
                   </svg>
@@ -304,27 +302,6 @@ export const TermConditions = ({ userAccepted, onAccepted, closeModal }: TTermCo
             {/* <!-- Lời kết --> */}
             <div className="mt-8 text-center text-xs text-gray-600 border-t pt-4">
               Cập nhật lần cuối: Tháng 10/2025 | Bản quyền © ENCYCOM
-            </div>
-          </div>
-
-          {/* <!-- FOOTER: Checkbox đồng ý điều khoản --> */}
-          <div className="bg-white px-6 py-4 border-t shadow-[0_0_4px_rgba(0,0,0,0.5)] border-gray-200 sticky bottom-0 z-10">
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                id="termsCheckbox"
-                checked={userAccepted}
-                onChange={(e) => {
-                  onAccepted(e.target.checked)
-                }}
-                className="w-5 h-5 text-main-cl bg-gray-100 border-gray-300 rounded focus:ring-main-cl focus:ring-2 cursor-pointer"
-              />
-              <label
-                htmlFor="termsCheckbox"
-                className="text-sm font-medium text-gray-700 cursor-pointer select-none"
-              >
-                Tôi đồng ý với điều khoản và điều kiện sử dụng dịch vụ
-              </label>
             </div>
           </div>
         </div>

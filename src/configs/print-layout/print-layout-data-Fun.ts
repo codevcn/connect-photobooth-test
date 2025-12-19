@@ -14,7 +14,8 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 1,
         containerHeight: 1,
         style: {
-          gridColumn: 'span 1',
+          height: '100%',
+          width: '100%',
         },
       },
     ],
@@ -23,9 +24,8 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         display: 'grid',
         gridTemplateColumns: 'repeat(1, 1fr)',
         gridTemplateRows: 'repeat(1, 1fr)',
-        height: 'fit-content',
+        height: '100%',
         width: '100%',
-        aspectRatio: '1 / 1',
       },
     },
   }
@@ -40,8 +40,8 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 1,
         containerHeight: 0.5,
         style: {
-          aspectRatio: '1 / 1',
           height: '100%',
+          width: '100%',
         },
       },
       {
@@ -49,8 +49,8 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 1,
         containerHeight: 0.5,
         style: {
-          aspectRatio: '1 / 1',
           height: '100%',
+          width: '100%',
         },
       },
     ],
@@ -60,6 +60,8 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         gridTemplateColumns: 'repeat(1, 1fr)',
         gridTemplateRows: 'repeat(2, 1fr)',
         placeItems: 'center',
+        height: '100%',
+        width: '100%',
       },
     },
   }
@@ -74,7 +76,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 0.5,
         containerHeight: 1,
         style: {
-          aspectRatio: '1 / 1',
+          height: '100%',
           width: '100%',
         },
       },
@@ -83,7 +85,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 0.5,
         containerHeight: 1,
         style: {
-          aspectRatio: '1 / 1',
+          height: '100%',
           width: '100%',
         },
       },
@@ -94,6 +96,8 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         gridTemplateColumns: 'repeat(2, 1fr)',
         gridTemplateRows: 'repeat(1, 1fr)',
         placeItems: 'center',
+        height: '100%',
+        width: '100%',
       },
     },
   }
@@ -108,7 +112,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 0.5,
         containerHeight: 0.5,
         style: {
-          aspectRatio: '1 / 1',
+          height: '100%',
           width: '100%',
         },
       },
@@ -117,7 +121,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 0.5,
         containerHeight: 0.5,
         style: {
-          aspectRatio: '1 / 1',
+          height: '100%',
           width: '100%',
         },
       },
@@ -126,7 +130,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 0.5,
         containerHeight: 0.5,
         style: {
-          aspectRatio: '1 / 1',
+          height: '100%',
           width: '100%',
         },
       },
@@ -135,7 +139,7 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 0.5,
         containerHeight: 0.5,
         style: {
-          aspectRatio: '1 / 1',
+          height: '100%',
           width: '100%',
         },
       },
@@ -145,10 +149,9 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         display: 'grid',
         gridTemplateColumns: 'repeat(2, 1fr)',
         gridTemplateRows: 'repeat(2, 1fr)',
-        width: '100%',
-        maxHeight: '100%',
-        height: 'auto',
         aspectRatio: '1 / 1',
+        height: '100%',
+        width: '100%',
       },
     },
   }
@@ -163,8 +166,8 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 0.333,
         containerHeight: 0.5,
         style: {
-          aspectRatio: '1 / 1',
           height: '100%',
+          width: '100%',
         },
       },
       {
@@ -172,8 +175,8 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 0.333,
         containerHeight: 0.5,
         style: {
-          aspectRatio: '1 / 1',
           height: '100%',
+          width: '100%',
         },
       },
       {
@@ -181,8 +184,8 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 0.333,
         containerHeight: 0.5,
         style: {
-          aspectRatio: '1 / 1',
           height: '100%',
+          width: '100%',
         },
       },
       {
@@ -190,8 +193,8 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 0.333,
         containerHeight: 0.5,
         style: {
-          aspectRatio: '1 / 1',
           height: '100%',
+          width: '100%',
         },
       },
       {
@@ -199,8 +202,8 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 0.333,
         containerHeight: 0.5,
         style: {
-          aspectRatio: '1 / 1',
           height: '100%',
+          width: '100%',
         },
       },
       {
@@ -208,8 +211,8 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 0.333,
         containerHeight: 0.5,
         style: {
-          aspectRatio: '1 / 1',
           height: '100%',
+          width: '100%',
         },
       },
     ],
@@ -219,8 +222,8 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         gridTemplateColumns: 'repeat(2, 1fr)', // 3 cột thay vì 2
         gridTemplateRows: 'repeat(3, 1fr)', // 2 hàng thay vì 3
         placeItems: 'center', // Căn giữa các items
-        width: 'fit-content',
-        maxWidth: 'fit-content',
+        height: '100%',
+        width: '100%',
       },
     },
   }
@@ -235,7 +238,8 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         containerWidth: 1,
         containerHeight: 1,
         style: {
-          gridColumn: 'span 1',
+          height: '100%',
+          width: '100%',
         },
       },
     ],
@@ -244,10 +248,8 @@ export function hardCodedLayoutData(layoutType?: TLayoutType): TPrintLayout[] {
         display: 'grid',
         gridTemplateColumns: 'repeat(1, 1fr)',
         gridTemplateRows: 'repeat(1, 1fr)',
-        height: 'fit-content',
-        maxHeight: 'fit-content',
+        height: '100%',
         width: '100%',
-        aspectRatio: '1 / 1',
       },
     },
   }

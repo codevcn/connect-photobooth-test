@@ -25,9 +25,6 @@ export const SlotsDisplayer = ({ layout, scrollable = true }: TFramesDisplayerPr
       <div
         style={{
           ...(layoutContainerConfigs.style || {}),
-          ...(layout.layoutType === 'full'
-            ? { aspectRatio: 'auto', height: '100%', width: '100%' }
-            : {}),
         }}
         data-layout-type={layout.layoutType}
         className={`NAME-slots-displayer p-0.5 h-full w-full`}

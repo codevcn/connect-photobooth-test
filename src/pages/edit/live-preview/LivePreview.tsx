@@ -146,18 +146,44 @@ export const LivePreview = ({
     zoomEditAreaController.reset()
   }
 
-  const fitLayoutSlots = () => {
-    for (const displayer of allowedPrintAreaRef.current?.querySelectorAll<HTMLElement>(
-      '.NAME-slots-displayer[data-layout-type="6-square"]'
-    ) || []) {
-      const slots = displayer.querySelectorAll<HTMLElement>('.NAME-layout-slot')
-      let totalWidth = 0
-      for (const slot of Array.from(slots).slice(0, 2)) {
-        const slotRect = slot.getBoundingClientRect()
-        totalWidth += slotRect.width
-      }
-      displayer.style.width = `${totalWidth + 4}px` // +4 cho p-0.5
+  const unFitLayoutSlots = () => {
+    const displayer =
+      allowedPrintAreaRef.current?.querySelector<HTMLElement>('.NAME-slots-displayer')
+    if (!displayer) return
+    displayer.style.height = '100%'
+    displayer.style.width = '100%'
+    for (const slot of displayer.querySelectorAll<HTMLElement>('.NAME-layout-slot') || []) {
+      slot.style.width = '100%'
+      slot.style.height = '100%'
     }
+  }
+
+  const fitLayoutSlots = () => {
+    const displayer =
+      allowedPrintAreaRef.current?.querySelector<HTMLElement>('.NAME-slots-displayer')
+    if (!displayer) return
+    if (displayer.getAttribute('data-layout-type') === 'full') return
+    for (const slot of displayer.querySelectorAll<HTMLElement>('.NAME-layout-slot') || []) {
+      const { height, width } = slot.getBoundingClientRect()
+      let newHeight = height
+      let newWidth = width
+      if (newHeight > newWidth) {
+        newHeight = newWidth
+      } else {
+        newWidth = newHeight
+      }
+      slot.style.height = `${newHeight}px`
+      slot.style.width = `${newWidth}px`
+    }
+    displayer.style.height = 'fit-content'
+    displayer.style.width = 'fit-content'
+  }
+
+  const handleFitUnFitLayoutSlots = () => {
+    unFitLayoutSlots()
+    requestAnimationFrame(() => {
+      fitLayoutSlots()
+    })
   }
 
   const handlePrintAreaUpdated = () => {
@@ -181,7 +207,7 @@ export const LivePreview = ({
       } else {
         useProductUIDataStore.getState().resetAllowedPrintedAreaChangeId()
       }
-      fitLayoutSlots()
+      handleFitUnFitLayoutSlots()
     }, 0)
   }
 
@@ -250,17 +276,18 @@ export const LivePreview = ({
 
   useEffect(() => {
     if (!pickedLayout || pickedProduct.id !== prevProductIdRef.current) return
+    handleFitUnFitLayoutSlots()
     // Lưu layout id để kiểm tra sau khi RAF hoàn thành
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        // Lấy giá trị mới nhất từ store để tránh closure stale
-        const currentLayout = useLayoutStore.getState().pickedLayout
-        // Chỉ thực hiện nếu layout vẫn còn là layout đã trigger effect này
-        if (currentLayout) {
-          // handlePutPrintedImagesInLayout(currentLayout, allowedPrintAreaRef.current!)
-        }
-      })
-    })
+    // requestAnimationFrame(() => {
+    //   requestAnimationFrame(() => {
+    //     // Lấy giá trị mới nhất từ store để tránh closure stale
+    //     const currentLayout = useLayoutStore.getState().pickedLayout
+    //     // Chỉ thực hiện nếu layout vẫn còn là layout đã trigger effect này
+    //     if (currentLayout) {
+    //       handlePutPrintedImagesInLayout(currentLayout, allowedPrintAreaRef.current!)
+    //     }
+    //   })
+    // })
   }, [pickedLayout?.id, pickedProduct.id])
 
   return (

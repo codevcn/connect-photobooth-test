@@ -64,7 +64,7 @@ export const Actions = () => {
     // ) {
     //   return toast.error('Chỉnh sửa vượt ra ngoài vùng in cho phép. Vui lòng điều chỉnh lại.')
     // }
-    if (!checkIfValidToCart()) return
+    if (!checkIfValidToCart('mockup-preview')) return
     setShowMockupPreview(true)
   }
 

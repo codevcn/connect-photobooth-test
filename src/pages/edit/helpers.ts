@@ -466,8 +466,6 @@ export const handlePutPrintedImagesInLayout = (
   layout: TPrintLayout,
   allowedPrintArea: HTMLElement
 ) => {
-  console.log('>>> [uuu] inputs:', { layout, allowedPrintArea })
-  console.trace('[uuu] trace:')
   const printedImages = reAssignElementsByLayoutData(
     structuredClone(layout),
     allowedPrintArea,
@@ -488,15 +486,23 @@ export const handlePutPrintedImagesInLayout = (
   )
 }
 
-export const checkIfValidToCart = () => {
+export const checkIfValidToCart = (type: 'mockup-preview' | 'add-to-cart') => {
   const layoutMode = useLayoutStore.getState().layoutMode
   if (layoutMode === 'with-layout') {
+    const displayer = document.body.querySelector<HTMLElement>(
+      '.NAME-print-area-container .NAME-slots-displayer'
+    )
+    if (!displayer) return false
     if (
-      document.body.querySelector<HTMLElement>(
+      displayer.querySelector<HTMLElement>(
         '.NAME-print-area-container .NAME-add-printed-image-to-slot'
       )
     ) {
-      toast.error('Vui lòng thêm hình vào tất cả các khung trước khi xem trước mockup.')
+      toast.error(
+        type === 'mockup-preview'
+          ? 'Vui lòng thêm hình vào tất cả các khung trước khi xem trước bản mockup.'
+          : 'Vui lòng thêm hình vào tất cả các khung trước khi thêm vào giỏ hàng.'
+      )
       return false
     }
   }

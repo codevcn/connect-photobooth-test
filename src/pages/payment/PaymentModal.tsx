@@ -22,15 +22,12 @@ interface PaymentModalProps {
 }
 
 export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModalProps) => {
-  const queryFilter = useQueryFilter()
   const [paymentMethod, setPaymentMethod] = useState<TPaymentType>('bank-transfer')
   const [confirming, setConfirming] = useState<boolean>(false)
   const [confirmingMessage, setConfirmingMessage] = useState<string>('Đang xử lý...')
   const [endOfPayment, setEndOfPayment] = useState<TEndOfPaymentData>()
   const formRef = useRef<HTMLFormElement>(null)
   const [errors, setErrors] = useState<TFormErrors>({})
-  const [showTermsModal, setShowTermsModal] = useState<boolean>(false)
-  const [userAcceptedTerms, setUserAcceptedTerms] = useState<boolean>(false)
 
   const validateForm = (formEle: HTMLFormElement) => {
     let isValid: boolean = true
@@ -73,41 +70,12 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
     setEndOfPayment(undefined)
   }
 
-  const openTermsModal = () => {
-    setShowTermsModal(true)
-  }
-
-  const closeTermsModal = () => {
-    setShowTermsModal(false)
-  }
-
-  const handleTermsAccepted = (accepted: boolean) => {
-    setUserAcceptedTerms(accepted)
-    if (accepted) {
-      // Close terms modal and proceed with payment
-      closeTermsModal()
-      processPayment()
-    }
-  }
-
-  const handleConfirmPayment = () => {
-    console.log('>>> [100] 100')
-    const form = formRef.current
-    if (!form) return
-    console.log('>>> [100] 103')
-    // Validate form
-    if (!validateForm(form)) {
-      toast.error('Vui lòng kiểm tra lại thông tin giao hàng')
-      return
-    }
-    console.log('>>> [100] 109')
-    // Show terms modal for user to accept
-    openTermsModal()
-  }
-
   const processPayment = async () => {
     const form = formRef.current
     if (!form) return
+
+    const isValid = validateForm(form)
+    if (!isValid) return
 
     // Get form data
     const formData = new FormData(form)
@@ -276,7 +244,7 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
           {/* Action Buttons */}
           <div className="space-y-3 pt-2">
             <button
-              onClick={handleConfirmPayment}
+              onClick={processPayment}
               className="5xl:text-[0.9em] md:text-lg text-base flex items-center justify-center gap-2 w-full h-[45px] bg-main-cl text-white font-bold rounded-lg shadow-lg active:scale-90 transition"
             >
               <span>Xác nhận thanh toán</span>
@@ -305,13 +273,6 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: PaymentModa
           <EndOfPayment data={endOfPayment} resetEndOfPaymentData={resetEndOfPaymentData} />
         )}
       </div>
-      {queryFilter.funId && showTermsModal && (
-        <TermConditions
-          userAccepted={userAcceptedTerms}
-          onAccepted={handleTermsAccepted}
-          closeModal={closeTermsModal}
-        />
-      )}
     </div>
   )
 }

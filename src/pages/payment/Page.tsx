@@ -21,6 +21,7 @@ import { useQueryFilter } from '@/hooks/extensions'
 import { useKeyboardStore } from '@/stores/keyboard/keyboard.store'
 import { useUserDataStore } from '@/stores/ui/user-data.store'
 import { AppNavigator } from '@/utils/navigator'
+import { TermConditions } from './TermConditions'
 
 interface IPaymentModalProps {
   imgSrc?: string
@@ -73,6 +74,8 @@ const PaymentPage = () => {
   const [selectedImage, setSelectedImage] = useState<string>()
   const products = useProductStore((s) => s.products)
   const queryFilter = useQueryFilter()
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
+  const [showTermsModal, setShowTermsModal] = useState<boolean>(false)
 
   // Hàm tính subtotal (tổng tiền trước giảm giá voucher)
   const calculateSubtotal = (): number => {
@@ -282,6 +285,10 @@ const PaymentPage = () => {
     }
   }, [])
 
+  const handleTickTerms = () => {
+    setAcceptedTerms((pre) => !pre)
+  }
+
   return (
     <div className="5xl:text-3xl h-screen bg-gray-100">
       {/* Header */}
@@ -384,8 +391,41 @@ const PaymentPage = () => {
                     </div>
                   </div>
 
+                  {queryFilter.funId && (
+                    <div className="flex gap-2 w-full text-sm text-gray-600 mt-4">
+                      <input
+                        type="checkbox"
+                        id="terms-and-conditions"
+                        checked={acceptedTerms}
+                        onChange={handleTickTerms}
+                        className="text-main-cl border border-main-cl h-5 w-5 rounded"
+                      />
+                      <div>
+                        <span>Tôi đồng ý với </span>
+                        <span
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            setShowTermsModal(true)
+                          }}
+                          className="text-main-cl underline cursor-pointer"
+                        >
+                          điều khoản và chính sách dịch vụ
+                        </span>
+                        <span>.</span>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Checkout Button - Desktop (in summary) */}
-                  <div className="hidden md:block mt-3 md:mt-4">
+                  <div
+                    style={{
+                      opacity: acceptedTerms ? 1 : 0.5,
+                      pointerEvents: acceptedTerms ? 'auto' : 'none',
+                      cursor: acceptedTerms ? 'pointer' : 'not-allowed',
+                    }}
+                    className="hidden md:block mt-3 md:mt-4"
+                  >
                     <button
                       onClick={() => {
                         setShowModal(true)
@@ -519,6 +559,9 @@ const PaymentPage = () => {
       {createPortal(
         <ProductImageModal imgSrc={selectedImage} onClose={handleCloseProductImageModal} />,
         document.body
+      )}
+      {queryFilter.funId && showTermsModal && (
+        <TermConditions closeModal={() => setShowTermsModal(false)} />
       )}
     </div>
   )

@@ -157,7 +157,7 @@ export const AddToCartHandler = ({
   }
 
   const listenAddToCart = () => {
-    if (!checkIfValidToCart()) return
+    if (!checkIfValidToCart('add-to-cart')) return
     useProductUIDataStore.getState().setIsAddingToCart(true)
     useEditedElementStore.getState().cancelSelectingElement()
     // Thu thập visual states của tất cả elements

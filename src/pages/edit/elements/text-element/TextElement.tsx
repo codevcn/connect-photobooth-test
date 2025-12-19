@@ -194,6 +194,7 @@ export const TextElement = ({
           clippath: clipPolygon || undefined,
           height,
           width,
+          fontSize,
         })
       )}
       data-persist-position={JSON.stringify(

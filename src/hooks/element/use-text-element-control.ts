@@ -5,6 +5,7 @@ import { TElementMountType, TTextVisualState } from '@/utils/types/global'
 import { useEditAreaStore } from '@/stores/ui/edit-area.store'
 import { calculateElementClipPolygon } from '@/pages/edit/elements/clip-element-helper'
 import { useEditedElementStore } from '@/stores/element/element.store'
+import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 
 type TInitialTextParams = Partial<
   TTextVisualState & {
@@ -97,6 +98,7 @@ export const useTextElementControl = (
   const [textColor, setTextColor] = useState<TTextVisualState['textColor']>(initialColor)
   const [fontFamily, setFontFamily] = useState<TTextVisualState['fontFamily']>(initialFontFamily)
   const [fontWeight, setFontWeight] = useState<TTextVisualState['fontWeight']>(initialFontWeight)
+  const allowedPrintedAreaChangeId = useProductUIDataStore((s) => s.allowedPrintedAreaChangeId)
 
   const validateInputValueAndSet = (
     value: string | number,
@@ -182,6 +184,17 @@ export const useTextElementControl = (
     elementRootRef.current?.style.setProperty('width', 'auto')
     updateClipPolygon()
   }, [content])
+
+  useEffect(() => {
+    // eventEmitter.on(EInternalEvents.EDITED_PRINT_AREA_CHANGED, stayElementVisualOnAllowedPrintArea)
+    // return () => {
+    //   eventEmitter.off(
+    //     EInternalEvents.EDITED_PRINT_AREA_CHANGED,
+    //     stayElementVisualOnAllowedPrintArea
+    //   )
+    // }
+    if (allowedPrintedAreaChangeId) updateClipPolygon()
+  }, [allowedPrintedAreaChangeId, scaleFactor])
 
   useEffect(() => {
     updateClipPolygon()

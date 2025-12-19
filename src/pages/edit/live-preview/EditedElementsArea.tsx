@@ -4,9 +4,6 @@ import { TextElement } from '../elements/text-element/TextElement'
 import { useElementLayerStore } from '@/stores/ui/element-layer.store'
 import { useSearchParams } from 'react-router-dom'
 import { PrintedImageElement } from '../elements/printed-image/PrintedImageElement'
-import { createPortal } from 'react-dom'
-import { TSelectedElement } from '@/utils/types/global'
-import { useState } from 'react'
 
 type TEditedElementsAreaProps = {
   allowedPrintAreaRef: React.RefObject<HTMLDivElement | null>
@@ -25,6 +22,7 @@ export const EditedElementsArea = ({
   const selectedElement = useEditedElementStore((s) => s.selectedElement)
   const selectElement = useEditedElementStore((s) => s.selectElement)
   const mockupId = useSearchParams()[0].get('mockupId')
+  console.log('>>> [reto] all eles:', { stickerElements, textElements, printedImages })
 
   return (
     <>

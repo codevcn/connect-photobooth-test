@@ -37,7 +37,7 @@ export const AddImageIcon = ({ styles, classNames, slotsCount }: TAddImageIconPr
         <path d="M12 5v14" />
       </svg>
       <span
-        className={`${
+        className={`select-none ${
           slotsCount < 3
             ? slotsCount < 2
               ? '5xl:text-lg text-[10px]'

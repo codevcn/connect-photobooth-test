@@ -5,6 +5,7 @@ import { Modal } from '@/components/custom/common/Modal'
 import { useEffect, useMemo, useState } from 'react'
 import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 import { CustomScrollbar } from '@/components/custom/CustomScrollbar'
+import { ProductColors } from './ProductColors'
 
 type TProductImagePreviewProps = {
   imageURL: string
@@ -390,106 +391,12 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
         </div>
       )}
 
-      {/* Color Section */}
-      {colorsCount > 0 && Object.keys(mergedAttributes.uniqueColors)[0] !== 'null' && (
-        <div className="NAME-color-variant-section mb-4">
-          <h3 className="5xl:text-[0.5em] text-sm text-slate-800 font-bold mb-2">
-            <span>{mergedAttributes.uniqueColorTitles[0]}</span>
-            <span className="5xl:text-[0.9em] text-xs"> ({selectedAttributes.color})</span>
-          </h3>
-          <CustomScrollbar
-            showScrollbar={colorsCount > 0}
-            dataToRerender={colorsCount}
-            classNames={{
-              container:
-                '5xl:text-[0.4em] smd:text-base text-sm font-bold py-2 w-full overflow-x-hidden',
-              content: '5xl:gap-6 flex flex-nowrap gap-3 overflow-x-auto no-scrollbar p-1 pb-2',
-            }}
-          >
-            {Object.keys(mergedAttributes.uniqueColors).map((color) => {
-              const isSelected = selectedAttributes.color === color
-              const material = selectedAttributes.material ?? 'null'
-              const scent = selectedAttributes.scent ?? 'null'
-              const isDisabled = !mergedAttributes.groups?.[material]?.[scent]?.[color]
-              if (mergedAttributes.uniqueColors[color]) {
-                // Case 1: Display color swatch with hex
-                return (
-                  <button
-                    key={color}
-                    onClick={() => pickColor(isDisabled, color)}
-                    disabled={isDisabled}
-                    className={`5xl:py-2 flex flex-col items-center rounded-full focus:outline-none transition active:scale-90 ${
-                      isDisabled ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
-                    title={color}
-                  >
-                    <div
-                      style={{ backgroundColor: mergedAttributes.uniqueColors[color] }}
-                      className={`${
-                        isDisabled
-                          ? 'ring-1 ring-gray-300 ring-offset-2 grayscale'
-                          : isSelected
-                          ? 'ring-2 ring-main-cl ring-offset-2 shadow-lg'
-                          : 'ring-1 ring-gray-300 ring-offset-2 hover:ring-secondary-cl hover:shadow-md'
-                      } 5xl:h-14 5xl:w-14 h-10 w-10 rounded-full`}
-                    >
-                      {isSelected && !isDisabled && (
-                        <div className="w-full h-full rounded-full flex items-center justify-center">
-                          <svg
-                            className="w-5 h-5 drop-shadow-lg"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                            strokeWidth="3"
-                            style={{
-                              color:
-                                getContrastColor(mergedAttributes.uniqueColors[color]) || '#000',
-                            }}
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </div>
-                      )}
-                    </div>
-                    {/* <div
-                      className={`rounded-md py-0.5 px-1.5 mt-2 inline-block w-max ${
-                        isDisabled ? 'grayscale' : ''
-                      }`}
-                      style={{
-                        backgroundColor: mergedAttributes.uniqueColors[color],
-                        color: getContrastColor(mergedAttributes.uniqueColors[color]) || '#000',
-                      }}
-                    >
-                      {color}
-                    </div> */}
-                  </button>
-                )
-              } else {
-                // Case 2: Display as label (no hex)
-                return (
-                  <button
-                    key={color}
-                    onClick={() => pickColor(isDisabled, color)}
-                    disabled={isDisabled}
-                    className={`5xl:py-2 px-2 py-1 font-bold rounded-lg transition-all mobile-touch ${
-                      isDisabled
-                        ? 'bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
-                        : isSelected
-                        ? 'bg-main-cl border-2 border-main-cl text-white shadow-md'
-                        : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
-                    }`}
-                  >
-                    {color}
-                  </button>
-                )
-              }
-            })}
-          </CustomScrollbar>
-        </div>
-      )}
+      <ProductColors
+        colorsCount={colorsCount}
+        mergedAttributes={mergedAttributes}
+        selectedAttributes={selectedAttributes}
+        pickColor={pickColor}
+      />
 
       {/* Size Section */}
       {sortedSizes.length > 0 && sortedSizes[0] !== 'null' && (

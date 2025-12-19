@@ -38,7 +38,7 @@ import PaymentPage from './pages/payment/Page'
 import { usePrintedImageStore } from './stores/printed-image/printed-image.store'
 import MaintainPage from './pages/maintain/Page'
 import { AppTempContainer } from './components/custom/TempContainer'
-import { Dev } from './dev/pages/Dev'
+import SwipeKeyboard from './dev/pages/Dev'
 import { GlobalKeyboardProvider } from './providers/GlobalKeyboardProvider'
 import { useQueryFilter } from './hooks/extensions'
 import { UserIdleTracker } from './components/custom/IdleWarningModal'
@@ -106,7 +106,7 @@ function AppRoutes() {
         <Routes>
           <Route path="/" element={<EditPageDev />} />
           <Route path="/payment" element={<PaymentPage />} />
-          <Route path="/dev" element={<Dev />} />
+          <Route path="/dev" element={<SwipeKeyboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <GlobalKeyboardProvider />

@@ -11,15 +11,15 @@ export default defineConfig({
     },
   },
   server: {
-    host: true, // Cho phép truy cập từ các thiết bị khác trong mạng
+    host: '0.0.0.0', // Cho phép truy cập từ các thiết bị khác trong mạng
     port: 3000, // Cổng mặc định, có thể đổi nếu cần
     strictPort: true, // Nếu port bị chiếm, không tự động đổi
     hmr: {
-      protocol: 'ws',
-      host: 'bs-local.com',
-      port: 3000,
-      clientPort: 3000,
+      protocol: 'wss',
+      clientPort: 443,
+      host: 'localhost',
     },
+    allowedHosts: true, // Cho phép tất cả hosts
   },
   build: {
     outDir: 'dist',

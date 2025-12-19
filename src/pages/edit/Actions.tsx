@@ -11,13 +11,33 @@ import { TextEditor } from './elements/text-element/TextEditor'
 import { checkIfValidToCart, recordMockupNote } from './helpers'
 import { toast } from 'react-toastify'
 import { AppNavigator } from '@/utils/navigator'
+import { useVisualStatesCollector } from '@/hooks/use-visual-states-collector'
+import { useEditedElementStore } from '@/stores/element/element.store'
 
 export const Actions = () => {
   const cartCount = useProductUIDataStore((s) => s.cartCount)
   const navigate = useNavigate()
   const [showMockupPreview, setShowMockupPreview] = useState(false)
   const pickedSurface = useProductUIDataStore((s) => s.pickedSurface)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const { collectMockupVisualStates } = useVisualStatesCollector()
+
+  const saveEditngDataToStore = () => {
+    const { stickers, printedImages, texts } = collectMockupVisualStates()
+    const {
+      saveEditedPrintedImageElementsState,
+      saveEditedStickerElementsState,
+      saveEditedTextElementsState,
+    } = useEditedElementStore.getState()
+    if (stickers && stickers.length > 0) {
+      saveEditedStickerElementsState(stickers)
+    }
+    if (texts && texts.length > 0) {
+      saveEditedTextElementsState(texts)
+    }
+    if (printedImages && printedImages.length > 0) {
+      saveEditedPrintedImageElementsState(printedImages)
+    }
+  }
 
   const addToCart = () => {
     eventEmitter.emit(EInternalEvents.ADD_TO_CART)
@@ -32,6 +52,7 @@ export const Actions = () => {
   }
 
   const beforeNavigateToPaymentHandler = () => {
+    saveEditngDataToStore()
     recordMockupNote()
     AppNavigator.navTo(navigate, '/payment')
   }

@@ -60,6 +60,9 @@ type TUseElementStore = {
     productId: TBaseProduct['id'],
     elementVisualState: Omit<TSavedElementVisualState, 'productId'>
   ) => void
+  saveEditedStickerElementsState: (elements: TStickerVisualState[]) => void
+  saveEditedTextElementsState: (elements: TTextVisualState[]) => void
+  saveEditedPrintedImageElementsState: (elements: TPrintedImageVisualState[]) => void
 }
 
 export const useEditedElementStore = create<TUseElementStore>((set, get) => ({
@@ -71,6 +74,17 @@ export const useEditedElementStore = create<TUseElementStore>((set, get) => ({
   savedElementsVisualStates: [],
   clippedElements: {},
 
+  saveEditedPrintedImageElementsState: (elements) => {
+    set({
+      printedImages: elements,
+    })
+  },
+  saveEditedStickerElementsState: (elements) => {
+    set({ stickerElements: elements })
+  },
+  saveEditedTextElementsState: (elements) => {
+    set({ textElements: elements })
+  },
   setElementInClipList: (elementId, polygon) => {
     const { clippedElements } = get()
     set({

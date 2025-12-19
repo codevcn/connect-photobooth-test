@@ -255,13 +255,14 @@ export type TStoredTemplate = TPrintTemplate
 
 export type TPrintLayoutVisualState = TPrintLayout
 
-export type TElementsVisualState = Partial<{
+export type TElementsVisualState = {
+  layoutMode: TLayoutMode
+} & Partial<{
   stickers: TStickerVisualState[]
   storedTemplates: TStoredTemplate[]
   texts: TTextVisualState[]
   printedImages: TPrintedImageVisualState[]
   storedLayouts: TPrintLayoutVisualState[]
-  layoutMode: TLayoutMode
 }>
 
 export type TMockupImageData = {

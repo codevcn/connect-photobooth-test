@@ -66,15 +66,6 @@ export const AddToCartHandler = ({
   ) => {
     console.log('>>> [add] handle add to cart:', { sessionId })
     if (!sessionId) return
-    // if (
-    //   printAreaContainerRef.current?.querySelector<HTMLElement>(
-    //     '.NAME-print-area-allowed[data-is-out-of-bounds="true"]'
-    //   )
-    // ) {
-    //   return onError(
-    //     new Error('Vui lòng đảm bảo tất cả phần tử nằm trong vùng in trước khi thêm vào giỏ hàng')
-    //   )
-    // }
     const [message, pickedVariant, pickedProduct, pickedSurface] = validateBeforeAddToCart()
     if (message) {
       return onError(new Error(message))
@@ -86,12 +77,13 @@ export const AddToCartHandler = ({
       return onError(new Error('Không tìm thấy khu vực in trên sản phẩm'))
     }
     const imgMimeType: TImgMimeType = 'image/png'
+    let renderScale: number = 8
     saveHtmlAsImageWithDesiredSize(
       printAreaContainer,
       transparentPrintAreaContainer,
       pickedSurface.area.widthRealPx,
       pickedSurface.area.heightRealPx,
-      8,
+      renderScale,
       imgMimeType,
       (fullContainerImageData, allowedPrintAreaImageData, allowedPrintAreaCanvas) => {
         const dataURL = URL.createObjectURL(fullContainerImageData)

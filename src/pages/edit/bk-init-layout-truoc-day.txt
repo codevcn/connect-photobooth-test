@@ -1,0 +1,55 @@
+import {
+  TBaseProduct,
+  TClientProductVariant,
+  TPrintAreaInfo,
+  TPrintedImage,
+} from '@/utils/types/global'
+import { PrintAreaOverlayPreview } from './live-preview/PrintAreaOverlay'
+import { usePrintArea } from '@/hooks/use-print-area'
+import { usePrintedImageStore } from '@/stores/printed-image/printed-image.store'
+import { useEffect, useRef, useState } from 'react'
+import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { buildDefaultLayout } from './customize/print-layout/builder'
+import { TPrintLayout } from '@/utils/types/print-layout'
+import { hardCodedLayoutData as hardCodedLayoutDataPtm } from '@/configs/print-layout/print-layout-data-Ptm'
+import { hardCodedLayoutData as hardCodedLayoutDataFun } from '@/configs/print-layout/print-layout-data-Fun'
+import { useLayoutStore } from '@/stores/ui/print-layout.store'
+import { PreviewImage } from './customize/print-layout/PreviewImage'
+import { useElementLayerStore } from '@/stores/ui/element-layer.store'
+import { useEditedElementStore } from '@/stores/element/element.store'
+import { useVisualStatesCollector } from '@/hooks/use-visual-states-collector'
+import { checkIfMobileScreen, resetAllStores } from '@/utils/helpers'
+import { LocalStorageHelper } from '@/utils/localstorage'
+import { useKeyboardStore } from '@/stores/keyboard/keyboard.store'
+import { useProductStore } from '@/stores/product/product.store'
+import { useEditAreaStore } from '@/stores/ui/edit-area.store'
+import { useEditModeStore } from '@/stores/ui/edit-mode.store'
+import { useElementStylingStore } from '@/stores/element/element-styling.store'
+import { useQueryFilter } from '@/hooks/extensions'
+import { AppNavigator } from '@/utils/navigator'
+import { TProductVariant } from '@/utils/types/api'
+
+      // if (queryFilter.dev || queryFilter.funId) {
+      //   const initialLayout: TPrintLayout = {
+      //     ...hardCodedLayoutDataFun('full')[0],
+      //     printedImageElements: [],
+      //   }
+      //   setInitialLayout(initialLayout)
+      //   onInitFirstProduct(product, initialLayout, firstPrintAreaInProduct)
+      // } else {
+      //   if (!printAreaContainerRef.current || !printAreaRef.current) return
+      //   const { layout } = buildDefaultLayout(
+      //     printAreaContainerRef.current,
+      //     printAreaRef.current,
+      //     printedImages,
+      //     2
+      //   )
+      //   const initialLayout: TPrintLayout = {
+      //     ...hardCodedLayoutDataPtm(layout.type)[0],
+      //     printedImageElements: layout.elements,
+      //     mountType: 'suggested',
+      //   }
+      //   setInitialLayout(initialLayout)
+      //   onInitFirstProduct(product, initialLayout, firstPrintAreaInProduct)
+      // }

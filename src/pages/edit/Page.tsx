@@ -1,9 +1,10 @@
 import {
   TBaseProduct,
+  TClientProductVariant,
+  TElementsVisualState,
   TElementType,
-  TMockupData,
+  TPrintAreaInfo,
   TPrintedImage,
-  TProductVariantInCart,
 } from '@/utils/types/global'
 import { ProductGallery } from './ProductGallery'
 import { ProductDetails } from './product/ProductDetails'
@@ -27,7 +28,6 @@ import { cancelSelectingZoomingImages } from './helpers'
 import { useKeyboardStore } from '@/stores/keyboard/keyboard.store'
 import { useLayoutStore } from '@/stores/ui/print-layout.store'
 import { MiddleInfoSection } from './MiddleInfoSection'
-import { toast } from 'react-toastify'
 import { useQueryFilter } from '@/hooks/extensions'
 import { useUserDataStore } from '@/stores/ui/user-data.store'
 import { AppLoading } from '@/components/custom/Loading'
@@ -81,122 +81,126 @@ const AddingToCartLoadingModal = ({ onClose }: TAddingToCartLoadingModalProps) =
 /**
  * Restore mockup visual states từ localStorage
  */
-const restoreMockupVisualStates = (mockupId: string) => {
-  const savedMockup = LocalStorageHelper.getSavedMockupData()
-  if (!savedMockup) return
-
-  const cartItems = savedMockup.productsInCart
-  let foundMockup: TMockupData | null = null
-  let foundProductVariant: TProductVariantInCart | null = null
+const restoreMockupVisualStates = (mockupId?: string) => {
+  let elementsVisualState: TElementsVisualState | null = null
+  let foundSurfaceId: TPrintAreaInfo['id'] | null = null
+  let foundVariantId: TClientProductVariant['id'] | null = null
   let foundProductId: TBaseProduct['id'] | null = null
 
-  // Search for the mockup in all cart items
-  for (const item of cartItems) {
-    for (const variant of item.productVariants) {
-      for (const mockupData of variant.mockupDataList) {
-        if (mockupData.id === mockupId) {
-          foundMockup = mockupData
-          foundProductVariant = variant
-          foundProductId = item.productId
-          break
+  if (mockupId) {
+    const savedMockup = LocalStorageHelper.getSavedMockupData()
+    if (!savedMockup) return
+
+    const cartItems = savedMockup.productsInCart
+
+    // Search for the mockup in all cart items
+    for (const item of cartItems) {
+      for (const variant of item.productVariants) {
+        for (const mockupData of variant.mockupDataList) {
+          if (mockupData.id === mockupId) {
+            foundSurfaceId = mockupData.surfaceInfo.id
+            foundVariantId = variant.variantId
+            foundProductId = item.productId
+            elementsVisualState = mockupData.elementsVisualState
+            break
+          }
         }
+        if (foundSurfaceId) break
       }
+      if (foundSurfaceId) break
     }
   }
   console.log('>>> [reto] ko tim thay:', {
-    foundMockup,
-    foundProductVariant,
+    foundSurfaceId,
+    foundVariantId,
     foundProductId,
+    elementsVisualState,
   })
 
-  if (!foundMockup || !foundProductVariant || !foundProductId) return
-
-  useEditedElementStore.getState().resetData()
-
   setTimeout(() => {
-    const elementsVisualState = foundMockup.elementsVisualState
+    if (elementsVisualState) {
+      const layoutMode = elementsVisualState.layoutMode
+      console.log('>>> [reto] layoutMode:', layoutMode)
+      if (layoutMode) {
+        useLayoutStore.getState().setLayoutMode(layoutMode)
+      }
 
-    const layoutMode = elementsVisualState.layoutMode
-    console.log('>>> [reto] layoutMode:', layoutMode)
-    if (layoutMode) {
-      useLayoutStore.getState().setLayoutMode(layoutMode)
-    }
+      // Restore layout
+      const restoredLayout = elementsVisualState.storedLayouts || []
+      console.log('>>> [reto] restoredLayout:', restoredLayout)
+      if (restoredLayout.length > 0) {
+        useLayoutStore.getState().restoreLayout(restoredLayout[0])
+      }
 
-    // Restore layout
-    const restoredLayout = elementsVisualState.storedLayouts || []
-    console.log('>>> [reto] restoredLayout:', restoredLayout)
-    if (restoredLayout.length > 0) {
-      useLayoutStore.getState().restoreLayout(restoredLayout[0])
-    }
+      // Restore text elements
+      const restoredTextElements = elementsVisualState.texts || []
+      console.log('>>> [reto] texts:', restoredTextElements)
+      if (restoredTextElements.length > 0) {
+        useEditedElementStore
+          .getState()
+          .setTextElements(restoredTextElements.map((text) => ({ ...text, isFromSaved: true })))
+      }
 
-    // Restore text elements
-    const restoredTextElements = elementsVisualState.texts || []
-    console.log('>>> [reto] texts:', restoredTextElements)
-    if (restoredTextElements.length > 0) {
-      useEditedElementStore
-        .getState()
-        .setTextElements(restoredTextElements.map((text) => ({ ...text, isFromSaved: true })))
-    }
+      // Restore printed image elements
+      const restoredPrintedImageElements = elementsVisualState.printedImages || []
+      console.log('>>> [reto] printedImages:', restoredPrintedImageElements)
+      if (restoredPrintedImageElements.length > 0) {
+        useEditedElementStore.getState().setPrintedImageElements(
+          restoredPrintedImageElements.map((printedImage) => ({
+            ...printedImage,
+            isFromSaved: true,
+          }))
+        )
+      }
 
-    // Restore printed image elements
-    const restoredPrintedImageElements = elementsVisualState.printedImages || []
-    console.log('>>> [reto] printedImages:', restoredPrintedImageElements)
-    if (restoredPrintedImageElements.length > 0) {
-      useEditedElementStore.getState().setPrintedImageElements(
-        restoredPrintedImageElements.map((printedImage) => ({
-          ...printedImage,
-          isFromSaved: true,
-        }))
+      // Restore sticker elements
+      const restoredStickerElements = elementsVisualState.stickers || []
+      console.log('>>> [reto] stickers:', restoredStickerElements)
+      if (restoredStickerElements.length > 0) {
+        useEditedElementStore
+          .getState()
+          .setStickerElements(
+            restoredStickerElements.map((sticker) => ({ ...sticker, isFromSaved: true }))
+          )
+      }
+
+      useElementLayerStore.getState().addElementLayersOnRestore(
+        restoredTextElements
+          .map((text) => ({
+            elementId: text.id,
+            index: text.zindex,
+            elementType: 'text' as TElementType,
+          }))
+          .concat(
+            restoredPrintedImageElements.map((printedImage) => ({
+              elementId: printedImage.id,
+              index: printedImage.zindex,
+              elementType: 'printed-image' as TElementType,
+              isLayoutImage: printedImage.isInitWithLayout,
+            }))
+          )
+          .concat(
+            restoredStickerElements.map((sticker) => ({
+              elementId: sticker.id,
+              index: sticker.zindex,
+              elementType: 'sticker' as TElementType,
+            }))
+          )
       )
     }
 
-    // Restore sticker elements
-    const restoredStickerElements = elementsVisualState.stickers || []
-    console.log('>>> [reto] stickers:', restoredStickerElements)
-    if (restoredStickerElements.length > 0) {
-      useEditedElementStore
-        .getState()
-        .setStickerElements(
-          restoredStickerElements.map((sticker) => ({ ...sticker, isFromSaved: true }))
-        )
+    if (foundVariantId && foundProductId && foundSurfaceId) {
+      const product = useProductStore.getState().getProductById(foundProductId)
+      console.log('>>> [reto] product 86:', product)
+      if (!product) return
+      const variant = product.variants.find((v) => v.id === foundVariantId)
+      console.log('>>> [reto] variant:', variant)
+      if (!variant) return
+      const surface = product.printAreaList.find((s) => s.id === foundSurfaceId)
+      console.log('>>> [reto] surface:', surface)
+      if (!surface) return
+      useProductUIDataStore.getState().handlePickProductOnRestore(product, variant, surface)
     }
-
-    useElementLayerStore.getState().addElementLayersOnRestore(
-      restoredTextElements
-        .map((text) => ({
-          elementId: text.id,
-          index: text.zindex,
-          elementType: 'text' as TElementType,
-        }))
-        .concat(
-          restoredPrintedImageElements.map((printedImage) => ({
-            elementId: printedImage.id,
-            index: printedImage.zindex,
-            elementType: 'printed-image' as TElementType,
-            isLayoutImage: printedImage.isInitWithLayout,
-          }))
-        )
-        .concat(
-          restoredStickerElements.map((sticker) => ({
-            elementId: sticker.id,
-            index: sticker.zindex,
-            elementType: 'sticker' as TElementType,
-          }))
-        )
-    )
-
-    // Restore product, variant, surface, and template
-    const product = useProductStore.getState().getProductById(foundProductId)
-    console.log('>>> [reto] product 86:', product)
-    if (!product) return
-    const variantId = foundProductVariant.variantId
-    const variant = product.variants.find((v) => v.id === variantId)
-    console.log('>>> [reto] variant:', variant)
-    if (!variant) return
-    const surface = product.printAreaList.find((s) => s.id === foundMockup.surfaceInfo.id)
-    console.log('>>> [reto] surface:', surface)
-    if (!surface) return
-    useProductUIDataStore.getState().handlePickProductOnRestore(product, variant, surface)
   }, 0)
 }
 
@@ -265,25 +269,26 @@ export default function EditPage({ products, printedImages }: TEditPageProps) {
       cancelSelectingZoomingImages()
     }
 
-    if (mockupId && firstRenderRef.current) {
-      restoreMockupVisualStates(mockupId)
+    if (firstRenderRef.current) {
+      restoreMockupVisualStates(mockupId || undefined)
       firstRenderRef.current = false
     }
 
     initDeviceId()
     loadAllFonts()
+
     document.body.addEventListener('pointerdown', listenPointerDownOnPage)
     window.addEventListener('resize', listenWindowResize)
     window.addEventListener('scroll', listenWindowScroll)
+
     return () => {
       document.body.removeEventListener('pointerdown', listenPointerDownOnPage)
       window.removeEventListener('resize', listenWindowResize)
       window.removeEventListener('scroll', listenWindowScroll)
-      useEditedElementStore.getState().resetData()
-      useElementLayerStore.getState().resetData()
-      useProductUIDataStore.getState().resetData()
-      // useTemplateStore.getState().resetData()
-      useLayoutStore.getState().resetData()
+      // useEditedElementStore.getState().resetData()
+      // useElementLayerStore.getState().resetData()
+      // useProductUIDataStore.getState().resetData()
+      // useLayoutStore.getState().resetData()
     }
   }, [])
 

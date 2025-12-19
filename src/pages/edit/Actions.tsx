@@ -22,7 +22,8 @@ export const Actions = () => {
   const { collectMockupVisualStates } = useVisualStatesCollector()
 
   const saveEditngDataToStore = () => {
-    const { stickers, printedImages, texts } = collectMockupVisualStates()
+    const { stickers, printedImages, texts, layoutMode, storedLayouts } =
+      collectMockupVisualStates()
     const {
       saveEditedPrintedImageElementsState,
       saveEditedStickerElementsState,

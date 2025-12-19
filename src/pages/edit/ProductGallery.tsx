@@ -313,6 +313,7 @@ export const ProductGallery = ({ products }: TProductGalleryProps) => {
 
   const initFirstProduct = () => {
     if (!mockupId) {
+      console.log('>>> [ini] initFirstProduct:', pickedProduct)
       if (!pickedProduct && allLayouts.length > 0) {
         const product = products[0]
         const initialLayout = createInitialLayout()
@@ -530,7 +531,7 @@ export const ProductGallery = ({ products }: TProductGalleryProps) => {
                     firstPrintAreaInProduct={firstPrintArea}
                     isPicked={product.id === pickedProduct?.id}
                     onPickProduct={handlePickProduct}
-                    onInitFirstProduct={handleSetFirstProduct}
+                    onInitFirstProduct={() => {}}
                     printedImages={printedImages}
                     productIndex={index + 1}
                     productsCount={products.length}

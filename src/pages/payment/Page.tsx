@@ -391,41 +391,8 @@ const PaymentPage = () => {
                     </div>
                   </div>
 
-                  {queryFilter.funId && (
-                    <div className="flex gap-2 w-full text-sm text-gray-600 mt-4">
-                      <input
-                        type="checkbox"
-                        id="terms-and-conditions"
-                        checked={acceptedTerms}
-                        onChange={handleTickTerms}
-                        className="text-main-cl border border-main-cl h-5 w-5 rounded"
-                      />
-                      <div>
-                        <span>Tôi đồng ý với </span>
-                        <span
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            setShowTermsModal(true)
-                          }}
-                          className="text-main-cl underline cursor-pointer"
-                        >
-                          điều khoản và chính sách dịch vụ
-                        </span>
-                        <span>.</span>
-                      </div>
-                    </div>
-                  )}
-
                   {/* Checkout Button - Desktop (in summary) */}
-                  <div
-                    style={{
-                      opacity: acceptedTerms ? 1 : 0.5,
-                      pointerEvents: acceptedTerms ? 'auto' : 'none',
-                      cursor: acceptedTerms ? 'pointer' : 'not-allowed',
-                    }}
-                    className="hidden md:block mt-3 md:mt-4"
-                  >
+                  <div className="hidden md:block mt-3 md:mt-4">
                     <button
                       onClick={() => {
                         setShowModal(true)
@@ -456,12 +423,47 @@ const PaymentPage = () => {
 
           {/* Fixed Checkout Button - Mobile only */}
           <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg px-2">
-            <div className="w-full mx-auto px-2 py-2">
+            {queryFilter.funId && (
+              <div className="flex gap-2 w-full text-sm text-gray-600 mt-4">
+                <input
+                  type="checkbox"
+                  id="terms-and-conditions"
+                  checked={acceptedTerms}
+                  onChange={handleTickTerms}
+                  className="text-main-cl border border-main-cl h-5 w-5 rounded"
+                />
+                <div>
+                  <span>Tôi đã đọc và đồng ý với </span>
+                  <span
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setShowTermsModal(true)
+                    }}
+                    className="text-blue-600 underline cursor-pointer"
+                  >
+                    Chính sách & điều khoản dịch vụ
+                  </span>
+                  <span> của công ty.</span>
+                </div>
+              </div>
+            )}
+            <div
+              style={{
+                opacity: acceptedTerms ? 1 : 0.5,
+                pointerEvents: acceptedTerms ? 'auto' : 'none',
+                cursor: acceptedTerms ? 'pointer' : 'not-allowed',
+              }}
+              className="w-full mx-auto px-2 py-2"
+            >
               <button
                 onClick={() => {
                   setShowModal(true)
                 }}
-                className="sm:h-[45px] h-[38px] flex items-center justify-center gap-2 w-full bg-main-cl text-white font-bold text-lg rounded-xl shadow-lg active:scale-95 transition duration-200"
+                style={{
+                  backgroundColor: acceptedTerms ? 'var(--vcn-main-cl)' : 'lightgray',
+                }}
+                className="sm:h-[45px] h-[38px] flex items-center justify-center gap-2 w-full text-white font-bold text-lg rounded-xl shadow-lg active:scale-95 transition duration-200"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

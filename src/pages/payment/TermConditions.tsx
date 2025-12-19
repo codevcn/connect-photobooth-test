@@ -19,7 +19,7 @@ export const TermConditions = ({ closeModal }: TTermConditionsProps) => {
 
       {/* <!-- Nội dung Popup (Căn giữa) --> */}
       <div className="flex items-center justify-center min-h-screen p-4 text-center sm:p-0 pointer-events-none">
-        <div className="relative bg-white rounded-xl shadow-2xl text-left overflow-hidden transform transition-all w-full max-w-4xl flex flex-col max-h-[90vh] pointer-events-auto">
+        <div className="relative bg-white rounded-xl shadow-2xl text-left overflow-hidden transform transition-all w-full max-w-4xl flex flex-col max-h-[85vh] pointer-events-auto">
           {/* <!-- HEADER: Tiêu đề và nút đóng --> */}
           <div className="bg-white px-6 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 z-10 shadow-sm">
             <div>
@@ -73,20 +73,20 @@ export const TermConditions = ({ closeModal }: TTermConditionsProps) => {
                 <div>
                   <span className="font-semibold text-gray-900">Mã số thuế:</span> 0316725482
                 </div>
-                <div>
+                {/* <div>
                   <span className="font-semibold text-gray-900">Hotline:</span> [SỐ ĐIỆN THOẠI]
-                </div>
+                </div> */}
                 <div className="col-span-1 md:col-span-2">
                   <span className="font-semibold text-gray-900">Địa chỉ trụ sở:</span> 436/38 Cách
                   Mạng Tháng Tám, Phường Nhiêu Lộc, Thành phố Hồ Chí Minh, Việt Nam
                 </div>
-                <div>
+                {/* <div>
                   <span className="font-semibold text-gray-900">Email:</span> [EMAIL HỖ TRỢ]
-                </div>
-                <div>
+                </div> */}
+                {/* <div>
                   <span className="font-semibold text-gray-900">Đại diện:</span> [TÊN NGƯỜI ĐẠI
                   DIỆN]
-                </div>
+                </div> */}
               </div>
             </section>
 

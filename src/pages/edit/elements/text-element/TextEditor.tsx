@@ -49,7 +49,7 @@ const EditorModal = ({ onClose }: TEditorModalProps) => {
           zindex: createInitialConstants<number>('ELEMENT_ZINDEX'),
           mountType: 'from-new',
           scale: createInitialConstants<number>('ELEMENT_ZOOM'),
-          fontSize,
+          fontSize: fontSize / scaleFactor,
         },
       ])
       useElementLayerStore.getState().addElementLayers([

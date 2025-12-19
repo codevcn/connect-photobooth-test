@@ -1,12 +1,10 @@
 import { useElementControl } from '@/hooks/element/use-element-control'
-import { useEffect, useState, useCallback } from 'react'
-import { roundZooming } from '@/utils/helpers'
+import { useEffect, useState } from 'react'
 import { createInitialConstants } from '@/utils/contants'
 import { TElementMountType, TTextVisualState } from '@/utils/types/global'
 import { useEditAreaStore } from '@/stores/ui/edit-area.store'
 import { calculateElementClipPolygon } from '@/pages/edit/elements/clip-element-helper'
 import { useEditedElementStore } from '@/stores/element/element.store'
-import { useElementControlForText } from './use-element-control-for-text'
 
 type TInitialTextParams = Partial<
   TTextVisualState & {
@@ -42,7 +40,6 @@ type TTextElementControlReturn = {
     scale?: number,
     angle?: number,
     zindex?: number,
-    fontSize?: number,
     textColor?: string,
     content?: string,
     fontFamily?: string,
@@ -63,9 +60,6 @@ export const useTextElementControl = (
       x: createInitialConstants<number>('ELEMENT_X'),
       y: createInitialConstants<number>('ELEMENT_Y'),
     },
-    fontSize: initialFontSize = createInitialConstants<number>('ELEMENT_TEXT_FONT_SIZE'),
-    maxFontSize,
-    minFontSize,
     textColor: initialColor = createInitialConstants<string>('ELEMENT_TEXT_COLOR'),
     content: initialContent = '',
     fontFamily: initialFontFamily = createInitialConstants<string>('ELEMENT_TEXT_FONT_FAMILY'),
@@ -84,7 +78,7 @@ export const useTextElementControl = (
     forZoom,
     state: baseState,
     handleSetElementState: baseHandleSetElementState,
-  } = useElementControlForText(
+  } = useElementControl(
     elementId,
     elementRootRef,
     printAreaAllowedRef,
@@ -100,48 +94,16 @@ export const useTextElementControl = (
   )
 
   const [content, setContent] = useState<TTextVisualState['content']>(initialContent)
-  const [fontSize, setFontSize] = useState<TTextVisualState['fontSize']>(initialFontSize)
   const [textColor, setTextColor] = useState<TTextVisualState['textColor']>(initialColor)
   const [fontFamily, setFontFamily] = useState<TTextVisualState['fontFamily']>(initialFontFamily)
   const [fontWeight, setFontWeight] = useState<TTextVisualState['fontWeight']>(initialFontWeight)
 
-  const convertZoomValueToFontSize = (zoomValue: number): number => {
-    return roundZooming(zoomValue * createInitialConstants<number>('ELEMENT_TEXT_FONT_SIZE'))
-  }
-
-  const convertFontSizeToZoomValue = (fontSize: number): number => {
-    return (
-      ((fontSize / createInitialConstants<number>('ELEMENT_TEXT_FONT_SIZE')).toFixed(
-        2
-      ) as unknown as number) * 1
-    )
-  }
-
-  const handleSetFontSize = (fontSizeValue?: number, scaleValue?: number) => {
-    let adjustedFontSize
-    if (scaleValue) {
-      adjustedFontSize = convertZoomValueToFontSize(scaleValue)
-    } else if (fontSizeValue) {
-      adjustedFontSize = fontSizeValue
-    } else return // nếu không tham số nào có giá trị => dừng lại
-    if (minFontSize && minFontSize > adjustedFontSize) {
-      adjustedFontSize = minFontSize
-    }
-    if (maxFontSize && maxFontSize < adjustedFontSize) {
-      adjustedFontSize = maxFontSize
-    }
-    setFontSize(adjustedFontSize)
-  }
-
   const validateInputValueAndSet = (
     value: string | number,
-    type: 'fontSize' | 'textColor' | 'content' | 'fontFamily' | 'fontWeight'
+    type: 'textColor' | 'content' | 'fontFamily' | 'fontWeight'
   ) => {
     let parsedValue: number | string = value
     switch (type) {
-      case 'fontSize':
-        handleSetFontSize(parsedValue as number)
-        break
       case 'fontWeight':
         setFontWeight(parsedValue as number)
         break
@@ -163,17 +125,12 @@ export const useTextElementControl = (
     scale?: number,
     angle?: number,
     zindex?: number,
-    fontSize?: number,
     textColor?: string,
     content?: string,
     fontFamily?: string,
     fontWeight?: number
   ) => {
     baseHandleSetElementState(posX, posY, undefined, angle, zindex)
-    if (fontSize) {
-      validateInputValueAndSet(fontSize, 'fontSize')
-      baseHandleSetElementState(undefined, undefined, convertFontSizeToZoomValue(fontSize))
-    }
     if (textColor) {
       validateInputValueAndSet(textColor, 'textColor')
     }
@@ -196,7 +153,6 @@ export const useTextElementControl = (
         undefined,
         undefined,
         undefined,
-        initialFontSize,
         initialColor,
         initialContent,
         initialFontFamily,
@@ -206,12 +162,8 @@ export const useTextElementControl = (
   }
 
   useEffect(() => {
-    handleSetFontSize(undefined, baseState.scale)
-  }, [baseState.scale])
-
-  useEffect(() => {
     setupVisualData()
-  }, [initialFontSize, initialColor, initialContent, initialFontFamily, initialFontWeight])
+  }, [initialColor, initialContent, initialFontFamily, initialFontWeight])
 
   // Update clip polygon when position, angle, or fontSize changes
   const updateClipPolygon = () => {
@@ -227,14 +179,19 @@ export const useTextElementControl = (
   }
 
   useEffect(() => {
+    elementRootRef.current?.style.setProperty('width', 'auto')
+    updateClipPolygon()
+  }, [content])
+
+  useEffect(() => {
     updateClipPolygon()
   }, [
     baseState.position.x,
     baseState.position.y,
     baseState.angle,
-    fontSize,
-    content,
-    updateClipPolygon,
+    baseState.scale,
+    elementId,
+    scaleFactor,
   ])
 
   return {
@@ -244,7 +201,6 @@ export const useTextElementControl = (
     forZoom,
     handleSetElementState,
     state: {
-      fontSize,
       textColor,
       content,
       fontFamily,

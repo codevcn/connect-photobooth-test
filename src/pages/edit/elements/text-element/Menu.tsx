@@ -59,7 +59,6 @@ export const TextElementMenu = ({ elementId, onClose }: TPrintedImageMenuProps) 
     eventEmitter.emit(
       EInternalEvents.SUBMIT_TEXT_ELE_PROPS,
       elementId,
-      fontSize,
       angle,
       posX,
       posY,
@@ -162,15 +161,15 @@ export const TextElementMenu = ({ elementId, onClose }: TPrintedImageMenuProps) 
     if (type !== 'text' || elementId !== idOfElement) return
     const pickedElementRoot = pickedElementRootRef.current
     const dataset = JSON.parse(pickedElementRoot?.getAttribute('data-visual-state') || '{}')
-    const { fontSize, angle, position } = dataset as TTextVisualState
+    const { angle, position } = dataset as TTextVisualState
     const { x: posX, y: posY } = position || {}
     const menuSection = menuRef.current
-    if (fontSize) {
-      const fontSizeInput = menuSection?.querySelector<HTMLInputElement>(
-        '.NAME-form-fontSize input'
-      )
-      if (fontSizeInput) fontSizeInput.value = fontSize.toFixed(0)
-    }
+    // if (fontSize) {
+    //   const fontSizeInput = menuSection?.querySelector<HTMLInputElement>(
+    //     '.NAME-form-fontSize input'
+    //   )
+    //   if (fontSizeInput) fontSizeInput.value = fontSize.toFixed(0)
+    // }
     if (angle || angle === 0) {
       const angleInput = menuSection?.querySelector<HTMLInputElement>('.NAME-form-angle input')
       if (angleInput) angleInput.value = angle.toFixed(0)

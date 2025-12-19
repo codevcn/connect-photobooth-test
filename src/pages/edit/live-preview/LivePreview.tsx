@@ -182,7 +182,7 @@ export const LivePreview = ({
         useProductUIDataStore.getState().resetAllowedPrintedAreaChangeId()
       }
       fitLayoutSlots()
-    }, 50)
+    }, 0)
   }
 
   const { printAreaRef, printAreaContainerRef, checkIfAnyElementOutOfBounds, isOutOfBounds } =

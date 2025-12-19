@@ -39,7 +39,6 @@ interface IInternalEvents {
   ) => void
   [EInternalEvents.SUBMIT_TEXT_ELE_PROPS]: (
     elementId: string,
-    fontSize?: number,
     angle?: number,
     posX?: number,
     posY?: number,

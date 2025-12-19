@@ -37,7 +37,7 @@ export const TextElement = ({
   printAreaContainerRef,
   elementControlRef,
 }: TTextElementProps) => {
-  const { id, mountType } = element
+  const { id, mountType, height, width, fontSize } = element
   const rootRef = useRef<HTMLElement | null>(null)
   const scaleFactor = useEditAreaStore((state) => state.editAreaScaleValue)
   const clipPolygon = useEditedElementStore((state) => state.clippedElements[id]?.polygon || null)
@@ -46,7 +46,7 @@ export const TextElement = ({
     forRotate: { ref: refForRotate, rotateButtonRef },
     forZoom: { ref: refForZoom, zoomButtonRef },
     forDrag: { ref: refForDrag, dragButtonRef, dragButtonSelfElementRef },
-    state: { position, angle, zindex, fontSize, textColor, content, fontFamily, fontWeight, scale },
+    state: { position, angle, zindex, textColor, content, fontFamily, fontWeight, scale },
     handleSetElementState,
   } = useTextElementControl(
     id,
@@ -59,7 +59,6 @@ export const TextElement = ({
       minFontSize: MIN_TEXT_FONT_SIZE,
       position: element.position,
       angle: element.angle,
-      fontSize: element.fontSize,
       textColor: element.textColor,
       content: element.content,
       zindex: element.zindex,
@@ -75,30 +74,30 @@ export const TextElement = ({
     const root = rootRef.current
     if (!root) return {}
     const rootRect = root.getBoundingClientRect()
-    const { left, top } = rootRect
-    const widthAfterScale = fontSize * content.length * 0.59 * scaleFactor // 0.59 là giá trị chiều dài trung bình cho 1 ký tự trong font chữ Arial (font chữ mặc định của ứng dụng)
-    const heightAfterScale = fontSize * scaleFactor // 1.2 là line-height mặc định
+    const { left, top, height, width } = rootRect
+    const widthAfterScale = root.offsetWidth * scale * scaleFactor
+    const heightAfterScale = root.offsetHeight * scale * scaleFactor
     return {
       display: isSelected ? 'block' : 'none',
-      top: top + rootRect.height / 2 - heightAfterScale / 2,
-      left: left + rootRect.width / 2 - widthAfterScale / 2,
+      top: top + height / 2 - heightAfterScale / 2,
+      left: left + width / 2 - widthAfterScale / 2,
       width: widthAfterScale,
       height: heightAfterScale,
     }
+    // requestAnimationFrame(updateInteractiveButtonsVisual)
   }
 
   const updateInteractiveButtonsVisual = () => {
     const root = rootRef.current
     if (!root) return
+    const rootRect = root.getBoundingClientRect()
+    const { left, top, height, width } = rootRect
+    const widthAfterScale = root.offsetWidth * scale * scaleFactor
+    const heightAfterScale = root.offsetHeight * scale * scaleFactor
     const interactions = interactionsRef.current
     if (!interactions) return
-    const rootRect = root.getBoundingClientRect()
-    const { left, top } = rootRect
-    const widthAfterScale = fontSize * content.length * 0.59 * scaleFactor // 0.59 là giá trị chiều dài trung bình cho 1 ký tự trong font chữ Arial (font chữ mặc định của ứng dụng)
-    const heightAfterScale = fontSize * scaleFactor // 1.2 là line-height mặc định
-    interactions.style.display = isSelected ? 'block' : 'none'
-    interactions.style.top = `${top + rootRect.height / 2 - heightAfterScale / 2}px`
-    interactions.style.left = `${left + rootRect.width / 2 - widthAfterScale / 2}px`
+    interactions.style.top = `${top + height / 2 - heightAfterScale / 2}px`
+    interactions.style.left = `${left + width / 2 - widthAfterScale / 2}px`
     interactions.style.width = `${widthAfterScale}px`
     interactions.style.height = `${heightAfterScale}px`
   }
@@ -119,7 +118,6 @@ export const TextElement = ({
 
   const listenSubmitEleProps = (
     elementId: string | null,
-    fontSize?: number,
     angle?: number,
     posX?: number,
     posY?: number,
@@ -129,17 +127,7 @@ export const TextElement = ({
     fontFamily?: string
   ) => {
     if (elementId === id) {
-      handleSetElementState(
-        posX,
-        posY,
-        undefined,
-        angle,
-        zindex,
-        fontSize,
-        textColor,
-        content,
-        fontFamily
-      )
+      handleSetElementState(posX, posY, undefined, angle, zindex, textColor, content, fontFamily)
     }
   }
 
@@ -153,7 +141,7 @@ export const TextElement = ({
   useEffect(() => {
     if (!isSelected) return
     eventEmitter.emit(EInternalEvents.SYNC_ELEMENT_PROPS, id, 'text')
-  }, [fontSize, angle, position, isSelected, id])
+  }, [angle, position, isSelected, id])
 
   useEffect(() => {
     window.addEventListener('resize', updateInteractiveButtonsVisual)
@@ -162,7 +150,7 @@ export const TextElement = ({
       window.removeEventListener('resize', updateInteractiveButtonsVisual)
       window.removeEventListener('scroll', updateInteractiveButtonsVisual)
     }
-  }, [isSelected, fontSize, content, id, scaleFactor])
+  }, [isSelected, content, id, scaleFactor, scale])
 
   useEffect(() => {
     eventEmitter.on(EInternalEvents.SUBMIT_TEXT_ELE_PROPS, listenSubmitEleProps)
@@ -185,8 +173,10 @@ export const TextElement = ({
       style={{
         left: position.x,
         top: position.y,
-        transform: `rotate(${angle}deg)`,
+        transform: `scale(${scale}) rotate(${angle}deg)`,
         zIndex: zindex,
+        height: `${height}px`,
+        width: `${width}px`,
       }}
       className={`NAME-root-element NAME-element-type-text absolute h-fit w-fit touch-none z-6`}
       onPointerDown={pickElement}
@@ -194,15 +184,16 @@ export const TextElement = ({
         typeToObject<TTextVisualState>({
           id,
           position,
+          scale,
           angle,
           zindex,
-          fontSize,
           textColor,
           content,
           fontFamily,
           fontWeight,
-          scale,
           clippath: clipPolygon || undefined,
+          height,
+          width,
         })
       )}
       data-persist-position={JSON.stringify(
@@ -221,7 +212,7 @@ export const TextElement = ({
         <div className="h-full w-full">
           <p
             style={{
-              fontSize: `${fontSize}px`,
+              ...(fontSize ? { fontSize: `${fontSize}px` } : {}),
               color: textColor,
               fontFamily,
               fontWeight,

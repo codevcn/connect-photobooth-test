@@ -214,14 +214,20 @@ export type TElementVisualBaseState = {
 
 export type TTextVisualState = TElementVisualBaseState & {
   id: string
-  fontSize: number
   textColor: string
   content: string
   fontFamily: string
   fontWeight: number
   mountType?: TElementMountType
   clippath?: string
-}
+} & Partial<{
+    mountType: TElementMountType
+    height: number
+    width: number
+    matchOrientation: TMatchOrientation
+    clippath: string
+    fontSize: number
+  }>
 
 export type TMatchOrientation = 'width' | 'height'
 

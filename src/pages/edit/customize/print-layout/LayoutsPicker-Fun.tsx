@@ -56,13 +56,13 @@ export const Slot = ({ slotConfig, isLayoutPicked, layoutType }: TemplateFramePr
   return (
     <div
       className={`flex justify-center items-center w-full h-full ${
-        layoutType === '6-square' ? 'border border-gray-600 border-dashed' : ''
-      }`}
+        layoutType === '6-square' ? 'border border-dashed' : ''
+      } ${isLayoutPicked ? 'border-main-cl' : 'border-gray-600'}`}
     >
       <div
         style={initStyle()}
-        className={`${layoutType === '6-square' ? '' : 'border border-gray-600 border-dashed'} ${
-          isLayoutPicked ? 'border-main-cl' : ''
+        className={`${layoutType === '6-square' ? '' : 'border border-dashed'} ${
+          isLayoutPicked ? 'border-main-cl' : 'border-gray-600'
         } NAME-layout-slot relative flex justify-center items-center overflow-hidden aspect-square`}
       >
         <svg

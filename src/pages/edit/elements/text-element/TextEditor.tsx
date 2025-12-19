@@ -24,26 +24,32 @@ const EditorModal = ({ onClose }: TEditorModalProps) => {
       const fontSize = createInitialConstants<number>('ELEMENT_TEXT_FONT_SIZE')
       const fontFamily = createInitialConstants<string>('ELEMENT_TEXT_FONT_FAMILY')
       const fontWeight = createInitialConstants<number>('ELEMENT_TEXT_FONT_WEIGHT')
+      const elementRect = calculateInitialTextElementPosition(
+        scaleFactor,
+        text,
+        `${fontSize}px`,
+        1,
+        fontFamily,
+        `${fontWeight}`
+      )
       useEditedElementStore.getState().addTextElement([
         {
           id: elementId,
           content: text,
           angle: createInitialConstants<number>('ELEMENT_ROTATION'),
-          position: calculateInitialTextElementPosition(
-            scaleFactor,
-            text,
-            `${fontSize}px`,
-            1,
-            fontFamily,
-            `${fontWeight}`
-          ),
-          fontSize,
+          position: {
+            x: elementRect.x,
+            y: elementRect.y,
+          },
+          height: elementRect.height,
+          width: elementRect.width,
           textColor: createInitialConstants<string>('ELEMENT_TEXT_COLOR'),
           fontFamily,
           fontWeight,
           zindex: createInitialConstants<number>('ELEMENT_ZINDEX'),
           mountType: 'from-new',
           scale: createInitialConstants<number>('ELEMENT_ZOOM'),
+          fontSize,
         },
       ])
       useElementLayerStore.getState().addElementLayers([

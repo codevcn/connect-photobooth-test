@@ -103,7 +103,6 @@ function AppRoutes() {
   if (queryFilter.dev) {
     return (
       <>
-        <IdleCountdown />
         <Routes>
           <Route path="/" element={<EditPageDev />} />
           <Route path="/payment" element={<PaymentPage />} />

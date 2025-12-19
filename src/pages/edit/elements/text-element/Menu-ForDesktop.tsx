@@ -111,7 +111,6 @@ export const TextElementMenuForDesktop = ({ elementId, onClose }: TPrintedImageM
     eventEmitter.emit(
       EInternalEvents.SUBMIT_TEXT_ELE_PROPS,
       elementId,
-      fontSize,
       angle,
       posX,
       posY,
@@ -214,15 +213,15 @@ export const TextElementMenuForDesktop = ({ elementId, onClose }: TPrintedImageM
     if (type !== 'text' || elementId !== idOfElement) return
     const pickedElementRoot = pickedElementRootRef.current
     const dataset = JSON.parse(pickedElementRoot?.getAttribute('data-visual-state') || '{}')
-    const { fontSize, angle, position } = dataset as TTextVisualState
+    const { angle, position } = dataset as TTextVisualState
     const { x: posX, y: posY } = position || {}
     const menuSection = menuRef.current
-    if (fontSize) {
-      const fontSizeInput = menuSection?.querySelector<HTMLInputElement>(
-        '.NAME-form-fontSize input'
-      )
-      if (fontSizeInput) fontSizeInput.value = fontSize.toFixed(0)
-    }
+    // if (fontSize) {
+    //   const fontSizeInput = menuSection?.querySelector<HTMLInputElement>(
+    //     '.NAME-form-fontSize input'
+    //   )
+    //   if (fontSizeInput) fontSizeInput.value = fontSize.toFixed(0)
+    // }
     if (angle || angle === 0) {
       const angleInput = menuSection?.querySelector<HTMLInputElement>('.NAME-form-angle input')
       if (angleInput) angleInput.value = angle.toFixed(0)
@@ -430,7 +429,7 @@ export const TextElementMenuForDesktop = ({ elementId, onClose }: TPrintedImageM
           <div className="NAME-form-group NAME-form-color flex flex-1 justify-center gap-1 rounded">
             <button
               onClick={() => setShowColorPicker((pre) => !pre)}
-              className="grow text-black rounded flex gap-1 items-center mobile-touch pl-0.5 py-2 justify-start hover:bg-gray-100 w-full"
+              className="grow text-black rounded flex gap-1 items-center mobile-touch py-1 justify-start hover:bg-gray-100 w-full"
             >
               <div className="flex gap-1 mx-1">
                 <svg
@@ -467,7 +466,7 @@ export const TextElementMenuForDesktop = ({ elementId, onClose }: TPrintedImageM
           <div className="NAME-form-group NAME-form-font flex flex-1 justify-center gap-1 relative rounded">
             <div
               onClick={() => setShowTextFontPicker((pre) => !pre)}
-              className="grow text-black rounded flex gap-1 items-center mobile-touch pl-0.5 py-2 justify-start hover:bg-gray-100 w-full"
+              className="grow text-black rounded flex gap-1 items-center mobile-touch py-1 justify-start hover:bg-gray-100 w-full"
             >
               <div className="flex gap-1 mx-1">
                 <svg

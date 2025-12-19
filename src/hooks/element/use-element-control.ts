@@ -377,6 +377,7 @@ export const useElementControl = (
 
   // Update clip polygon when position or scale changes
   const updateClipPolygon = () => {
+    if (elementType === 'text') return
     const element = elementRootRef.current
     const allowedArea = printAreaAllowedRef.current
     if (!element || !allowedArea) return

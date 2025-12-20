@@ -26,7 +26,6 @@ type TInteractiveButtonsState = {
 type TStickerElementProps = {
   element: TStickerVisualState
   allowedPrintAreaRef: React.RefObject<HTMLDivElement | null>
-  mountType: TElementMountType
   isSelected: boolean
   selectElement: (elementId: string, elementType: 'sticker', path: string) => void
   removeStickerElement: (stickerElementId: string) => void

@@ -237,18 +237,16 @@ const PaymentPage = () => {
 
   const backToEditPage = () => {
     if (queryFilter.isPhotoism) {
-      AppNavigator.navTo(navigate, '/edit')
+      AppNavigator.navTo(navigate, '/edit', { mockupId: undefined })
     } else {
-      AppNavigator.navTo(navigate, '/')
+      AppNavigator.navTo(navigate, '/', { mockupId: undefined })
     }
   }
 
   const handleEditMockup = (mockupDataId: string) => {
     if (queryFilter.isPhotoism) {
-      // navigate(`/edit${fillQueryStringToURL()}&mockupId=${mockupDataId}`)
       AppNavigator.navTo(navigate, `/edit`, { mockupId: mockupDataId })
     } else {
-      // navigate(`/${fillQueryStringToURL()}&mockupId=${mockupDataId}`)
       AppNavigator.navTo(navigate, `/`, { mockupId: mockupDataId })
     }
   }

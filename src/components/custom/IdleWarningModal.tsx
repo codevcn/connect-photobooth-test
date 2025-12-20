@@ -1,3 +1,5 @@
+import { useOnRouteChange } from '@/hooks/use-route'
+import { removeQueryString } from '@/utils/helpers'
 import { createQueryStringInURL } from '@/utils/navigator'
 import { useState, useEffect, useRef } from 'react'
 
@@ -108,30 +110,38 @@ export const UserIdleTracker = ({
 
   const idleTimerRef = useRef<NodeJS.Timeout | null>(null)
   const modalTimerRef = useRef<NodeJS.Timeout | null>(null)
-  const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const countdownIntervalForDebugRef = useRef<NodeJS.Timeout | null>(null)
+  const onTimeoutRef = useRef(onTimeout)
+  const disableIdleTrackingRef = useRef(false)
+
+  // Cập nhật ref khi onTimeout thay đổi để tránh stale closure
+  useEffect(() => {
+    onTimeoutRef.current = onTimeout
+  }, [onTimeout])
 
   // Reset idle timer về giá trị ban đầu
   const resetIdleTimer = () => {
+    if (disableIdleTrackingRef.current) return
     // Clear các timer cũ
     if (idleTimerRef.current) {
-      clearInterval(idleTimerRef.current)
+      clearTimeout(idleTimerRef.current)
     }
-    if (countdownIntervalRef.current) {
-      clearInterval(countdownIntervalRef.current)
+    if (countdownIntervalForDebugRef.current) {
+      clearInterval(countdownIntervalForDebugRef.current)
     }
 
     // Reset countdown
     setIdleCountdown(idleTimeout)
 
-    // Bắt đầu đếm ngược idle
+    // Bắt đầu đếm ngược idle (chỉ để hiển thị debug, ko có tác dụng gì khác)
     let currentCount = idleTimeout
-    countdownIntervalRef.current = setInterval(() => {
+    countdownIntervalForDebugRef.current = setInterval(() => {
       currentCount--
       setIdleCountdown(currentCount)
 
       if (currentCount <= 0) {
-        if (countdownIntervalRef.current) {
-          clearInterval(countdownIntervalRef.current)
+        if (countdownIntervalForDebugRef.current) {
+          clearInterval(countdownIntervalForDebugRef.current)
         }
       }
     }, 1000)
@@ -165,9 +175,9 @@ export const UserIdleTracker = ({
     }
     setShowModal(false)
 
-    // Gọi callback nếu có
-    if (onTimeout) {
-      onTimeout()
+    // Gọi callback nếu có (sử dụng ref để tránh stale closure)
+    if (onTimeoutRef.current) {
+      onTimeoutRef.current()
     } else {
       // Mặc định chuyển về trang chủ
       window.location.href = '/' + createQueryStringInURL()
@@ -195,39 +205,55 @@ export const UserIdleTracker = ({
     }
   }
 
-  useEffect(() => {
-    // Khởi tạo idle timer lần đầu
-    resetIdleTimer()
+  const disableTimers = () => {
+    if (idleTimerRef.current) {
+      clearTimeout(idleTimerRef.current)
+    }
+    if (modalTimerRef.current) {
+      clearInterval(modalTimerRef.current)
+    }
+    if (countdownIntervalForDebugRef.current) {
+      clearInterval(countdownIntervalForDebugRef.current)
+    }
+  }
 
+  useOnRouteChange((path) => {
+    if (!removeQueryString(path).split('/')[1]) {
+      disableIdleTrackingRef.current = true
+      // nếu là trang chủ thì disable tính năng idle
+      disableTimers()
+    } else {
+      // không phải trang chủ thì reset timer
+      disableIdleTrackingRef.current = false
+      resetIdleTimer()
+    }
+  })
+
+  useEffect(() => {
     // Lắng nghe các sự kiện user activity
     const events = ['pointerdown', 'pointermove']
 
-    events.forEach((event) => {
+    for (const event of events) {
       window.addEventListener(event, handleUserActivity)
-    })
+    }
+
+    // Khởi tạo idle timer lần đầu
+    resetIdleTimer()
 
     // Cleanup
     return () => {
-      if (idleTimerRef.current) {
-        clearInterval(idleTimerRef.current)
-      }
-      if (modalTimerRef.current) {
-        clearInterval(modalTimerRef.current)
-      }
-      if (countdownIntervalRef.current) {
-        clearInterval(countdownIntervalRef.current)
-      }
+      disableTimers()
 
-      events.forEach((event) => {
+      for (const event of events) {
         window.removeEventListener(event, handleUserActivity)
-      })
+      }
     }
   }, [idleTimeout, modalTimeout])
 
   return (
     <>
       {/* Debug info - có thể xóa trong production */}
-      {/* <div className="fixed top-4 right-4 bg-white p-4 rounded-lg shadow-lg border border-gray-200 text-sm">
+      {/* <div className="NAME-ooo fixed top-4 right-4 bg-white z-9999 p-4 rounded-lg shadow-lg border border-gray-200 text-sm">
         <div className="font-semibold mb-2">Idle Tracker Debug</div>
         <div>
           Idle countdown: <span className="font-mono font-bold">{idleCountdown}s</span>

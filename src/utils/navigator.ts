@@ -7,7 +7,11 @@ export const createQueryStringInURL = (): string => {
 }
 
 export class AppNavigator {
-  static navTo(navigate: NavigateFunction, path: string, params?: Record<string, string>) {
+  static navTo(
+    navigate: NavigateFunction,
+    path: string,
+    params?: Record<string, string | undefined>
+  ) {
     const existingQuery = createQueryStringInURL()
 
     // Parse existing query params
@@ -15,9 +19,13 @@ export class AppNavigator {
 
     // Add new params
     if (params) {
-      Object.entries(params).forEach(([key, value]) => {
+      for (const [key, value] of Object.entries(params)) {
+        if (value === undefined) {
+          searchParams.delete(key)
+          continue
+        }
         searchParams.set(key, value) // tự động encode
-      })
+      }
     }
 
     const queryString = searchParams.toString()

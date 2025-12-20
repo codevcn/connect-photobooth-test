@@ -20,7 +20,6 @@ type TInteractiveButtonsState = {
 type TTextElementProps = {
   element: TTextVisualState
   allowedPrintAreaRef: React.RefObject<HTMLDivElement | null>
-  mountType: TElementMountType
   isSelected: boolean
   selectElement: (elementId: string, elementType: 'text') => void
   removeTextElement: (textElementId: string) => void

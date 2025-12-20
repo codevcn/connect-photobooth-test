@@ -57,49 +57,13 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
               setError('Không thể xử lý mã QR. Vui lòng thử lại.')
               toast.error('Không thể xử lý mã QR. Vui lòng thử lại.')
             })
-          // qrGetter
-          //   .handleImageData(result.data, (percentage, images, error) => {
-          //     setProgress(percentage)
-          //     if (error) {
-          //       console.error('>>> Lỗi lấy dữ liệu mã QR:', error)
-          //       setError('Không thể lấy dữ liệu từ mã QR. Vui lòng thử lại.')
-          //       toast.error('Không thể lấy dữ liệu từ mã QR. Vui lòng thử lại.')
-          //       return
-          //     }
-          //     if (images) {
-          //       onScanSuccess(
-          //         images.map((img) => ({
-          //           ...img,
-          //           url: img.isOriginalImage ? img.url : URL.createObjectURL(img.blob),
-          //         }))
-          //       )
-          //     }
-          //   })
-          //   .catch((err) => {
-          //     console.error('>>> Lỗi xử lý dữ liệu mã QR:', err)
-          //     setError('Không thể xử lý mã QR. Vui lòng thử lại.')
-          //     toast.error('Không thể xử lý mã QR. Vui lòng thử lại.')
-          //   })
         }
       },
       {
         returnDetailedScanResult: true,
         highlightScanRegion: true,
         highlightCodeOutline: true,
-        // Tăng tần suất quét
-        maxScansPerSecond: 10, // Tăng từ 1 lên 10
-        // Giảm chất lượng video để xử lý nhanh hơn
-        // calculateScanRegion: (video) => {
-        //   // Chỉ quét vùng trung tâm (giảm diện tích cần xử lý)
-        //   const smallestDimension = Math.min(video.videoWidth, video.videoHeight)
-        //   const scanRegionSize = Math.round(0.7 * smallestDimension)
-        //   return {
-        //     x: Math.round((video.videoWidth - scanRegionSize) / 2),
-        //     y: Math.round((video.videoHeight - scanRegionSize) / 2),
-        //     width: scanRegionSize,
-        //     height: scanRegionSize,
-        //   }
-        // },
+        maxScansPerSecond: 10, // Tăng tần suất quét mã QR
       }
     )
     scannerRef.current = qrScanner
@@ -215,14 +179,6 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
           </>
         )}
       </div>
-      {!isScanning && !error && (
-        <p
-          className="text-center mt-2 text-white text-sm animate-fade-in-up"
-          style={{ animationDelay: '0.2s' }}
-        >
-          Hãy đưa mã QR vào khung để quét
-        </p>
-      )}
     </div>
   )
 }

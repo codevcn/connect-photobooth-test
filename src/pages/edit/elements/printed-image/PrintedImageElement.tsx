@@ -15,7 +15,6 @@ const MIN_ZOOM: number = 0.2
 type TPrintedImageElementProps = {
   element: TPrintedImageVisualState
   allowedPrintAreaRef: React.RefObject<HTMLDivElement | null>
-  mountType: TElementMountType
   isSelected: boolean
   selectElement: (elementId: string, elementType: 'printed-image', path: string) => void
   removePrintedImageElement: (printedImageElementId: string) => void

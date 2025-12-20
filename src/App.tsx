@@ -22,7 +22,7 @@ if (new URLSearchParams(window.location.search).get('q') === 'ptm') {
   document.documentElement.style.setProperty('--vcn-main-cl', '#e60076')
 }
 
-import { Routes, Route, BrowserRouter, useNavigate } from 'react-router-dom'
+import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import EditPagePTM from '@/pages/edit/Layout-Ptm'
 import EditPageFUN from '@/pages/edit/Layout-Fun'
 import EditPageDev from '@/pages/edit/Layout-Dev'
@@ -44,7 +44,7 @@ import { useQueryFilter } from './hooks/extensions'
 import { UserIdleTracker } from './components/custom/IdleWarningModal'
 
 const IdleCountdown = () => {
-  return !isHomePage() && <UserIdleTracker idleTimeout={30} modalTimeout={10} />
+  return <UserIdleTracker idleTimeout={30} modalTimeout={10} />
   // return <></>
 }
 
@@ -103,6 +103,7 @@ function AppRoutes() {
   if (queryFilter.dev) {
     return (
       <>
+        {/* <IdleCountdown /> */}
         <Routes>
           <Route path="/" element={<EditPageDev />} />
           <Route path="/payment" element={<PaymentPage />} />

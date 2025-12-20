@@ -14,11 +14,6 @@ export default defineConfig({
     host: '0.0.0.0', // Cho phép truy cập từ các thiết bị khác trong mạng
     port: 3000, // Cổng mặc định, có thể đổi nếu cần
     strictPort: true, // Nếu port bị chiếm, không tự động đổi
-    hmr: {
-      protocol: 'wss',
-      clientPort: 443,
-      host: 'localhost',
-    },
     allowedHosts: true, // Cho phép tất cả hosts
   },
   build: {

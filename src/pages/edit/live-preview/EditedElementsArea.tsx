@@ -32,7 +32,6 @@ export const EditedElementsArea = ({
             key={element.id}
             element={element}
             allowedPrintAreaRef={allowedPrintAreaRef}
-            mountType={mockupId ? 'from-saved' : 'from-new'}
             isSelected={selectedElement?.elementId === element.id}
             selectElement={selectElement}
             removeStickerElement={(elementId) => {
@@ -50,7 +49,6 @@ export const EditedElementsArea = ({
             key={element.id}
             element={element}
             allowedPrintAreaRef={allowedPrintAreaRef}
-            mountType={mockupId ? 'from-saved' : 'from-new'}
             isSelected={selectedElement?.elementId === element.id}
             selectElement={selectElement}
             removeTextElement={(elementId) => {
@@ -68,7 +66,6 @@ export const EditedElementsArea = ({
             key={element.id}
             element={element}
             allowedPrintAreaRef={allowedPrintAreaRef}
-            mountType={mockupId ? 'from-saved' : 'from-new'}
             isSelected={selectedElement?.elementId === element.id}
             selectElement={selectElement}
             removePrintedImageElement={(elementId) => {

@@ -637,3 +637,7 @@ export function setPathParams(path: string, params: Record<string, any> = {}) {
   const query = searchParams.toString()
   return query ? `${pathname}?${query}` : pathname
 }
+
+export function removeQueryString(path: string): string {
+  return new URL(path, 'http://dummy-base').pathname
+}

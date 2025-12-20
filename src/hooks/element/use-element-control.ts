@@ -288,8 +288,6 @@ export const useElementControl = (
     // Normalise saved scale: some saved data may store percentage (e.g. 100)
     let parsedScale = typeof initialZoom === 'number' ? initialZoom : 1
     if (parsedScale <= 0) parsedScale = 1
-    // If value looks like percent (very large > 10), convert to ratio
-    if (parsedScale > 10) parsedScale = parsedScale / 100
     // Clamp to min/max zoom if provided
     if (minZoom && parsedScale < minZoom) parsedScale = minZoom
     if (maxZoom && parsedScale > maxZoom) parsedScale = maxZoom
@@ -372,7 +370,7 @@ export const useElementControl = (
 
   useEffect(() => {
     setupVisualData()
-  }, [mountType, initialPosition?.x, initialPosition?.y, initialAngle, initialZoom, initialZindex])
+  }, [mountType, initialPosition?.x, initialPosition?.y, initialAngle, initialZoom])
 
   // Update clip polygon when position or scale changes
   const updateClipPolygon = () => {

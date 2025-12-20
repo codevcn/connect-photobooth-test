@@ -12,6 +12,7 @@ import { useEditAreaStore } from '@/stores/ui/edit-area.store'
 import { useEditedElementStore } from '@/stores/element/element.store'
 import { useLayoutStore } from '@/stores/ui/print-layout.store'
 import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
+import { MyDevComponent } from '@/dev/components/Preview'
 
 type TZoomButtonsProps = {
   scale: number

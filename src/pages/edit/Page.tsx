@@ -115,6 +115,7 @@ const restoreMockupVisualStates = (mockupId?: string) => {
     foundVariantId,
     foundProductId,
     elementsVisualState,
+    mockupId,
   })
 
   setTimeout(() => {
@@ -138,9 +139,13 @@ const restoreMockupVisualStates = (mockupId?: string) => {
       const restoredTextElements = elementsVisualState.texts || []
       console.log('>>> [reto] texts:', restoredTextElements)
       if (restoredTextElements.length > 0) {
-        useEditedElementStore
-          .getState()
-          .setTextElements(restoredTextElements.map((text) => ({ ...text, isFromSaved: true })))
+        useEditedElementStore.getState().setTextElements(
+          restoredTextElements.map((text) => ({
+            ...text,
+            isFromSaved: true,
+            mountType: 'from-saved',
+          }))
+        )
       }
 
       // Restore printed image elements
@@ -151,6 +156,7 @@ const restoreMockupVisualStates = (mockupId?: string) => {
           restoredPrintedImageElements.map((printedImage) => ({
             ...printedImage,
             isFromSaved: true,
+            mountType: 'from-saved',
           }))
         )
       }
@@ -162,10 +168,15 @@ const restoreMockupVisualStates = (mockupId?: string) => {
         useEditedElementStore
           .getState()
           .setStickerElements(
-            restoredStickerElements.map((sticker) => ({ ...sticker, isFromSaved: true }))
+            restoredStickerElements.map((sticker) => ({
+              ...sticker,
+              isFromSaved: true,
+              mountType: 'from-saved',
+            }))
           )
       }
 
+      useElementLayerStore.getState().resetData()
       useElementLayerStore.getState().addElementLayersOnRestore(
         restoredTextElements
           .map((text) => ({

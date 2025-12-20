@@ -5,6 +5,7 @@ import { detectColorFormat, getContrastColor, rgbStringToHex } from '@/utils/hel
 import { TTextVisualState } from '@/utils/types/global'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
+import { HexColorPicker } from 'react-colorful'
 
 // Bảng màu cơ bản cho text editor
 const BASIC_COLORS = [
@@ -96,6 +97,7 @@ export const ColorPickerModal = ({
   setCurrentColor,
 }: ColorPickerModalProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const [pickerMode, setPickerMode] = useState<'preset' | 'custom'>('preset')
 
   const handleColorSelect = (color: string) => {
     setCurrentColor(color)
@@ -151,7 +153,7 @@ export const ColorPickerModal = ({
         </div>
 
         {/* Current Color Display */}
-        <div className="mb-4">
+        <div className="mb-3">
           <label className="5xl:text-[0.8em] block text-sm font-semibold text-gray-700 mb-2">
             Xem trước màu chữ:
           </label>
@@ -167,54 +169,109 @@ export const ColorPickerModal = ({
           </div>
         </div>
 
-        {/* Color Palette Grid */}
-        <div className="mb-4">
-          <label className="5xl:text-[0.8em] block text-sm font-semibold text-gray-700 mb-2">
-            Chọn màu nhanh:
-          </label>
-          <div className="grid grid-cols-6 gap-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
-            {BASIC_COLORS.map((color) => {
-              const isSelected = currentColor.toUpperCase() === color.hex.toUpperCase()
-              return (
-                <button
-                  key={color.hex}
-                  // onClick={() => handleColorSelect(color.hex)}
-                  onPointerDown={() => handleColorSelect(color.hex)}
-                  title={color.name}
-                  className={`shadow-[0_0_3px_gray] aspect-square rounded-lg transition-all hover:scale-110 active:scale-95 ${
-                    isSelected
-                      ? 'ring-4 ring-main-cl ring-offset-2 scale-110'
-                      : 'hover:ring-2 hover:ring-gray-400'
-                  } ${color.hex === '#FFFFFF' ? 'border-2 border-gray-300' : ''}`}
-                  style={{
-                    backgroundColor: color.hex,
-                  }}
-                >
-                  {isSelected && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke={
-                        color.hex === '#FFFFFF' ||
-                        color.hex === '#F5F5F5' ||
-                        color.hex === '#FFFF00'
-                          ? '#000000'
-                          : '#FFFFFF'
-                      }
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="w-full h-full p-1"
-                    >
-                      <path d="M20 6 9 17l-5-5" />
-                    </svg>
-                  )}
-                </button>
-              )
-            })}
+        {/* Mode Toggle */}
+        <div className="mb-3">
+          <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-lg">
+            <button
+              onClick={() => setPickerMode('preset')}
+              className={`py-2 px-3 rounded-md font-semibold text-sm transition-all ${
+                pickerMode === 'preset'
+                  ? 'bg-main-cl text-white shadow'
+                  : 'bg-transparent text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              Màu sẵn có
+            </button>
+            <button
+              onClick={() => setPickerMode('custom')}
+              className={`py-2 px-3 rounded-md font-semibold text-sm transition-all ${
+                pickerMode === 'custom'
+                  ? 'bg-main-cl text-white shadow'
+                  : 'bg-transparent text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              Màu tùy chỉnh
+            </button>
           </div>
         </div>
+
+        {/* Color Palette Grid - Preset Mode */}
+        {pickerMode === 'preset' && (
+          <div className="mb-3">
+            <label className="5xl:text-[0.8em] block text-sm font-semibold text-gray-700 mb-2">
+              Chọn màu nhanh:
+            </label>
+            <div className="grid grid-cols-6 gap-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
+              {BASIC_COLORS.map((color) => {
+                const isSelected = currentColor.toUpperCase() === color.hex.toUpperCase()
+                return (
+                  <button
+                    key={color.hex}
+                    onPointerDown={() => handleColorSelect(color.hex)}
+                    title={color.name}
+                    className={`shadow-[0_0_3px_gray] aspect-square rounded-lg transition-all hover:scale-110 active:scale-95 ${
+                      isSelected
+                        ? 'ring-4 ring-main-cl ring-offset-2 scale-110'
+                        : 'hover:ring-2 hover:ring-gray-400'
+                    } ${color.hex === '#FFFFFF' ? 'border-2 border-gray-300' : ''}`}
+                    style={{
+                      backgroundColor: color.hex,
+                    }}
+                  >
+                    {isSelected && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke={
+                          color.hex === '#FFFFFF' ||
+                          color.hex === '#F5F5F5' ||
+                          color.hex === '#FFFF00'
+                            ? '#000000'
+                            : '#FFFFFF'
+                        }
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="w-full h-full p-1"
+                      >
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Hex Color Picker - Custom Mode */}
+        {pickerMode === 'custom' && (
+          <div className="mb-3">
+            <label className="5xl:text-[0.8em] block text-sm font-semibold text-gray-700 mb-2">
+              Chọn màu tùy chỉnh:
+            </label>
+            <div className="flex flex-col items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="NAME-hex-color-picker-wrapper w-full">
+                <HexColorPicker color={currentColor} onChange={handleColorSelect} />
+              </div>
+              <div className="w-full">
+                <input
+                  type="text"
+                  value={currentColor.toUpperCase()}
+                  onChange={(e) => {
+                    const value = e.target.value.trim()
+                    if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
+                      handleColorSelect(value)
+                    }
+                  }}
+                  placeholder="#FFFFFF"
+                  className="w-full px-3 py-2 text-center font-mono text-gray-800 bg-white border-2 border-gray-300 rounded-lg focus:border-main-cl focus:ring-2 focus:ring-main-cl/20 outline-none transition-all"
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Input Color */}
         {/* <div className="mb-4">

@@ -39,6 +39,7 @@ export const VoucherSection = ({ cartItems, onVoucherApplied }: VoucherSectionPr
 
   // Hàm áp dụng voucher
   const applyVoucher = async () => {
+    console.log('>>> discountCode:', discountCode)
     if (!discountCode.trim()) {
       setDiscountMessage({ message: 'Vui lòng nhập mã giảm giá', status: 'error' })
       return

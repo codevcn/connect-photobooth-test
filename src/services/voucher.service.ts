@@ -17,6 +17,7 @@ class VoucherService {
     items: TCheckVoucherReq['items'],
     storeCode: string
   ): Promise<VoucherValidationResult> {
+    console.log('>>> [vou] params:', { code, items, storeCode })
     const checkedQuery = checkQueryString()
     let deviceId: string | null = null
     if (checkedQuery.isPhotoism || checkedQuery.dev) {
@@ -37,17 +38,18 @@ class VoucherService {
       items,
       voucher_code: code,
     }
+    console.log('>>> [vou] reqData:', reqData)
 
     const response = await postCheckVoucher(reqData)
-
-    if (!response.success || !response.data?.data) {
+console.log('>>> [vou] res:', response)
+    if (!response.success || !response.data) {
       return {
         success: false,
         message: response.error || 'Không thể kiểm tra mã giảm giá',
       }
     }
 
-    const voucherData = response.data.data
+    const voucherData = response.data
 
     // Check if error response
     if ('error' in voucherData) {

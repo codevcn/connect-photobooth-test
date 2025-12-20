@@ -161,6 +161,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
               id="fullName-input"
               name="fullName"
               type="text"
+              defaultValue="Nguyễn Văn A"
               placeholder="Nguyễn Văn A"
               className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
             />
@@ -180,6 +181,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
               <input
                 id="phone-input"
                 name="phone"
+                defaultValue="0987654321"
                 type="tel"
                 placeholder="09xx xxx xxx"
                 className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
@@ -199,6 +201,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
               <input
                 id="email-input"
                 name="email"
+                defaultValue="email@domain.com"
                 type="email"
                 placeholder="email@domain.com"
                 className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
@@ -220,6 +223,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
               <select
                 id="province-input"
                 name="province"
+                defaultValue="Đồng Nai"
                 onChange={handleProvinceChange}
                 className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all bg-white`}
                 disabled={isLoadingProvinces}
@@ -250,6 +254,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
               <select
                 id="city-input"
                 name="city"
+                defaultValue="Thành phố Biên Hòa"
                 onChange={handleDistrictChange}
                 className="5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all bg-white"
                 disabled={!selectedProvinceId || isLoadingDistricts}
@@ -283,6 +288,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
             <select
               id="ward-input"
               name="ward"
+              defaultValue="Phường Tân Hiệp"
               className="5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all bg-white"
               disabled={!selectedDistrictId || isLoadingWards}
             >
@@ -312,6 +318,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
               id="address-input"
               name="address"
               type="text"
+              defaultValue="123 Đường ABC"
               placeholder="Số nhà, tên đường, phường/xã..."
               className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
             />
@@ -331,6 +338,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, ShippingInfoFormProp
               id="message-input"
               name="message"
               placeholder="Nhập lời nhắn của bạn..."
+              defaultValue="Giao giờ hành chính"
               rows={2}
               className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] py-2 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
             ></textarea>

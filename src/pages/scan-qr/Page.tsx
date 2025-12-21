@@ -74,7 +74,7 @@ const ScanQRPage = () => {
 
   return (
     // Container chính - Quay lại Gradient Hồng Đỏ tươi sáng
-    <div className="relative h-screen w-screen overflow-hidden bg-linear-to-br from-[#9f1239] via-[#e11d48] to-[#f43f5e]">
+    <div className="relative h-screen w-screen overflow-hidden bg-linear-to-br from-[#e60076] via-[#df197f] to-[#fe389e]">
       <FloatingStyles />
 
       {/* --- BACKGROUND DECORATION & FLOATING ICONS --- */}
@@ -269,43 +269,51 @@ const ScanQRPage = () => {
         <h1 className="h-12 block text-3xl md:text-5xl font-extrabold text-white drop-shadow-lg uppercase tracking-wide">
           QUÉT MÃ QR
         </h1>
-        <p className="h-[42px] text-white/95 text-sm md:text-lg font-light italic bg-white/10 backdrop-blur-md px-6 py-1.5 rounded-full inline-block shadow-sm border border-white/20">
+        <p className="h-[42px] text-white/95 text-base md:text-xl italic bg-white/10 backdrop-blur-md px-6 py-1.5 rounded-full inline-block shadow-sm border border-white/20">
           Biến ảnh photobooth thành sự độc đáo
         </p>
         <QRScanner onScanSuccess={handleData} />
       </section>
 
       {/* 3. INSTRUCTIONS (RIGHT SIDE - TOP 58%) */}
-      <div className="absolute right-3 top-[58%] transform -translate-y-1/2 z-40 flex flex-col gap-4">
+      <div className="absolute right-12 text-2xl top-[58%] transform -translate-y-1/2 z-40 flex flex-col gap-4">
         {/* STEP 1 */}
-        <div className="flex flex-col items-center justify-center bg-black/40 backdrop-blur-xl p-3 rounded-2xl border border-white/20 shadow-2xl w-[100px] md:w-[130px] transform transition-all hover:scale-105 hover:bg-black/60 group cursor-default">
-          <div className="w-10 h-10 rounded-full bg-white text-[#e11d48] flex items-center justify-center font-bold text-lg shadow-inner mb-1.5 group-hover:bg-[#e11d48] group-hover:text-white transition-colors duration-300">
+        <div className="flex flex-col items-center justify-center bg-black/40 backdrop-blur-xl p-3 rounded-2xl border border-white/20 shadow-2xl w-[100px] md:w-[180px] transform transition-all hover:scale-105 hover:bg-black/60 group cursor-default">
+          <div className="w-12 h-12 rounded-full bg-white text-[#e11d48] flex items-center justify-center font-bold shadow-inner mb-1.5 group-hover:bg-[#e11d48] group-hover:text-white transition-colors duration-300">
             1
           </div>
-          <span className="text-white font-bold text-xs text-center leading-tight">Quét QR</span>
-          <span className="hidden md:block text-white/80 text-[10px] text-center mt-1">
+          <span className="text-white font-bold text-xs 5xl:text-2xl text-center leading-tight">
+            Quét QR
+          </span>
+          <span className="hidden md:block text-white/80 text-[10px] 5xl:text-2xl text-center mt-1">
             trên ảnh
           </span>
         </div>
 
         {/* STEP 2 */}
-        <div className="flex flex-col items-center justify-center bg-black/40 backdrop-blur-xl p-3 rounded-2xl border border-white/20 shadow-2xl w-[100px] md:w-[130px] transform transition-all hover:scale-105 hover:bg-black/60 group cursor-default">
-          <div className="w-10 h-10 rounded-full bg-white text-[#e11d48] flex items-center justify-center font-bold text-lg shadow-inner mb-1.5 group-hover:bg-[#e11d48] group-hover:text-white transition-colors duration-300">
+        <div className="flex flex-col items-center justify-center bg-black/40 backdrop-blur-xl p-3 rounded-2xl border border-white/20 shadow-2xl w-[100px] md:w-[180px] transform transition-all hover:scale-105 hover:bg-black/60 group cursor-default">
+          <div className="w-12 h-12 rounded-full bg-white text-[#e11d48] flex items-center justify-center font-bold shadow-inner mb-1.5 group-hover:bg-[#e11d48] group-hover:text-white transition-colors duration-300">
             2
           </div>
-          <span className="text-white font-bold text-xs text-center leading-tight">Xem Ảnh</span>
-          <span className="hidden md:block text-white/80 text-[10px] text-center mt-1">
+          <span className="text-white font-bold text-xs 5xl:text-2xl text-center leading-tight">
+            Xem Ảnh
+          </span>
+          <span className="hidden md:block text-white/80 text-[10px] 5xl:text-2xl text-center mt-1">
             trên quà
           </span>
         </div>
 
         {/* STEP 3 */}
-        <div className="flex flex-col items-center justify-center bg-black/40 backdrop-blur-xl p-3 rounded-2xl border border-white/20 shadow-2xl w-[100px] md:w-[130px] transform transition-all hover:scale-105 hover:bg-black/60 group cursor-default">
-          <div className="w-10 h-10 rounded-full bg-white text-[#e11d48] flex items-center justify-center font-bold text-lg shadow-inner mb-1.5 group-hover:bg-[#e11d48] group-hover:text-white transition-colors duration-300">
+        <div className="flex flex-col items-center justify-center bg-black/40 backdrop-blur-xl p-3 rounded-2xl border border-white/20 shadow-2xl w-[100px] md:w-[180px] transform transition-all hover:scale-105 hover:bg-black/60 group cursor-default">
+          <div className="w-12 h-12 rounded-full bg-white text-[#e11d48] flex items-center justify-center font-bold shadow-inner mb-1.5 group-hover:bg-[#e11d48] group-hover:text-white transition-colors duration-300">
             3
           </div>
-          <span className="text-white font-bold text-xs text-center leading-tight">Đặt Hàng</span>
-          <span className="hidden md:block text-white/80 text-[10px] text-center mt-1">ngay</span>
+          <span className="text-white font-bold text-xs 5xl:text-2xl text-center leading-tight">
+            Đặt Hàng
+          </span>
+          <span className="hidden md:block text-white/80 text-[10px] 5xl:text-2xl text-center mt-1">
+            ngay
+          </span>
         </div>
       </div>
     </div>

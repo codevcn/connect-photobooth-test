@@ -63,7 +63,21 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
         returnDetailedScanResult: true,
         highlightScanRegion: true,
         highlightCodeOutline: true,
-        maxScansPerSecond: 10, // Tăng tần suất quét mã QR
+        maxScansPerSecond: 15, // Tăng tần suất quét mã QR
+        // Tăng vùng quét QR lên gần như toàn bộ camera (padding 16px)
+        calculateScanRegion: (video) => {
+          const padding = 16 // Padding 16px từ mỗi cạnh
+          const smallerDimension = Math.min(video.videoWidth, video.videoHeight)
+          const scanRegionSize = smallerDimension - padding * 2
+          return {
+            x: Math.round((video.videoWidth - scanRegionSize) / 2),
+            y: Math.round((video.videoHeight - scanRegionSize) / 2),
+            width: scanRegionSize,
+            height: scanRegionSize,
+            downScaledWidth: scanRegionSize,
+            downScaledHeight: scanRegionSize,
+          }
+        },
       }
     )
     scannerRef.current = qrScanner
@@ -100,7 +114,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
   useEffect(() => {
     if (!isReady) return
     qrGetter.setDetectFromFileHandler(detectFromFile as any)
-    // initializeScanner()
+    initializeScanner()
     if (error) {
       stopCamera()
     }
@@ -141,11 +155,11 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
   // }, [isReady])
 
   return (
-    <div className="w-full">
-      <div className="relative aspect-square bg-gray-900 rounded-2xl overflow-hidden shadow-lg max-h-[90vh]">
+    <div className="h-[calc(100vh-250px)] w-fit">
+      <div className="h-full relative aspect-square bg-gray-900 rounded-2xl overflow-hidden shadow-lg">
         <video
           ref={videoRef}
-          className="max-w-[600px] max-h-[90vh] w-full h-full object-cover transition-transform duration-300"
+          className="max-h-full max-w-full w-full h-full object-cover transition-transform duration-300"
           playsInline
         />
         {error ? (
@@ -169,11 +183,6 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
                     <span>%</span>
                   </p>
                 </div>
-              </div>
-            )}
-            {!isScanning && (
-              <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-1/2 h-1/2 border-2 border-pink-400 rounded-lg opacity-30 animate-pulse"></div>
               </div>
             )}
           </>

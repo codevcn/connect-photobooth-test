@@ -1,3 +1,5 @@
+import QRScanner from '@/pages/scan-qr/QRScanner'
+
 const toast = {
   loading: (msg: string, opt?: any) => console.log('Loading:', msg),
   dismiss: (id: any) => console.log('Dismiss toast'),
@@ -12,7 +14,7 @@ const generateUniqueId = () => Date.now().toString()
 const AppNavigator = { navTo: (nav: any, path: string) => console.log('AppNav to', path) }
 
 // --- MOCK QR SCANNER COMPONENT (Giả lập camera để xem UI) ---
-const QRScanner = ({ onScanSuccess }: { onScanSuccess: any }) => {
+const QRScannerV2 = ({ onScanSuccess }: { onScanSuccess: any }) => {
   return (
     <div
       className="w-full h-full relative flex items-center justify-center overflow-hidden cursor-pointer"
@@ -277,13 +279,14 @@ const ScanQRPageV2 = () => {
       </div>
 
       {/* 1. HEADER (TOP CENTER) */}
-      <section className="absolute top-4 left-0 w-full text-center z-20 px-4 pointer-events-none">
-        <h1 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-lg mb-2 uppercase tracking-wide">
+      <section className="flex flex-col h-full justify-center items-center gap-4 relative w-full text-center z-20 p-8 pointer-events-none">
+        <h1 className="h-12 block text-3xl md:text-5xl font-extrabold text-white drop-shadow-lg uppercase tracking-wide">
           QUÉT MÃ QR
         </h1>
-        <p className="text-white/95 text-sm md:text-lg font-light italic bg-white/10 backdrop-blur-md px-6 py-1.5 rounded-full inline-block shadow-sm border border-white/20">
+        <p className="h-[42px] text-white/95 text-sm md:text-lg font-light italic bg-white/10 backdrop-blur-md px-6 py-1.5 rounded-full inline-block shadow-sm border border-white/20">
           Biến ảnh photobooth thành sự độc đáo
         </p>
+        <QRScanner onScanSuccess={async (res: any) => {}} />
       </section>
 
       {/* 3. INSTRUCTIONS (RIGHT SIDE - TOP 58%) */}

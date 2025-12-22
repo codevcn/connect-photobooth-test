@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import QRCode from 'qrcode'
 import { appLogger } from '@/logging/Logger'
-import { EAppPage, ELogLevel } from '@/utils/enums'
+import { EAppFeature, EAppPage, ELogLevel } from '@/utils/enums'
 
 type TStarProps = {
   top?: string
@@ -61,13 +61,26 @@ const IntroPage = () => {
         const parser = new DOMParser()
         const svgDoc = parser.parseFromString(svgString, 'image/svg+xml')
         const svgElement = svgDoc.documentElement
-        containerRef.current!.querySelector('.NAME-qr-svg-placeholder')!.replaceWith(svgElement)
+        containerRef.current?.querySelector('.NAME-qr-svg-placeholder')?.replaceWith(svgElement)
       })
-      .catch(console.error)
+      .catch((error) => {
+        appLogger.logError(
+          error,
+          'Error generating QR code on intro page',
+          EAppPage.INTRO,
+          EAppFeature.INTRO_QR_CODE
+        )
+        console.error('>>> Lỗi tạo mã QR trên trang intro:', error)
+      })
   }, [])
 
   const clickOnCTAButton = (e: React.MouseEvent<HTMLButtonElement>) => {
-    appLogger.logInfo('User clicked on CTA button', EAppPage.INTRO, e.currentTarget)
+    appLogger.logInfo(
+      'User clicked on CTA button',
+      EAppPage.INTRO,
+      EAppFeature.INTRO_CTA_BUTTON,
+      e.currentTarget
+    )
     AppNavigator.navTo(navigate, '/qr')
   }
 

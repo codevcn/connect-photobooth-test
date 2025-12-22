@@ -1,4 +1,4 @@
-import { EAppPage, ELogLevel } from '../enums'
+import { EAppFeature, EAppPage, ELogLevel } from '../enums'
 import { TLayoutMode, TLayoutType, TPrintLayout } from './print-layout'
 
 export type TIntersectSameFields<A, B> = {
@@ -535,7 +535,9 @@ export type TLogEntry = {
   timestamp: string
   level: ELogLevel
   message: string
+  appCurrentURL: string
   appPage: EAppPage
+  appFeature: EAppFeature
   causedElement?: {
     className?: string
     id?: string

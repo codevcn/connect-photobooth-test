@@ -22,6 +22,8 @@ import { useKeyboardStore } from '@/stores/keyboard/keyboard.store'
 import { AppNavigator } from '@/utils/navigator'
 import { TermConditions } from './TermConditions'
 import { useVoucherStore } from '@/stores/voucher/product.store'
+import { appLogger } from '@/logging/Logger'
+import { EAppFeature, EAppPage } from '@/utils/enums'
 
 type IPaymentModalProps = {
   imgSrc?: string
@@ -323,6 +325,11 @@ const PaymentPage = () => {
   //   }
   // }, [])
 
+  const proceedToPayment = () => {
+    appLogger.logInfo('User proceeded to payment', EAppPage.PAYMENT, EAppFeature.PAYMENT_PROCEED)
+    setShowModal(true)
+  }
+
   return (
     <div className="STYLE-height-full-dynamic relative 5xl:text-3xl bg-gray-100">
       {/* Header */}
@@ -428,9 +435,7 @@ const PaymentPage = () => {
                   {/* Checkout Button - Desktop (in summary) */}
                   <div className="hidden md:block mt-3 md:mt-4">
                     <button
-                      onClick={() => {
-                        setShowModal(true)
-                      }}
+                      onClick={proceedToPayment}
                       className="5xl:text-[0.9em] 5xl:h-14 flex items-center justify-center gap-2 w-full mt-4 h-11 bg-main-cl hover:scale-95 text-white font-bold text-base rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition duration-200"
                     >
                       <svg
@@ -490,9 +495,7 @@ const PaymentPage = () => {
                 className="w-full mt-3"
               >
                 <button
-                  onClick={() => {
-                    setShowModal(true)
-                  }}
+                  onClick={proceedToPayment}
                   style={{
                     backgroundColor: acceptedTerms ? 'var(--vcn-main-cl)' : 'lightgray',
                   }}

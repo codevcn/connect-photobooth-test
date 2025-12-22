@@ -237,18 +237,18 @@ export const ProductList: React.FC<ProductListProps> = ({
                 <div className="sm:gap-2 gap-1 flex flex-col">
                   {discountedPrice ? (
                     <div className="flex flex-col">
-                      <span className="text-[0.7em] text-gray-400 line-through font-medium">
-                        <span>{formatNumberWithCommas(originalPrice)}</span>
+                      <span className="smd:text-[1.3em] text-[1.5em] font-bold text-primary">
+                        <span>{formatNumberWithCommas(discountedPrice)}</span>
                         <span> VND</span>
                       </span>
-                      <span className="text-[1.2em] font-bold text-primary">
-                        <span>{formatNumberWithCommas(discountedPrice)}</span>
+                      <span className="text-[0.7em] text-gray-400 line-through font-medium">
+                        <span>{formatNumberWithCommas(originalPrice)}</span>
                         <span> VND</span>
                       </span>
                     </div>
                   ) : (
                     <div>
-                      <span className="text-[1.5em] font-bold text-primary">
+                      <span className="smd:text-[1.3em] text-[1.5em] font-bold text-primary">
                         <span>{formatNumberWithCommas(originalPrice)}</span>
                         <span> VND</span>
                       </span>
@@ -308,7 +308,7 @@ export const ProductList: React.FC<ProductListProps> = ({
                         </svg>
                       </button>
                     </div>
-                    <div className="flex h-fit ml-1">
+                    <div className="flex h-fit ml-2">
                       <button
                         onClick={() =>
                           handleDeleteClick(productId, productVariantId, mockupData.id)

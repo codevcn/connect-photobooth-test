@@ -9,7 +9,7 @@ import { AppNavigator } from '@/utils/navigator'
 import { SectionLoading } from '@/components/custom/Loading'
 import { checkIfLargeScreen } from '@/utils/helpers'
 import { appLogger } from '@/logging/Logger'
-import { EAppPage, ELogLevel } from '@/utils/enums'
+import { EAppFeature, EAppPage, ELogLevel } from '@/utils/enums'
 
 type QRScannerProps = {
   onScanSuccess: (result: TUserInputImage[]) => Promise<void>
@@ -40,6 +40,12 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
               setProgress(percentage)
               if (error) {
                 console.error('>>> [qr] Lỗi lấy dữ liệu mã QR:', error)
+                appLogger.logError(
+                  error,
+                  'Error extracting QR code data',
+                  EAppPage.SCAN_QR,
+                  EAppFeature.QR_EXTRACT_DATA
+                )
                 setError('Không thể lấy dữ liệu từ mã QR. Vui lòng thử lại.')
                 toast.error('Không thể lấy dữ liệu từ mã QR. Vui lòng thử lại')
                 setTimeout(() => {
@@ -59,12 +65,27 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
             })
             .catch((err) => {
               console.error('>>> [qr] Lỗi xử lý dữ liệu mã QR:', err)
+              appLogger.logError(
+                err,
+                'Error processing QR code data',
+                EAppPage.SCAN_QR,
+                EAppFeature.QR_EXTRACT_DATA
+              )
               setError('Không thể xử lý mã QR. Vui lòng thử lại.')
               toast.error('Không thể xử lý mã QR. Vui lòng thử lại.')
             })
         }
       },
       {
+        onDecodeError: (error) => {
+          console.error('>>> [qr] decode qr error:', error)
+          appLogger.logError(
+            error instanceof Error ? error : new Error(error),
+            'QR decode error',
+            EAppPage.SCAN_QR,
+            EAppFeature.QR_EXTRACT_DATA
+          )
+        },
         returnDetailedScanResult: true,
         highlightScanRegion: true,
         highlightCodeOutline: true,
@@ -89,12 +110,21 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
     qrScanner
       .start()
       .then(() => {
-        appLogger.logInfo('Camera started successfully', EAppPage.SCAN_QR)
+        appLogger.logInfo(
+          'Camera started successfully',
+          EAppPage.SCAN_QR,
+          EAppFeature.QR_LAUNCH_CAMERA
+        )
         setCameraIsActive(true)
       })
       .catch((error) => {
         console.log('>>> [qr] error:', error)
-        appLogger.logError(error, 'Cannot start camera', EAppPage.SCAN_QR)
+        appLogger.logError(
+          error,
+          'Cannot start camera',
+          EAppPage.SCAN_QR,
+          EAppFeature.QR_LAUNCH_CAMERA
+        )
         setError('Không thể truy cập camera. Vui lòng cấp quyền sử dụng camera.')
         toast.error('Không thể truy cập camera. Vui lòng cấp quyền sử dụng camera.')
       })
@@ -121,7 +151,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
 
     setIsScanning(false)
     console.log('>>> Camera đã được tắt hoàn toàn.')
-    appLogger.logInfo('Camera stopped', EAppPage.SCAN_QR)
+    appLogger.logInfo('Camera stopped', EAppPage.SCAN_QR, EAppFeature.QR_LAUNCH_CAMERA)
   }, [])
 
   const startScanning = () => {

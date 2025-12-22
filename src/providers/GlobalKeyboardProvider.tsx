@@ -3,6 +3,8 @@ import { VietnameseKeyboard } from '@/components/custom/virtual-keyboard/Vietnam
 import { createPortal } from 'react-dom'
 import { useKeyboardStore } from '@/stores/keyboard/keyboard.store'
 import { checkIfMobileScreen } from '@/utils/helpers'
+import { appLogger } from '@/logging/Logger'
+import { EAppFeature, EAppPage } from '@/utils/enums'
 
 export enum ETextFieldNameForKeyBoard {
   VIRLTUAL_KEYBOARD_TEXTFIELD = 'NAME-virltual-keyboard-textfield',
@@ -19,6 +21,11 @@ export const GlobalKeyboardProvider = () => {
 
   const showKeyboard = useCallback((input: HTMLInputElement | HTMLTextAreaElement) => {
     if (input.classList.contains(ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD)) {
+      appLogger.filterLogByURLPathInclude('payment', appLogger.logInfo)(
+        'Virtual keyboard is shown',
+        EAppPage.PAYMENT,
+        EAppFeature.VIRTUAL_KEYBOARD
+      )
       currentInputRef.current = input
       setIsVisible(true)
     }

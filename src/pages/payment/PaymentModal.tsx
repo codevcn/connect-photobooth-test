@@ -9,6 +9,8 @@ import { ShippingInfoForm, TFormErrors } from './ShippingInfo'
 import { LocalStorageHelper } from '@/utils/localstorage'
 import { SectionLoading } from '@/components/custom/Loading'
 import { EndOfPayment } from './EndOfPayment'
+import { appLogger } from '@/logging/Logger'
+import { EAppFeature, EAppPage } from '@/utils/enums'
 
 type TShippingInfo = {
   name: string
@@ -85,6 +87,12 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: TPaymentMod
   }
 
   const processPayment = async () => {
+    appLogger.logInfo(
+      'User initiated payment processing',
+      EAppPage.PAYMENT,
+      EAppFeature.PAYMENT_PROCESS
+    )
+
     const form = formRef.current
     if (!form) return
 
@@ -145,6 +153,12 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: TPaymentMod
             paymentDetails,
           })
         } else {
+          appLogger.logError(
+            new Error('No payment instructions received from server'),
+            'No payment instructions received from server',
+            EAppPage.PAYMENT,
+            EAppFeature.PAYMENT_PROCESS
+          )
           throw new Error('Không nhận được thông tin thanh toán từ server')
         }
       } else {
@@ -162,6 +176,16 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems }: TPaymentMod
       }
     } catch (error) {
       console.error('>>> Payment error:', error)
+      appLogger.logError(
+        error instanceof Error
+          ? error
+          : typeof error === 'string'
+          ? new Error(error)
+          : new Error('Unknown error'),
+        'Error occurred during payment processing',
+        EAppPage.PAYMENT,
+        EAppFeature.PAYMENT_PROCESS
+      )
       toast.error('Có lỗi xảy ra khi xử lý thanh toán')
     } finally {
       setConfirming(false)

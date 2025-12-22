@@ -24,6 +24,8 @@ import {
 } from '../helpers'
 import { base64WorkerHelper } from '@/workers/base64.worker-helper'
 import { useLayoutStore } from '@/stores/ui/print-layout.store'
+import { appLogger } from '@/logging/Logger'
+import { EAppFeature, EAppPage } from '@/utils/enums'
 
 type TAddToCartHandlerProps = {
   printAreaContainerRef: React.RefObject<HTMLDivElement | null>
@@ -150,6 +152,9 @@ export const AddToCartHandler = ({
 
   const listenAddToCart = () => {
     if (!checkIfValidToCart('add-to-cart')) return
+
+    appLogger.logInfo('User initiated add to cart action', EAppPage.EDIT, EAppFeature.ADD_TO_CART)
+
     useProductUIDataStore.getState().setIsAddingToCart(true)
     useEditedElementStore.getState().cancelSelectingElement()
     // Thu thập visual states của tất cả elements
@@ -160,10 +165,21 @@ export const AddToCartHandler = ({
         useProductUIDataStore.getState().setLastestMockupId(mockupId)
         console.log('>>> [note] mockup id after add to cart:', mockupId)
         recordMockupNote()
+        appLogger.logInfo(
+          'Add to cart completed successfully',
+          EAppPage.EDIT,
+          EAppFeature.ADD_TO_CART
+        )
       },
       (error) => {
         toast.error(error.message || 'Đã có lỗi xảy ra khi thêm vào giỏ hàng')
         useProductUIDataStore.getState().setIsAddingToCart(false)
+        appLogger.logError(
+          error,
+          'Error occurred during add to cart',
+          EAppPage.EDIT,
+          EAppFeature.ADD_TO_CART
+        )
       }
     )
   }

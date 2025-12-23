@@ -376,7 +376,7 @@ const PaymentPage = () => {
             {/* Layout: 2 columns on medium+ screens */}
             <div className="grid grid-cols-1 md:grid-cols-[4fr_2fr] gap-3 h-full">
               {/* Left Column: Product List */}
-              <div className="overflow-y-hidden md:overflow-y-auto gallery-scroll">
+              <div className="overflow-y-hidden md:overflow-y-auto h-full gallery-scroll">
                 <ProductList
                   cartItems={cartItems}
                   onUpdateQuantity={updateQuantity}

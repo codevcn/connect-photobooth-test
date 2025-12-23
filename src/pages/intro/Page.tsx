@@ -48,7 +48,8 @@ const IntroPage = () => {
     if (!firstRenderRef.current) return
     firstRenderRef.current = false
 
-    const textInput = 'https://api.encycom.com/' + window.location.search + '&device=mobile'
+    const textInput =
+      'https://api.encycom.com/redirect/' + window.location.search + '&device=mobile'
 
     QRCode.toString(textInput, {
       type: 'svg',

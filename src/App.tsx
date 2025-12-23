@@ -41,7 +41,7 @@ import { AppTempContainer } from './components/custom/TempContainer'
 import { GlobalKeyboardProvider } from './providers/GlobalKeyboardProvider'
 import { useQueryFilter } from './hooks/extensions'
 import { UserIdleTracker } from './components/custom/IdleWarningModal'
-import ScanQRPageV2 from './dev/pages/Dev'
+import Dev from './dev/pages/Dev'
 
 const IdleCountdown = () => {
   return <UserIdleTracker idleTimeout={30} modalTimeout={10} />
@@ -122,7 +122,7 @@ function AppRoutes() {
         <Routes>
           <Route path="/" element={<EditPageDev />} />
           <Route path="/payment" element={<PaymentPage />} />
-          <Route path="/dev" element={<ScanQRPageV2 />} />
+          <Route path="/dev" element={<Dev />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <GlobalKeyboardProvider />

@@ -1,0 +1,258 @@
+[
+    {
+        "ref_id": "auto:RAkPcicmZ3d-NQhUd2hwAAAnG1BVd1odcghRCV1USAFWGPLy9NTUiP4MUhJhpZhCY1j3iBWnvaHVWFkcAR5cAVACUgJQCwdSAlQFBlhTBQoDVwJWCx0NAAdXHVJRBlcWd1EJQQM",
+        "distance": 0,
+        "address": "Phường Phú Thủy,Tỉnh Lâm Đồng",
+        "name": "A.13 Đường Lê Quý Đôn",
+        "display": "A.13 Đường Lê Quý Đôn Phường Phú Thủy,Tỉnh Lâm Đồng",
+        "boundaries": [
+            {
+                "type": 2,
+                "id": 29982,
+                "name": "Phú Thủy",
+                "prefix": "Phường",
+                "full_name": "Phường Phú Thủy"
+            },
+            {
+                "type": 0,
+                "id": 30,
+                "name": "Lâm Đồng",
+                "prefix": "Tỉnh",
+                "full_name": "Tỉnh Lâm Đồng"
+            }
+        ],
+        "categories": [],
+        "entry_points": []
+    },
+    {
+        "ref_id": "auto:RAkPcicmZ3d-NQgjARoDcQ1abyQidyMddQhWCV1USAFdCBamoqKF0tj_W1UNoqKhhkNTFX2lnQwGFjZFRNHfnwgVVAdeCQZMClEFA1pUAgMeVgJSAh8MDgRTG0xXBVAfAABXA1YFVgBVDA0kUwhGVg",
+        "distance": 0,
+        "address": "Phường Đông Hưng Thuận,Thành Phố Hồ Chí Minh",
+        "name": "A.180 Đường Đông Hưng Thuận 27",
+        "display": "A.180 Đường Đông Hưng Thuận 27 Phường Đông Hưng Thuận,Thành Phố Hồ Chí Minh",
+        "boundaries": [
+            {
+                "type": 2,
+                "id": 21260,
+                "name": "Đông Hưng Thuận",
+                "prefix": "Phường",
+                "full_name": "Phường Đông Hưng Thuận"
+            },
+            {
+                "type": 0,
+                "id": 12,
+                "name": "Hồ Chí Minh",
+                "prefix": "Thành Phố",
+                "full_name": "Thành Phố Hồ Chí Minh"
+            }
+        ],
+        "categories": [],
+        "entry_points": []
+    },
+    {
+        "ref_id": "auto:RAkPcicmZ3d-NQhRAhkGdAwgFVdWd1sZCQUjCV1USAJWGPLy9NTUiP4MUhJhpZhCY1j3iBWnvaHVWFkcAR5cAVACUgVdCQNSAlQFBlFZBAIVSANSBx4NBwZSHFJRBlIbCnYEXhVQ",
+        "distance": 0,
+        "address": "Phường Phú Thủy,Tỉnh Lâm Đồng",
+        "name": "A.23 Đường Lê Quý Đôn",
+        "display": "A.23 Đường Lê Quý Đôn Phường Phú Thủy,Tỉnh Lâm Đồng",
+        "boundaries": [
+            {
+                "type": 2,
+                "id": 29982,
+                "name": "Phú Thủy",
+                "prefix": "Phường",
+                "full_name": "Phường Phú Thủy"
+            },
+            {
+                "type": 0,
+                "id": 30,
+                "name": "Lâm Đồng",
+                "prefix": "Tỉnh",
+                "full_name": "Tỉnh Lâm Đồng"
+            }
+        ],
+        "categories": [],
+        "entry_points": []
+    },
+    {
+        "ref_id": "auto:RAkPcicmZ3d-NQhTBBRxBQwgaFVQDiRsBwJdCV1USAJTGPLy9NTUiP4MUhJhpZhCY1j3iBWnvaHVWFkcAR5cAVACUAFTCwdSAlQFAVdZBAIVSANSBxgHDQFaHFJRBlIbCnYEXhVQ",
+        "distance": 0,
+        "address": "Phường Phú Thủy,Tỉnh Lâm Đồng",
+        "name": "A.26 Đường Lê Quý Đôn",
+        "display": "A.26 Đường Lê Quý Đôn Phường Phú Thủy,Tỉnh Lâm Đồng",
+        "boundaries": [
+            {
+                "type": 2,
+                "id": 29982,
+                "name": "Phú Thủy",
+                "prefix": "Phường",
+                "full_name": "Phường Phú Thủy"
+            },
+            {
+                "type": 0,
+                "id": 30,
+                "name": "Lâm Đồng",
+                "prefix": "Tỉnh",
+                "full_name": "Tỉnh Lâm Đồng"
+            }
+        ],
+        "categories": [],
+        "entry_points": []
+    },
+    {
+        "ref_id": "auto:RAlSCTMtfAgcIHdbAx8GDQ1RblMgByYeCtHelB8VJFELGHgK8cZbEyehl1wNNlqkgsyPqFsEDSMPFiHrgRChoqCFh4v4VlFCaqeBEzUL1IiSEhIsVUXVjrJDeabIWAoWCgFVHFYGXgBcCQ5XC1QFA1NVAwkcVgdMBRUABQVbHlZWBlIdAQVedAdZFVU",
+        "distance": 0,
+        "address": "Phường Ninh Kiều,Thành Phố Cần Thơ",
+        "name": "Ủy Ban Nhân Dân Phường An Cư Đường Xô Viết Nghệ Tĩnh",
+        "display": "Ủy Ban Nhân Dân Phường An Cư Đường Xô Viết Nghệ Tĩnh Phường Ninh Kiều,Thành Phố Cần Thơ",
+        "boundaries": [
+            {
+                "type": 2,
+                "id": 3087,
+                "name": "Ninh Kiều",
+                "prefix": "Phường",
+                "full_name": "Phường Ninh Kiều"
+            },
+            {
+                "type": 0,
+                "id": 15,
+                "name": "Cần Thơ",
+                "prefix": "Thành Phố",
+                "full_name": "Thành Phố Cần Thơ"
+            }
+        ],
+        "categories": [
+            "9001"
+        ],
+        "entry_points": []
+    },
+    {
+        "ref_id": "auto:RAlSCTMtfAgZVQUkcBwNdgRXGCBTdVMeCtHelB8VJFELGHgK8cZbEyehl1wNNlqkgsyPqFsEDSMPFirMi5MMEqKlpYQLXxamoqKF0tj_W1UNKFWhhg1lQEyCluMPDVkcBx5VB14GVQZTDQFSAlQFB1hTBQoDVAFXBx0BAA1THVJRBlcWd1EJQQM",
+        "distance": 0,
+        "address": "Phường An Hải,Thành Phố Đà Nẵng",
+        "name": "Ủy Ban Nhân Dân Phường An Hải Đông Đường Ngô Quyền",
+        "display": "Ủy Ban Nhân Dân Phường An Hải Đông Đường Ngô Quyền Phường An Hải,Thành Phố Đà Nẵng",
+        "boundaries": [
+            {
+                "type": 2,
+                "id": 20493,
+                "name": "An Hải",
+                "prefix": "Phường",
+                "full_name": "Phường An Hải"
+            },
+            {
+                "type": 0,
+                "id": 13,
+                "name": "Đà Nẵng",
+                "prefix": "Thành Phố",
+                "full_name": "Thành Phố Đà Nẵng"
+            }
+        ],
+        "categories": [
+            "9001"
+        ],
+        "entry_points": []
+    },
+    {
+        "ref_id": "auto:RAlSCTMtfAgfIwNaABxyAAwhHlNZBVUVCtHelB8VJFELGHgK8cZbEyehl1wNNlqkgsyPqFsEDSMPFirMi5MMEjL2xElF_KakgoWOrg0FFX9MDxIq05ebVhWnvYPbiVkWAAZLAlABVgVdDQBaAlQFA1VWDgMdXhxQARwCBQxaG1NRBlIdBwsjUwpGAw",
+        "distance": 0,
+        "address": "Phường An Hải,Thành Phố Đà Nẵng",
+        "name": "Ủy Ban Nhân Dân Phường An Hải Tây Đường Mai Hắc Đế",
+        "display": "Ủy Ban Nhân Dân Phường An Hải Tây Đường Mai Hắc Đế Phường An Hải,Thành Phố Đà Nẵng",
+        "boundaries": [
+            {
+                "type": 2,
+                "id": 20493,
+                "name": "An Hải",
+                "prefix": "Phường",
+                "full_name": "Phường An Hải"
+            },
+            {
+                "type": 0,
+                "id": 13,
+                "name": "Đà Nẵng",
+                "prefix": "Thành Phố",
+                "full_name": "Thành Phố Đà Nẵng"
+            }
+        ],
+        "categories": [
+            "9001"
+        ],
+        "entry_points": []
+    },
+    {
+        "ref_id": "auto:RAkPYDcwcHd5XFFQAxgCDANRSFpSA1IcVVIDU1UABQkBWlAACgYCV1IDVwpIBARXVkxWAFQHH1VSBQdPUgBXUFJUXwQEAA9XU1wOCKfy84LM3a8MVQ1VFQRTFlNXGFMdBQJUBlMFVgJdCAdWAV8EA1tMBAMaUQpbBx0EAQZaFFZacANBQlU",
+        "distance": 0,
+        "address": "Phường Hải Vân,Thành Phố Đà Nẵng",
+        "name": "Đường A 10",
+        "display": "Đường A 10 Phường Hải Vân,Thành Phố Đà Nẵng",
+        "boundaries": [
+            {
+                "type": 2,
+                "id": 781,
+                "name": "Hải Vân",
+                "prefix": "Phường",
+                "full_name": "Phường Hải Vân"
+            },
+            {
+                "type": 0,
+                "id": 13,
+                "name": "Đà Nẵng",
+                "prefix": "Thành Phố",
+                "full_name": "Thành Phố Đà Nẵng"
+            }
+        ],
+        "categories": [],
+        "entry_points": []
+    },
+    {
+        "ref_id": "auto:RAkPYDcwcHd5XAtWBRlWBQwBH1MHAlMeVFNWAANTVwRQD1JRC1wMB1RTVFYfBVNbBkgCAgMFTABXVwdIAVRXBlUDAAJXDgIBVlIOCKfy84LM3a8MVQ1VFQRXFlNXGFMdAwhSC10EVghLCQdWBl0CCCUDWUFI",
+        "distance": 0,
+        "address": "Phường Liên Chiểu,Thành Phố Đà Nẵng",
+        "name": "Đường A 14",
+        "display": "Đường A 14 Phường Liên Chiểu,Thành Phố Đà Nẵng",
+        "boundaries": [
+            {
+                "type": 2,
+                "id": 21517,
+                "name": "Liên Chiểu",
+                "prefix": "Phường",
+                "full_name": "Phường Liên Chiểu"
+            },
+            {
+                "type": 0,
+                "id": 13,
+                "name": "Đà Nẵng",
+                "prefix": "Thành Phố",
+                "full_name": "Thành Phố Đà Nẵng"
+            }
+        ],
+        "categories": [],
+        "entry_points": []
+    },
+    {
+        "ref_id": "auto:RAkPYDcwcHd5XFFbBRoGBABbHlUAUgFLUgJVV1ZRVFNXCAcGBl0MA1UHUQBOVAJaURsCUVMFTgNRAFMbUgBRUAIEBFQBDlcBVlIOCKfy84LM3a8MVQ1VFQRWFlNXGFMdAQVXAlMFVgVXCwFTBl8EA1tMBAMYVgZTCxQNBwFWFVdacANBQlU",
+        "distance": 0,
+        "address": "Phường Hải Vân,Thành Phố Đà Nẵng",
+        "name": "Đường A 15",
+        "display": "Đường A 15 Phường Hải Vân,Thành Phố Đà Nẵng",
+        "boundaries": [
+            {
+                "type": 2,
+                "id": 781,
+                "name": "Hải Vân",
+                "prefix": "Phường",
+                "full_name": "Phường Hải Vân"
+            },
+            {
+                "type": 0,
+                "id": 13,
+                "name": "Đà Nẵng",
+                "prefix": "Thành Phố",
+                "full_name": "Thành Phố Đà Nẵng"
+            }
+        ],
+        "categories": [],
+        "entry_points": []
+    }
+]

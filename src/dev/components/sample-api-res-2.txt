@@ -1,0 +1,77 @@
+[
+    {
+        "ref_id": "auto:RAkPcicmZ3d-NQhaAhgEAQZVaCZTBFAdCQFRCV0EVAVF_KakgoWOrg0FFXxKE0uDiahaFWOnrgxBYgvum15eA1YbXwdcDARSBl0FA1NSBQcfXQNSBAMMAQZUHFBYB1QdAQBVBV1zB1wWXQ",
+        "distance": 0,
+        "address": "Phường Tân Triều,Tỉnh Đồng Nai",
+        "name": "125 Đường Nguyễn Văn Tiên",
+        "display": "125 Đường Nguyễn Văn Tiên Phường Tân Triều,Tỉnh Đồng Nai",
+        "boundaries": [
+            {
+                "type": 2,
+                "id": 5911,
+                "name": "Tân Triều",
+                "prefix": "Phường",
+                "full_name": "Phường Tân Triều"
+            },
+            {
+                "type": 0,
+                "id": 23,
+                "name": "Đồng Nai",
+                "prefix": "Tỉnh",
+                "full_name": "Tỉnh Đồng Nai"
+            }
+        ],
+        "categories": [],
+        "entry_points": []
+    },
+    {
+        "ref_id": "auto:RAlGCSImcWBoNWFYBEhXVFBUFQdMBFYbVx1RUAVTSwhVDVNPVFENB1UDUFEaVlYECRYFBwBD6fKnhoOWrF4CEihSE0mEg7MMEjLxsA1CYVvM3I0MCRwEGwBWH1pQA1IaBABVAlYDXwtUCABMBFQFBFtXAgUYVgJSAhUPc1QPXgc",
+        "distance": 0,
+        "address": "Xã Mỹ Lệ,Tỉnh Tây Ninh",
+        "name": "125 Đường Nguyễn Văn Tiến",
+        "display": "125 Đường Nguyễn Văn Tiến Xã Mỹ Lệ,Tỉnh Tây Ninh",
+        "boundaries": [
+            {
+                "type": 2,
+                "id": 20520,
+                "name": "Mỹ Lệ",
+                "prefix": "Xã",
+                "full_name": "Xã Mỹ Lệ"
+            },
+            {
+                "type": 0,
+                "id": 40,
+                "name": "Tây Ninh",
+                "prefix": "Tỉnh",
+                "full_name": "Tỉnh Tây Ninh"
+            }
+        ],
+        "categories": [],
+        "entry_points": []
+    },
+    {
+        "ref_id": "auto:RAlGCSImcWBoNWFYABlWDFBSSFNMA1IbBh1RAgQBS1EHAFNPBQUBVVdSVAccVwcHCRYFBwBD6fKnhoOWrF4CEihSE0mEg7MMEjLxsA1CYVvM3I0MCRwEGwBRHFNYBlAYBABVAlYHVAtUCABMB1YHAVZaBAAfVgJSAhkPc1QPXgc",
+        "distance": 0,
+        "address": "Xã Tân Trụ,Tỉnh Tây Ninh",
+        "name": "125 Đường Nguyễn Văn Tiến",
+        "display": "125 Đường Nguyễn Văn Tiến Xã Tân Trụ,Tỉnh Tây Ninh",
+        "boundaries": [
+            {
+                "type": 2,
+                "id": 23080,
+                "name": "Tân Trụ",
+                "prefix": "Xã",
+                "full_name": "Xã Tân Trụ"
+            },
+            {
+                "type": 0,
+                "id": 40,
+                "name": "Tây Ninh",
+                "prefix": "Tỉnh",
+                "full_name": "Tỉnh Tây Ninh"
+            }
+        ],
+        "categories": [],
+        "entry_points": []
+    }
+]

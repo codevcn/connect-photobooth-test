@@ -1,12 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { voucherService } from '@/services/voucher.service'
 import { TVoucher, TPaymentProductItem } from '@/utils/types/global'
 import { TCheckVoucherReq } from '@/utils/types/api'
 import { ETextFieldNameForKeyBoard } from '@/providers/GlobalKeyboardProvider'
 import { useVoucherStore } from '@/stores/voucher/product.store'
-import { toast } from 'react-toastify'
 
-interface VoucherSectionProps {
+type VoucherSectionProps = {
   cartItems: TPaymentProductItem[]
   onVoucherApplied: (voucher: TVoucher | null, discount: number) => void
 }
@@ -17,12 +16,13 @@ type TDiscountMessage = {
 }
 
 export const VoucherSection = ({ cartItems, onVoucherApplied }: VoucherSectionProps) => {
-  const [discountCode, setDiscountCode] = useState('')
   const appliedVoucher = useVoucherStore((state) => state.appliedVoucher)
   const setAppliedVoucher = useVoucherStore((state) => state.setAppliedVoucher)
   const [discountMessage, setDiscountMessage] = useState<TDiscountMessage>()
   const [isApplyingVoucher, setIsApplyingVoucher] = useState(false)
   const reapplyVoucherID = useVoucherStore((state) => state.reapplyVoucherID)
+  const voucherInputRef = useRef<HTMLInputElement>(null)
+  const reapplyVoucherIDRef = useRef<string | null>(reapplyVoucherID)
 
   // Convert cart items to API format
   const buildVoucherCheckItems = (): TCheckVoucherReq['items'] => {
@@ -43,6 +43,7 @@ export const VoucherSection = ({ cartItems, onVoucherApplied }: VoucherSectionPr
 
   // Hàm áp dụng voucher
   const applyVoucher = async () => {
+    const discountCode = voucherInputRef.current?.value || ''
     console.log('>>> discountCode:', discountCode)
     if (!discountCode.trim()) {
       setDiscountMessage({ message: 'Vui lòng nhập mã giảm giá', status: 'error' })
@@ -84,16 +85,17 @@ export const VoucherSection = ({ cartItems, onVoucherApplied }: VoucherSectionPr
   // Hàm xóa voucher
   const removeVoucher = () => {
     setAppliedVoucher(null)
-    setDiscountCode('')
+    voucherInputRef.current!.value = ''
     setDiscountMessage(undefined)
     onVoucherApplied(null, 0)
   }
 
   useEffect(() => {
-    if (discountCode) {
+    if (appliedVoucher && reapplyVoucherIDRef.current !== reapplyVoucherID) {
+      reapplyVoucherIDRef.current = reapplyVoucherID
       applyVoucher()
     }
-  }, [reapplyVoucherID, discountCode])
+  }, [reapplyVoucherID, appliedVoucher])
 
   return (
     <section className="bg-white rounded-2xl shadow-sm p-4">
@@ -157,8 +159,7 @@ export const VoucherSection = ({ cartItems, onVoucherApplied }: VoucherSectionPr
       <div className="flex items-center gap-2 w-full md:flex-col md:items-end">
         <input
           type="text"
-          value={discountCode}
-          onChange={(e) => setDiscountCode(e.target.value)}
+          ref={voucherInputRef}
           onKeyDown={(e) => e.key === 'Enter' && !isApplyingVoucher && applyVoucher()}
           placeholder="Nhập mã khuyến mãi"
           disabled={!!appliedVoucher || isApplyingVoucher}

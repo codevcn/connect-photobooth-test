@@ -285,45 +285,22 @@ const PaymentPage = () => {
     document.body.addEventListener('pointerdown', listenPointerDownOnPage)
     return () => {
       document.body.removeEventListener('pointerdown', listenPointerDownOnPage)
+      useVoucherStore.getState().setAppliedVoucher(null)
     }
   }, [])
+
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      setAppliedVoucher(null)
+      setVoucherDiscount(0)
+      useVoucherStore.getState().setAppliedVoucher(null)
+    }
+    useVoucherStore.getState().resetReapplyVoucherID()
+  }, [cartItems.length])
 
   const handleTickTerms = () => {
     setAcceptedTerms((pre) => !pre)
   }
-
-  // useEffect(() => {
-  //   const adjustUIOnScroll = (e: Event) => {
-  //     if (!checkIfMobileScreen()) return
-  //     const proceedToPayment = proceedToPaymentRef.current
-  //     const voucherContainer = voucherContainerRef.current
-  //     if (proceedToPayment && voucherContainer) {
-  //       const proceedToPaymentRect = proceedToPayment.getBoundingClientRect()
-  //       if (proceedToPaymentRect.bottom > window.innerHeight) {
-  //         voucherContainer.style.paddingBottom = `${60}px`
-  //         proceedToPayment.style.cssText = `
-  //           position: absolute;
-  //           bottom: 0px;
-  //           left: 0px;
-  //           padding: 0px;
-  //           width: 100%;
-  //         `
-  //       } else {
-  //         voucherContainer.style.paddingBottom = `0px`
-  //         proceedToPayment.style.cssText = `
-  //           position: static;
-  //           padding: 0px 8px 80px 8px;
-  //           width: auto;
-  //         `
-  //       }
-  //     }
-  //   }
-
-  //   window.addEventListener('scroll', adjustUIOnScroll)
-  //   return () => {
-  //     window.removeEventListener('scroll', adjustUIOnScroll)
-  //   }
-  // }, [])
 
   const proceedToPayment = () => {
     appLogger.logInfo('User proceeded to payment', EAppPage.PAYMENT, EAppFeature.PAYMENT_PROCEED)
@@ -376,7 +353,7 @@ const PaymentPage = () => {
             {/* Layout: 2 columns on medium+ screens */}
             <div className="5xl:h-full h-auto md:grid md:grid-cols-[4fr_2fr] gap-3">
               {/* Left Column: Product List */}
-              <div className="md:overflow-y-auto md:mb-0 mb-3 overflow-y-hidden h-full gallery-scroll">
+              <div className="md:overflow-y-auto md:mb-0 md:h-[calc(100vh-80px)] mb-3 overflow-y-hidden h-full gallery-scroll">
                 <ProductList
                   cartItems={cartItems}
                   onUpdateQuantity={updateQuantity}

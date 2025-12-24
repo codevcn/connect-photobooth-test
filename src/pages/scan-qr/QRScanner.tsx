@@ -183,7 +183,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
 
   useEffect(() => {
     if (!isReady) return
-    // startScanning()
+    startScanning()
     return () => {
       stopCamera()
     }

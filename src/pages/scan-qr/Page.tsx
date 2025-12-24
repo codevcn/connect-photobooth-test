@@ -266,7 +266,7 @@ const ScanQRPage = () => {
       </div>
 
       {/* --- HƯỚNG DẪN QUÉT QR (BÊN TRÁI) --- */}
-      <div className="5xl:text-xl text-base absolute left-6 top-4 w-[29vw] z-30 pointer-events-auto">
+      <div className="5xl:text-xl text-base absolute left-6 top-1/2 -translate-y-1/2 w-[29vw] z-30 pointer-events-auto">
         <div className="bg-gray-100 border border-gray-400 rounded-xl p-4 pb-2">
           {/* Header */}
           <h2 className="text-[1.5rem] font-extrabold text-main-cl text-center mb-4 tracking-wide">
@@ -276,7 +276,7 @@ const ScanQRPage = () => {
           {/* Các bước hướng dẫn */}
           <div className="flex flex-col items-start space-y-4">
             {/* Bước 1: Hướng QR vào webcam */}
-            <div className="flex flex-col items-center">
+            <div className="w-full">
               <p className="flex gap-2 text-black font-bold text-[1em] mb-1">
                 <span className="flex items-center justify-center leading-none h-8 min-w-8 bg-main-cl rounded-full text-white">
                   1.
@@ -289,7 +289,7 @@ const ScanQRPage = () => {
             </div>
 
             {/* Bước 1: Hướng QR vào webcam */}
-            <div className="flex flex-col items-center">
+            <div className="w-full">
               <p className="flex gap-2 text-black font-bold text-[1em] mb-1">
                 <span className="flex items-center justify-center leading-none h-8 min-w-8 bg-main-cl rounded-full text-white">
                   2.
@@ -302,15 +302,17 @@ const ScanQRPage = () => {
             </div>
 
             {/* Bước 3: Giữ khoảng cách 8cm */}
-            <div className="flex flex-col items-center">
+            <div className="w-full">
               <p className="flex gap-2 text-black font-bold text-[1em] mb-1">
                 <span className="flex items-center justify-center leading-none h-8 min-w-8 bg-main-cl rounded-full text-white">
                   3.
                 </span>
                 <span>Đưa mã QR của bạn vào khung hình camera</span>
               </p>
-              <div className="bg-white p-1.5 rounded-2xl flex items-center justify-center mb-3 w-full relative">
-                <img className="w-60" src="/images/design-qr-page/chu-y-qr.png" alt="Ruler" />
+              <div className="flex items-center justify-center mb-3 w-full relative">
+                <div className="p-1.5 rounded-2xl w-fit bg-white">
+                  <img className="w-60" src="/images/design-qr-page/chu-y-qr.png" alt="Ruler" />
+                </div>
               </div>
             </div>
           </div>
@@ -336,7 +338,7 @@ const ScanQRPage = () => {
       </section>
 
       {/* --- BẠN SẼ NHẬN ĐƯỢC (BÊN PHẢI) --- */}
-      <div className="5xl:text-xl text-base h-full absolute right-6 top-4 w-[29vw] z-40 pointer-events-auto">
+      <div className="5xl:text-xl text-base absolute right-6 top-1/2 -translate-y-1/2 w-[29vw] z-40 pointer-events-auto">
         <div className="bg-gray-100 border border-gray-400 rounded-xl p-4 pb-2">
           {/* Header */}
           <h2 className="text-[1.5rem] font-extrabold text-main-cl text-center mb-4 tracking-wide">

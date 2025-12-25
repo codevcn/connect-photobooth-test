@@ -89,12 +89,12 @@ const IntroPage = () => {
   return (
     <div className="h-screen w-screen bg-black">
       <div className="relative h-full w-full">
-        <div
+        {/* <div
           ref={containerRef}
           className="absolute top-1/2 -translate-y-1/2 left-20 w-[460px] h-[460px] z-20"
         >
           <QRFrame />
-        </div>
+        </div> */}
 
         <div className="relative h-full w-full z-10">
           <video

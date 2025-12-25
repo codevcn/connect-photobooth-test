@@ -42,6 +42,7 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems, show }: TPaym
   const [errors, setErrors] = useState<TFormErrors>({})
 
   const validateForm = (formEle: HTMLFormElement): TShippingInfo | null => {
+    let isValid = true
     const formData = new FormData(formEle)
     const shippingInfo: TShippingInfo = {
       name: formData.get('fullName')?.toString().trim() || '',
@@ -64,23 +65,23 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems, show }: TPaym
         ward: ward ? undefined : 'Phường/Xã không hợp lệ',
         address: address ? undefined : 'Địa chỉ không hợp lệ',
       })
-      return null
+      isValid = false
     }
     if (phone && !isValidPhoneNumber(phone)) {
       setErrors((pre) => ({
         ...pre,
         phone: 'Số điện thoại không hợp lệ',
       }))
-      return null
+      isValid = false
     }
     if (email && !isValidEmail(email)) {
       setErrors((pre) => ({
         ...pre,
         email: 'Email không hợp lệ',
       }))
-      return null
+      isValid = false
     }
-    return shippingInfo
+    return isValid ? shippingInfo : null
   }
 
   const resetEndOfPaymentData = () => {

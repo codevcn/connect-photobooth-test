@@ -22,8 +22,6 @@ import {
   cleanPrintAreaOnExtractMockupImage,
   recordMockupNote,
 } from '../helpers'
-import { base64WorkerHelper } from '@/workers/base64.worker-helper'
-import { useLayoutStore } from '@/stores/ui/print-layout.store'
 import { appLogger } from '@/logging/Logger'
 import { EAppFeature, EAppPage } from '@/utils/enums'
 
@@ -118,9 +116,6 @@ export const AddToCartHandler = ({
             `mockup-${Date.now()}.${convertMimeTypeToExtension(imgMimeType)}`
           )
           .then((res) => {
-            const spn = document.createElement('span')
-            spn.innerText = res.url
-            document.body.querySelector('.NAME-mockup-preview-action-btn')!.innerHTML=res.url
             const result = LocalStorageHelper.updateMockupImagePreSent(
               sessionId,
               pickedProduct.id,

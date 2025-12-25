@@ -37,11 +37,9 @@ const LayoutFUN = () => {
         const imagesToAdd: TPrintedImage[] = []
         for (const imageData of imageDataList) {
           const img = new Image()
-          img.onload = async () => {
-            const res = await fetch(imageData)
-            const blob = await res.blob()
+          img.onload = () => {
             imagesToAdd.push({
-              url: URL.createObjectURL(blob),
+              url: imageData,
               height: img.naturalHeight,
               width: img.naturalWidth,
               id: generateUniqueId(),

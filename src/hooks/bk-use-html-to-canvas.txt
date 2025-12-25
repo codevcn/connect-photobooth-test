@@ -1,0 +1,539 @@
+import { resizeCanvas } from '@/utils/helpers'
+import { domToBlob, domToCanvas } from 'modern-screenshot'
+
+/**
+ * Detect iOS device (iPhone, iPad, iPod)
+ */
+const isIOSDevice = (): boolean => {
+  const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera
+  // Check for iOS devices
+  if (/iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream) {
+    return true
+  }
+  // Check for iPad on iOS 13+ (reports as Mac)
+  if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) {
+    return true
+  }
+  return false
+}
+
+/**
+ * Get iOS canvas memory limit
+ * iOS có giới hạn canvas size rất nghiêm ngặt:
+ * - iPhone 6/7/8: ~16MP (4096x4096)
+ * - iPhone X+: ~32MP nhưng với nhiều ảnh sẽ bị giảm
+ * - Khi có nhiều ảnh lớn, memory limit sẽ bị exceeded
+ */
+const getIOSCanvasLimit = (imageCount: number): number => {
+  // Giảm dần theo số lượng ảnh
+  if (imageCount >= 6) return 2048  // Max 2048px cho 6+ ảnh
+  if (imageCount >= 4) return 3072  // Max 3072px cho 4+ ảnh
+  if (imageCount >= 2) return 4096  // Max 4096px cho 2+ ảnh
+  return 4096
+}
+
+/**
+ * Wait for all images in container to load
+ */
+const waitForImagesToLoad = (container: HTMLElement): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const images = Array.from(container.querySelectorAll('img'))
+    
+    if (images.length === 0) {
+      resolve()
+      return
+    }
+
+    let loadedCount = 0
+    let hasError = false
+    const timeout = setTimeout(() => {
+      if (!hasError) {
+        console.warn('⚠️ Image loading timeout, proceeding anyway...')
+        resolve()
+      }
+    }, 10000) // 10s timeout
+
+    const checkComplete = () => {
+      loadedCount++
+      if (loadedCount === images.length) {
+        clearTimeout(timeout)
+        if (!hasError) {
+          resolve()
+        }
+      }
+    }
+
+    images.forEach((img) => {
+      if (img.complete && img.naturalHeight !== 0) {
+        checkComplete()
+      } else {
+        img.addEventListener('load', checkComplete, { once: true })
+        img.addEventListener('error', (e) => {
+          console.error('❌ Image failed to load:', img.src, e)
+          hasError = true
+          clearTimeout(timeout)
+          reject(new Error(`Failed to load image: ${img.src}`))
+        }, { once: true })
+      }
+    })
+  })
+}
+
+/**
+ * Calculate optimal scale based on image count, container size, and device type
+ */
+const calculateOptimalScale = (container: HTMLElement, defaultScale: number = 8): number => {
+  const images = container.querySelectorAll('img')
+  const imageCount = images.length
+  const containerWidth = container.getBoundingClientRect().width
+  const containerHeight = container.getBoundingClientRect().height
+  const isIOS = isIOSDevice()
+
+  console.log('📱 Device detection:', { isIOS, imageCount, containerWidth, containerHeight, defaultScale })
+
+  // iOS cần xử lý đặc biệt vì có memory limit nghiêm ngặt
+  if (isIOS) {
+    const maxCanvasSize = getIOSCanvasLimit(imageCount)
+    const maxDimension = Math.max(containerWidth, containerHeight)
+    
+    // Tính scale tối đa để không vượt quá giới hạn iOS
+    let iosMaxScale = Math.floor(maxCanvasSize / maxDimension)
+    
+    // Giảm thêm cho trường hợp nhiều ảnh để tránh memory overflow
+    if (imageCount >= 6) {
+      iosMaxScale = Math.min(iosMaxScale, 2) // Max scale = 2 cho 6+ ảnh trên iOS
+      console.log('🍎 iOS 6+ images: forcing scale to', iosMaxScale)
+    } else if (imageCount >= 4) {
+      iosMaxScale = Math.min(iosMaxScale, 3) // Max scale = 3 cho 4+ ảnh trên iOS
+      console.log('🍎 iOS 4+ images: limiting scale to', iosMaxScale)
+    }
+
+    const finalScale = Math.max(1, Math.min(defaultScale, iosMaxScale))
+    console.log('🍎 iOS final scale:', finalScale, '(requested:', defaultScale, ')')
+    return finalScale
+  }
+
+  // Android và các platform khác - giữ nguyên logic cũ
+  if (imageCount >= 6) {
+    console.log('🔧 6+ images detected, reducing scale from', defaultScale, 'to', Math.max(4, defaultScale / 2))
+    return Math.max(4, defaultScale / 2) // Min scale = 4
+  } else if (imageCount >= 4) {
+    console.log('🔧 4+ images detected, reducing scale from', defaultScale, 'to', Math.max(5, defaultScale * 0.7))
+    return Math.max(5, defaultScale * 0.7)
+  }
+
+  // Check canvas size limit (most browsers: ~16,384px)
+  const estimatedCanvasSize = Math.max(containerWidth, containerHeight) * defaultScale
+  if (estimatedCanvasSize > 15000) {
+    const adjustedScale = Math.floor(15000 / Math.max(containerWidth, containerHeight))
+    console.log('🔧 Canvas too large, adjusting scale to', adjustedScale)
+    return Math.max(4, adjustedScale)
+  }
+
+  return defaultScale
+}
+
+/**
+ * Crop canvas to a specific region
+ */
+const cropCanvas = (
+  sourceCanvas: HTMLCanvasElement,
+  x: number,
+  y: number,
+  cropWidth: number,
+  cropHeight: number,
+  outputWidth: number,
+  outputHeight: number
+): HTMLCanvasElement => {
+  const croppedCanvas = document.createElement('canvas')
+  croppedCanvas.width = cropWidth
+  croppedCanvas.height = cropHeight
+
+  const ctx = croppedCanvas.getContext('2d')
+  if (!ctx) {
+    throw new Error('Failed to get canvas context for cropping')
+  }
+
+  // Draw the cropped region
+  ctx.drawImage(sourceCanvas, x, y, cropWidth, cropHeight, 0, 0, outputWidth, outputHeight)
+
+  return croppedCanvas
+}
+
+type TUseHtlmToCanvasReturn = {
+  saveHtmlAsImage: (
+    htmContainer: HTMLDivElement,
+    desiredImgMimeType: string | null,
+    scale: number | undefined,
+    onSaved: (imgData: Blob, canvas: HTMLCanvasElement) => void,
+    onError: (error: Error) => void
+  ) => void
+  saveHtmlAsImageWithDesiredSizeOldVersion: (
+    htmlContainer: HTMLDivElement,
+    desiredOutputWidth: number,
+    desiredOutputHeight: number,
+    desiredImgMimeType: string | null,
+    onSaved: (imgData: Blob, canvas: HTMLCanvasElement, originalCanvas: HTMLCanvasElement) => void,
+    onError: (error: Error) => void
+  ) => void
+  saveHtmlAsImageCropped: (
+    htmlContainer: HTMLDivElement,
+    cropBounds: DOMRect,
+    desiredOutputWidth: number,
+    desiredOutputHeight: number,
+    desiredImgMimeType: string | null,
+    onSaved: (imgData: Blob, canvas: HTMLCanvasElement) => void,
+    onError: (error: Error) => void
+  ) => void
+  saveHtmlAsImageWithDesiredSize: (
+    htmlContainer: HTMLDivElement,
+    transparentPrintAreaContainer: HTMLDivElement,
+    desiredOutputWidth: number,
+    desiredOutputHeight: number,
+    upScale: number,
+    desiredImgMimeType: string | null,
+    onSaved: (
+      fullContainerImageData: Blob,
+      allowedPrintAreaImageData: Blob,
+      allowedPrintAreaCanvas: HTMLCanvasElement
+    ) => void,
+    onError: (error: Error) => void
+  ) => void
+  savePrintAreaAsImage: (
+    htmContainer: HTMLDivElement,
+    allowedPrintArea: HTMLDivElement,
+    desiredImgMimeType: string | null,
+    upScale: number | undefined,
+    onSaved: (
+      fullPrintAreaContainer: Blob,
+      allowedPrintAreaImage: Blob,
+      allowedPrintAreaCanvas: HTMLCanvasElement
+    ) => void,
+    onError: (error: Error) => void
+  ) => void
+}
+
+export const useHtmlToCanvas = (): TUseHtlmToCanvasReturn => {
+  const savePrintAreaAsImage = async (
+    htmContainer: HTMLDivElement,
+    allowedPrintArea: HTMLDivElement,
+    desiredImgMimeType: string | null,
+    upScale: number | undefined,
+    onSaved: (
+      fullPrintAreaContainer: Blob,
+      allowedPrintAreaImage: Blob,
+      allowedPrintAreaCanvas: HTMLCanvasElement
+    ) => void,
+    onError: (error: Error) => void
+  ) => {
+    try {
+      await document.fonts.ready
+      const scale: number = upScale || 8
+      const [fullContainerCanvas, allowedPrintAreaCanvas] = await Promise.all([
+        domToCanvas(htmContainer, {
+          scale: scale,
+          quality: 1,
+          type: desiredImgMimeType || 'image/webp',
+        }),
+        domToCanvas(allowedPrintArea, {
+          scale: scale,
+          quality: 1,
+          type: desiredImgMimeType || 'image/webp',
+        }),
+      ])
+      const outputList: Blob[] = []
+      fullContainerCanvas.toBlob((blob) => {
+        if (blob) {
+          outputList.push(blob)
+          if (outputList.length === 2) {
+            onSaved(outputList[0], outputList[1], allowedPrintAreaCanvas)
+          }
+        } else {
+          throw new Error('Failed to convert entire product canvas to Blob')
+        }
+      }, desiredImgMimeType || 'image/webp')
+      allowedPrintAreaCanvas.toBlob((blob) => {
+        if (blob) {
+          outputList.push(blob)
+          if (outputList.length === 2) {
+            onSaved(outputList[0], outputList[1], allowedPrintAreaCanvas)
+          }
+        } else {
+          throw new Error('Failed to convert allowed print area canvas to Blob')
+        }
+      }, desiredImgMimeType || 'image/webp')
+    } catch (error) {
+      onError(error as Error)
+    }
+  }
+
+  const saveHtmlAsImage = async (
+    htmContainer: HTMLDivElement,
+    desiredImgMimeType: string | null,
+    upScale: number | undefined,
+    onSaved: (imgData: Blob, canvas: HTMLCanvasElement) => void,
+    onError: (error: Error) => void
+  ) => {
+    requestIdleCallback(async () => {
+      try {
+        await document.fonts.ready
+        const scale: number = upScale || 8
+        const canvas = await domToCanvas(htmContainer, {
+          scale: scale,
+          quality: 1,
+          type: desiredImgMimeType || 'image/webp',
+        })
+        canvas.toBlob((blob) => {
+          if (blob) {
+            onSaved(blob, canvas)
+          } else {
+            onError(new Error('Failed to convert resized canvas to Blob'))
+          }
+        })
+      } catch (error) {
+        onError(error as Error)
+      }
+    })
+  }
+
+  const saveHtmlAsImageWithDesiredSize = async (
+    htmlContainer: HTMLDivElement,
+    transparentPrintAreaContainer: HTMLDivElement,
+    desiredOutputWidth: number,
+    desiredOutputHeight: number,
+    upScale: number = 8,
+    desiredImgMimeType: string | null,
+    onSaved: (
+      fullContainerImageData: Blob,
+      allowedPrintAreaImageData: Blob,
+      allowedPrintAreaCanvas: HTMLCanvasElement
+    ) => void,
+    onError: (error: Error) => void
+  ) => {
+    requestIdleCallback(async () => {
+      try {
+        console.log('🎨 Starting capture process...')
+        
+        // Calculate optimal scale based on content
+        const optimalScale = calculateOptimalScale(transparentPrintAreaContainer, upScale)
+        console.log('📊 Using scale:', optimalScale, '(original:', upScale, ')')
+
+        // Wait for all images to load
+        console.log('⏳ Waiting for images to load...')
+        await Promise.race([
+          waitForImagesToLoad(htmlContainer),
+          waitForImagesToLoad(transparentPrintAreaContainer)
+        ])
+        console.log('✅ All images loaded')
+
+        // Wait for fonts
+        await Promise.race([
+          document.fonts.ready,
+          new Promise(resolve => setTimeout(resolve, 3000)) // 3s timeout
+        ])
+        console.log('✅ Fonts ready')
+
+        // Small delay to ensure rendering is complete
+        await new Promise(resolve => setTimeout(resolve, 100))
+
+        console.log('📸 Capturing mockup image...')
+        const mokupImageBlob = await domToBlob(htmlContainer, {
+          scale: optimalScale,
+          quality: 1,
+          type: desiredImgMimeType || 'image/webp',
+        })
+        console.log('✅ Mockup captured:', mokupImageBlob.size, 'bytes')
+
+        // Lấy vị trí của container và element cần crop
+        const containerRect = transparentPrintAreaContainer.getBoundingClientRect()
+        const elementRect = transparentPrintAreaContainer
+          .querySelector('.NAME-print-area-allowed')
+          ?.getBoundingClientRect()
+        
+        if (!elementRect) {
+          throw new Error('Print area element not found')
+        }
+
+        // Tính vị trí relative của element so với container
+        const relativeX = elementRect.left - containerRect.left
+        const relativeY = elementRect.top - containerRect.top
+        
+        const imageDataPromises: Promise<Blob>[] = []
+
+        console.log('📸 Capturing full canvas...')
+        const fullCanvas = await domToCanvas(transparentPrintAreaContainer, {
+          scale: optimalScale,
+          quality: 1,
+          type: desiredImgMimeType || 'image/webp',
+        })
+        console.log('✅ Full canvas captured:', fullCanvas.width, 'x', fullCanvas.height)
+        imageDataPromises.push(
+          new Promise((resolve, reject) => {
+            fullCanvas.toBlob((blob) => {
+              if (blob) {
+                resolve(blob)
+              } else {
+                reject(new Error('Failed to convert full canvas to Blob'))
+              }
+            }, desiredImgMimeType || 'image/webp')
+          })
+        )
+
+        // Tạo canvas mới để crop
+        const croppedCanvas = document.createElement('canvas')
+        const ctx = croppedCanvas.getContext('2d')
+
+        if (!ctx) {
+          return new Error('Failed to get canvas context for cropping')
+        }
+
+        // Set kích thước canvas crop (đã scale) - sử dụng optimalScale thay vì upScale
+        const cropWidth = elementRect.width * optimalScale
+        const cropHeight = elementRect.height * optimalScale
+        croppedCanvas.width = cropWidth
+        croppedCanvas.height = cropHeight
+
+        // Crop vùng cần thiết từ fullCanvas
+        ctx.drawImage(
+          fullCanvas,
+          relativeX * optimalScale, // source x (đã scale)
+          relativeY * optimalScale, // source y (đã scale)
+          cropWidth, // source width
+          cropHeight, // source height
+          0, // destination x
+          0, // destination y
+          cropWidth, // destination width
+          cropHeight // destination height
+        )
+
+        imageDataPromises.push(
+          new Promise((resolve, reject) => {
+            croppedCanvas.toBlob((blob) => {
+              if (blob) {
+                resolve(blob)
+              } else {
+                reject(new Error('Failed to convert cropped canvas to Blob'))
+              }
+            }, desiredImgMimeType || 'image/webp')
+          })
+        )
+        const blobs = await Promise.all(imageDataPromises)
+        
+        // Kiểm tra nếu blob quá nhỏ (có thể bị trắng/empty) - iOS issue
+        const isIOS = isIOSDevice()
+        if (isIOS && (mokupImageBlob.size < 1000 || blobs[1].size < 1000)) {
+          console.error('⚠️ iOS: Blob size too small, might be empty/white image')
+          console.log('📊 Blob sizes:', { mockup: mokupImageBlob.size, cropped: blobs[1].size })
+          // Có thể retry với scale thấp hơn nếu cần
+        }
+        
+        console.log('✅ Final output:', { 
+          mockupSize: mokupImageBlob.size, 
+          croppedSize: blobs[1].size,
+          canvasSize: `${croppedCanvas.width}x${croppedCanvas.height}`,
+          scale: optimalScale,
+          isIOS
+        })
+        
+        onSaved(mokupImageBlob, blobs[1], croppedCanvas)
+      } catch (error) {
+        console.error('❌ Capture failed:', error)
+        // Nếu là iOS và bị lỗi, log thêm thông tin debug
+        if (isIOSDevice()) {
+          console.error('🍎 iOS device detected. Canvas memory might be exceeded.')
+          console.log('💡 Try reducing image sizes or number of images')
+        }
+        onError(error as Error)
+      }
+    })
+  }
+
+  const saveHtmlAsImageWithDesiredSizeOldVersion = async (
+    htmlContainer: HTMLDivElement,
+    desiredOutputWidth: number,
+    desiredOutputHeight: number,
+    desiredImgMimeType: string | null,
+    onSaved: (
+      imgData: Blob,
+      canvasWithDesiredSize: HTMLCanvasElement,
+      originalCanvas: HTMLCanvasElement
+    ) => void,
+    onError: (error: Error) => void
+  ) => {
+    requestIdleCallback(async () => {
+      try {
+        const maxImageSizeInPx: number = 5000
+        const scale: number = maxImageSizeInPx / htmlContainer.getBoundingClientRect().width
+        const canvas = await domToCanvas(htmlContainer, {
+          scale: 8,
+          quality: 1,
+          type: desiredImgMimeType || 'image/webp',
+        })
+        const finalCanvas = resizeCanvas(canvas, desiredOutputWidth, desiredOutputHeight)
+        if (!finalCanvas) {
+          throw new Error('Failed to resize canvas to desired size')
+        }
+        canvas.toBlob((blob) => {
+          if (blob) {
+            onSaved(blob, finalCanvas, canvas)
+          } else {
+            onError(new Error('Failed to convert resized canvas to Blob'))
+          }
+        })
+      } catch (error) {
+        onError(error as Error)
+      }
+    })
+  }
+
+  const saveHtmlAsImageCropped = async (
+    htmlContainer: HTMLDivElement,
+    cropBounds: DOMRect,
+    desiredOutputWidth: number,
+    desiredOutputHeight: number,
+    desiredImgMimeType: string | null,
+    onSaved: (imgData: Blob, canvasWithDesiredSize: HTMLCanvasElement) => void,
+    onError: (error: Error) => void
+  ) => {
+    try {
+      const maxImageSizeInPx: number = 5000
+      const scale: number = maxImageSizeInPx / htmlContainer.getBoundingClientRect().width
+
+      // Capture full canvas
+      const fullCanvas = await domToCanvas(htmlContainer, {
+        scale: scale,
+        quality: 1,
+        type: desiredImgMimeType || 'image/webp',
+      })
+
+      // Crop to print area (scaled coordinates)
+      const croppedCanvas = cropCanvas(
+        fullCanvas,
+        cropBounds.x * scale,
+        cropBounds.y * scale,
+        cropBounds.width * scale,
+        cropBounds.height * scale,
+        desiredOutputWidth,
+        desiredOutputHeight
+      )
+
+      croppedCanvas.toBlob((blob) => {
+        if (blob) {
+          onSaved(blob, croppedCanvas)
+        } else {
+          onError(new Error('Failed to convert resized canvas to Blob'))
+        }
+      }, desiredImgMimeType || 'image/webp')
+    } catch (error) {
+      onError(error as Error)
+    }
+  }
+
+  return {
+    savePrintAreaAsImage,
+    saveHtmlAsImage,
+    saveHtmlAsImageWithDesiredSizeOldVersion,
+    saveHtmlAsImageCropped,
+    saveHtmlAsImageWithDesiredSize,
+  }
+}

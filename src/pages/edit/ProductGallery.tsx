@@ -58,7 +58,7 @@ const Product = ({
 }: TProductProps) => {
   const [initialLayout, setInitialLayout] = useState<TPrintLayout>()
   const isMobileScreen = checkIfMobileScreen()
-  const wantedVariantRef = useRef<TClientProductVariant | undefined>(undefined)
+  // const wantedVariantRef = useRef<TClientProductVariant | undefined>(undefined)
 
   const buildInitialLayout = () => {
     requestAnimationFrame(() => {
@@ -66,8 +66,8 @@ const Product = ({
       onInitFirstProduct(
         product,
         createInitialLayout(),
-        firstPrintAreaInProduct,
-        wantedVariantRef.current
+        firstPrintAreaInProduct
+        // wantedVariantRef.current
       )
     })
   }
@@ -104,26 +104,34 @@ const Product = ({
     buildInitialLayout()
   }, [product.id])
 
-  const hardCode_findBlackColor = (): string => {
-    let imageURL: string = firstPrintAreaInProduct.imageUrl
-    const productId = product.id
-    if (productId !== 29 && productId !== 25 && productId !== 7) return imageURL
-    // Tìm màu đen rồi chọn nó làm màu mặc định nếu có
-    const wantedVariant = product.variants.find(
-      (variant) =>
-        variant.attributes.color?.toLowerCase() === 'black' ||
-        variant.attributes.color?.toLowerCase() === 'đen'
+  // const hardCode_findBlackColor = (): string => {
+  //   let imageURL: string = firstPrintAreaInProduct.imageUrl
+  //   const productId = product.id
+  //   if (productId !== 29 && productId !== 25 && productId !== 7) return imageURL
+  //   // Tìm màu đen rồi chọn nó làm màu mặc định nếu có
+  //   const wantedVariant = product.variants.find(
+  //     (variant) =>
+  //       variant.attributes.color?.toLowerCase() === 'black' ||
+  //       variant.attributes.color?.toLowerCase() === 'đen'
+  //   )
+  //   if (wantedVariant) {
+  //     wantedVariantRef.current = wantedVariant
+  //     const foundPrintArea = product.printAreaList.find(
+  //       (printArea) => printArea.variantId === wantedVariant.id
+  //     )?.imageUrl
+  //     if (foundPrintArea) {
+  //       imageURL = foundPrintArea
+  //     }
+  //   }
+  //   return imageURL
+  // }
+
+  const findFirstDisplayedMockup = (): string => {
+    const firstVariant = product.variants[0]
+    const mockup = product.printAreaList.find(
+      (printArea) => printArea.variantId === firstVariant.id
     )
-    if (wantedVariant) {
-      wantedVariantRef.current = wantedVariant
-      const foundPrintArea = product.printAreaList.find(
-        (printArea) => printArea.variantId === wantedVariant.id
-      )?.imageUrl
-      if (foundPrintArea) {
-        imageURL = foundPrintArea
-      }
-    }
-    return imageURL
+    return mockup?.imageUrl || firstPrintAreaInProduct.imageUrl
   }
 
   return (
@@ -139,7 +147,7 @@ const Product = ({
       } NAME-gallery-product spmd:w-full spmd:h-auto smd:rounded-lg group h-full rounded-lg aspect-square cursor-pointer mobile-touch outline-0 hover:outline-2 hover:outline-main-cl relative`}
       onClick={() => {
         if (initialLayout)
-          onPickProduct(product, initialLayout, firstPrintAreaInProduct, wantedVariantRef.current)
+          onPickProduct(product, initialLayout, firstPrintAreaInProduct, product.variants[0])
       }}
     >
       <div
@@ -155,7 +163,7 @@ const Product = ({
       </div>
       <div className="NAME-gallery-child-to-rounded w-full h-full bg-white border border-gray-200 relative rounded-t-lg z-20">
         <img
-          src={hardCode_findBlackColor() || '/images/placeholder.svg'}
+          src={findFirstDisplayedMockup() || '/images/placeholder.svg'}
           alt={product.name}
           className="NAME-product-image absolute top-0 left-0 min-h-full max-h-full w-full h-full object-contain rounded-xl"
         />
@@ -326,26 +334,31 @@ export const ProductGallery = ({ products }: TProductGalleryProps) => {
         const product = products[0]
         const initialLayout = createInitialLayout()
         const firstPrintAreaInProduct = product.printAreaList[0]
-        let wantedVariant: TClientProductVariant | undefined = undefined
+        // let wantedVariant: TClientProductVariant | undefined = undefined
 
-        const hardCode_findBlackColor = () => {
-          const productId = product.id
-          if (productId !== 29 && productId !== 25 && productId !== 7) return
-          // Tìm màu đen rồi chọn nó làm màu mặc định nếu có
-          const variant = product.variants.find(
-            (variant) =>
-              variant.attributes.color?.toLowerCase() === 'black' ||
-              variant.attributes.color?.toLowerCase() === 'đen'
-          )
-          if (variant) {
-            wantedVariant = variant
-          }
-        }
-        hardCode_findBlackColor()
+        // const hardCode_findBlackColor = () => {
+        //   const productId = product.id
+        //   if (productId !== 29 && productId !== 25 && productId !== 7) return
+        //   // Tìm màu đen rồi chọn nó làm màu mặc định nếu có
+        //   const variant = product.variants.find(
+        //     (variant) =>
+        //       variant.attributes.color?.toLowerCase() === 'black' ||
+        //       variant.attributes.color?.toLowerCase() === 'đen'
+        //   )
+        //   if (variant) {
+        //     wantedVariant = variant
+        //   }
+        // }
+        // hardCode_findBlackColor()
 
         useProductUIDataStore
           .getState()
-          .handlePickFirstProduct(product, firstPrintAreaInProduct, initialLayout, wantedVariant)
+          .handlePickFirstProduct(
+            product,
+            firstPrintAreaInProduct,
+            initialLayout,
+            product.variants[0]
+          )
       }
     }
   }

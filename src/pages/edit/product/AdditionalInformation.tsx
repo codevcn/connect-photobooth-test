@@ -1,3 +1,5 @@
+import { TermConditions } from '@/components/ui/TermConditions'
+import { useQueryFilter } from '@/hooks/extensions'
 import { useState } from 'react'
 
 type TTabType = 'description' | 'shipping' | 'personalization'
@@ -81,6 +83,8 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
   </ul>
 </section>
 `
+  const [showTermsModal, setShowTermsModal] = useState(false)
+  const queryFilter = useQueryFilter()
 
   const handlePickTab = (tab: TTabType) => {
     if (tab === activeTab) {
@@ -210,8 +214,21 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
         </span>
         <span> trên nền tảng ứng dụng chụp ảnh của</span>
         <span className=" font-bold whitespace-nowrap text-black"> Fun Studio</span>
-        <span>. Bạn nhớ đọc kỹ điều khoản dịch vụ nhé.</span>
+        <span>
+          <span>. Bạn nhớ đọc kỹ </span>
+          <span
+            className="underline cursor-pointer text-blue-600 font-bold"
+            onClick={() => setShowTermsModal(true)}
+          >
+            điều khoản dịch vụ
+          </span>
+          <span> nhé.</span>
+        </span>
       </div>
+
+      {(queryFilter.funId || queryFilter.dev) && showTermsModal && (
+        <TermConditions closeModal={() => setShowTermsModal(false)} />
+      )}
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { getContrastColor, sortSizes } from '@/utils/helpers'
+import { extractIntegerFromString, getContrastColor, sortSizes } from '@/utils/helpers'
 import { TBaseProduct, TClientProductVariant } from '@/utils/types/global'
 import { PrintSurface } from '../print-surface/PrintSurface'
 import { Modal } from '@/components/custom/common/Modal'
@@ -217,7 +217,14 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
         if (aIsSize) return -1
         if (bIsSize) return 1
 
-        // Không phải size → sort text bình thường
+        // Cả 2 không phải size → thử extract số và so sánh
+        const parsedA = extractIntegerFromString(A)
+        const parsedB = extractIntegerFromString(B)
+        if (parsedA && parsedB) {
+          return parsedB - parsedA
+        }
+
+        // Cả 2 không phải size → sort text bình thường
         return A.localeCompare(B, 'vi')
       })
     }

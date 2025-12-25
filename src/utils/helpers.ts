@@ -642,3 +642,8 @@ export function setPathParams(path: string, params: Record<string, any> = {}) {
 export function removeQueryString(path: string): string {
   return new URL(path, 'http://dummy-base').pathname
 }
+
+export function extractIntegerFromString(str: string): number | null {
+  const match = str.match(/-?\d+/)
+  return match ? parseInt(match[0]) : null
+}

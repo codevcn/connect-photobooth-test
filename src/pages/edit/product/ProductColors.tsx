@@ -78,7 +78,7 @@ export const ProductColors = ({
       .map((x) => x.key)
   }
 
-  const sortedColors = useMemo(
+  const sortedColors = useMemo<string[]>(
     () =>
       sortColorsByBrightnessAsc(
         Object.keys(mergedAttributes.uniqueColors),

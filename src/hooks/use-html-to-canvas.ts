@@ -28,6 +28,42 @@ const cropCanvas = (
   return croppedCanvas
 }
 
+/**
+ * Decode tất cả ảnh trong container trước khi render
+ * Giúp iOS xử lý tốt hơn với nhiều ảnh lớn
+ */
+const decodeAllImages = async (container: HTMLElement): Promise<void> => {
+  const images = container.querySelectorAll('img')
+  const decodePromises: Promise<void>[] = []
+
+  images.forEach((img) => {
+    if (img.complete && img.naturalWidth > 0) {
+      // Ảnh đã load, gọi decode()
+      decodePromises.push(
+        img.decode().catch((err) => {
+          console.warn('[decode] Failed to decode image:', img.src, err)
+        })
+      )
+    } else {
+      // Ảnh chưa load, đợi load xong rồi decode
+      decodePromises.push(
+        new Promise<void>((resolve) => {
+          img.onload = () => {
+            img
+              .decode()
+              .then(resolve)
+              .catch(() => resolve())
+          }
+          img.onerror = () => resolve()
+        })
+      )
+    }
+  })
+
+  await Promise.all(decodePromises)
+  console.log(`[decode] Decoded ${images.length} images`)
+}
+
 type TUseHtlmToCanvasReturn = {
   saveHtmlAsImage: (
     htmContainer: HTMLDivElement,
@@ -179,6 +215,10 @@ export const useHtmlToCanvas = (): TUseHtlmToCanvasReturn => {
     onError: (error: Error) => void
   ) => {
     requestIdleCallback(async () => {
+      // 1️⃣ Decode tất cả ảnh trước
+      await decodeAllImages(htmlContainer)
+      await decodeAllImages(transparentPrintAreaContainer)
+
       const mokupImageBlob = await domToBlob(htmlContainer, {
         scale: upScale,
         quality: 1,

@@ -266,7 +266,7 @@ const ScanQRPage = () => {
       </div>
 
       {/* --- HƯỚNG DẪN QUÉT QR (BÊN TRÁI) --- */}
-      <div className="5xl:text-xl 5xl:block hidden text-base absolute left-6 top-1/2 -translate-y-1/2 w-[29vw] z-30 pointer-events-auto">
+      <div className="5xl:text-xl 5xl:block hidden text-base absolute left-6 top-1/2 -translate-y-1/2 w-[27vw] z-30 pointer-events-auto">
         <div className="bg-gray-100 border border-gray-400 rounded-xl p-4 pb-2">
           {/* Header */}
           <h2 className="text-[1.5rem] font-extrabold text-main-cl text-center mb-4 tracking-wide">
@@ -342,7 +342,7 @@ const ScanQRPage = () => {
       </section>
 
       {/* --- BẠN SẼ NHẬN ĐƯỢC (BÊN PHẢI) --- */}
-      <div className="5xl:text-xl 5xl:block hidden text-base absolute right-6 top-1/2 -translate-y-1/2 w-[29vw] z-40 pointer-events-auto">
+      <div className="5xl:text-xl 5xl:block hidden text-base absolute right-6 top-1/2 -translate-y-1/2 w-[27vw] z-40 pointer-events-auto">
         <div className="bg-gray-100 border border-gray-400 rounded-xl p-4 pb-2">
           {/* Header */}
           <h2 className="text-[1.5rem] font-extrabold text-main-cl text-center mb-4 tracking-wide">

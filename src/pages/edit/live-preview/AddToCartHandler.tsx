@@ -118,6 +118,9 @@ export const AddToCartHandler = ({
             `mockup-${Date.now()}.${convertMimeTypeToExtension(imgMimeType)}`
           )
           .then((res) => {
+            const spn = document.createElement('span')
+            spn.innerText = res.url
+            document.body.querySelector('.NAME-mockup-preview-action-btn')!.innerHTML=res.url
             const result = LocalStorageHelper.updateMockupImagePreSent(
               sessionId,
               pickedProduct.id,

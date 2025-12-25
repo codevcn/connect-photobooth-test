@@ -217,9 +217,9 @@ export const Actions = () => {
 
           <button
             onClick={handleShowMockupPreview}
-            className="w-full cursor-pointer border-main-cl border-2 active:bg-main-hover-cl text-main-cl font-bold h-10 px-4 rounded shadow-lg flex items-center justify-center gap-2 text-base"
+            className="NAME-mockup-preview-action-btn w-full cursor-pointer border-main-cl border-2 active:bg-main-hover-cl text-main-cl font-bold h-10 px-4 rounded shadow-lg flex items-center justify-center gap-2 text-base"
           >
-            Xem trước bản mockup
+            <span>Xem trước bản mockup</span>
           </button>
           <button
             onClick={beforeAddToCartHandler}

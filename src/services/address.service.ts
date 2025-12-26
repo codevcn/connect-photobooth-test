@@ -39,7 +39,7 @@ class AddressService {
       const locations = await getVietmapAutocomplete(text, 2)
       return AddressAdapter.toClientLocations(locations)
     } catch (error) {
-      console.error('Error fetching autocomplete:', error)
+      console.error('>>> Error fetching autocomplete:', error)
       return []
     }
   }

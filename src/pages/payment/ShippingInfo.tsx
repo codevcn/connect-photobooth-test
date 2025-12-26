@@ -8,6 +8,7 @@ import { WarningIcon } from '@/components/custom/icons/WarningIcon'
 import { useQueryFilter } from '@/hooks/extensions'
 import { useDebouncedCallback } from '@/hooks/use-debounce'
 import { ELocationBoudaryType } from '@/utils/enums'
+import { toast } from 'react-toastify'
 
 type TFormErrors = {
   fullName?: string
@@ -24,8 +25,15 @@ type TSearchableItem = {
   name: string
 }
 
+const normalizeString = (str: string) =>
+  str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+
 const fuzzySearchVietnamese = (items: TSearchableItem[], query: string): TSearchableItem[] => {
-  const normalize = (str: string) =>
+  const normalizeString = (str: string) =>
     str
       .toLowerCase()
       .normalize('NFD')
@@ -35,7 +43,7 @@ const fuzzySearchVietnamese = (items: TSearchableItem[], query: string): TSearch
   // Chuẩn bị keywords một lần
   const keywords: string[] = []
   for (const word of query.split(/\s+/)) {
-    const normalized = normalize(word)
+    const normalized = normalizeString(word)
     if (normalized.length > 0) {
       keywords.push(normalized)
     }
@@ -47,7 +55,7 @@ const fuzzySearchVietnamese = (items: TSearchableItem[], query: string): TSearch
   const results: Array<{ item: TSearchableItem; score: number }> = []
 
   for (const item of items) {
-    const normalizedItem = normalize(item.name)
+    const normalizedItem = normalizeString(item.name)
     let matchCount = 0
 
     // Đếm số từ khớp
@@ -69,10 +77,47 @@ const fuzzySearchVietnamese = (items: TSearchableItem[], query: string): TSearch
   return results.map((result) => result.item)
 }
 
+const normalizeAddressString = (address: TClientLocationResult['address']) =>
+  address.replace(/,/g, ', ')
+
+const getFullAddress = (location: TClientLocationResult) => {
+  return `${location.name}, ${normalizeAddressString(location.address)}.`
+}
+
+const sortLocationsResultByKeyword = (
+  locations: TClientLocationResult[],
+  query: string
+): TSortedLocation[] => {
+  const bestMatchedLocations: TSortedLocation[] = []
+  const keyword: string[] = []
+  for (const word of query.split(/\s+/)) {
+    const normalized = normalizeString(word)
+    if (normalized.length > 0) {
+      keyword.push(normalized)
+    }
+  }
+  for (const location of locations) {
+    const locationToCompare = normalizeString(getFullAddress(location))
+    let currentMatchPoint = 0
+    for (const word of keyword) {
+      if (locationToCompare.includes(word)) {
+        currentMatchPoint += 1
+      }
+    }
+    bestMatchedLocations.push({ ...location, matchPoint: currentMatchPoint })
+  }
+  bestMatchedLocations.sort((a, b) => b.matchPoint - a.matchPoint)
+  return bestMatchedLocations
+}
+
 type TSelectedLocationData = {
   province: string
   district: string
   ward: string
+}
+
+type TSortedLocation = TClientLocationResult & {
+  matchPoint: number
 }
 
 type TShippingInfoFormProps = {
@@ -82,17 +127,14 @@ type TShippingInfoFormProps = {
 
 export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormProps>(
   ({ errors, showPaymentModal }, ref) => {
-    const [selectedProvinceId, setSelectedProvinceId] = useState<number | null>(null)
-    const [selectedDistrictId, setSelectedDistrictId] = useState<number | null>(null)
-    const [selectedWardCode, setSelectedWardCode] = useState<string | null>(null)
     const [locations, setLocations] = useState<TClientLocationResult[]>([])
     const [selectedLocation, setSelectedLocation] = useState<TClientLocationResult | null>(null)
     const containerRef = useRef<HTMLDivElement>(null)
     const setTypingSuggestions = useKeyboardStore((s) => s.setSuggestions)
     const queryFilter = useQueryFilter()
+    const keywordRef = useRef<string>('')
 
     const selectedLocationData = useMemo<TSelectedLocationData>(() => {
-      console.log('>>> [dress] selectedLocation:', selectedLocation)
       if (selectedLocation) {
         return {
           province:
@@ -109,23 +151,60 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
       return { province: '', district: '', ward: '' }
     }, [selectedLocation])
 
-    const getFullAddress = (location: TClientLocationResult) => {
-      return `${location.name}, ${location.address}.`
-    }
-
-    const searchAddress = useDebouncedCallback(async (inputValue: string) => {
-      if (inputValue.trim().length === 0) {
+    const searchAddress = useDebouncedCallback(async (keyword: string) => {
+      if (keyword.trim().length === 0) {
+        setLocations([])
         setTypingSuggestions([])
         return
       }
-      const locations = await addressService.autocompleteAddress(inputValue)
+      keywordRef.current = keyword
+      let locations: TClientLocationResult[] = []
+      try {
+        locations = await addressService.autocompleteAddress(keyword)
+      } catch (error) {
+        console.error('>>> Error searching address:', error)
+        toast.error('Đã có lỗi xảy ra khi tìm kiếm địa chỉ')
+      }
+      if (locations.length === 0) {
+        setTypingSuggestions([])
+        setLocations([])
+        return
+      }
+      locations = sortLocationsResultByKeyword(locations, keyword)
       setLocations(locations)
-      const suggestions = locations.map((loc) => ({
-        id: loc.refId,
-        text: getFullAddress(loc),
-      }))
-      setTypingSuggestions(suggestions)
+      setTypingSuggestions(
+        locations.map((loc) => ({
+          id: loc.refId,
+          text: getFullAddress(loc),
+        }))
+      )
     }, 300)
+
+    const cleanOverlapKeyword = (fullAddress: string, keyword: string) => {
+      const words = keyword.trim().toLowerCase().split(/\s+/)
+      const lowerFullAddress = fullAddress.toLowerCase()
+      let index = 0
+      for (const word of words) {
+        if (word.trim().length === 0) continue
+        if (lowerFullAddress.includes(word)) {
+          words[index] = ''
+        }
+        index++
+      }
+      return words.join(' ').trim()
+    }
+
+    const setTextFieldValue = (addressTextFieldElement: HTMLInputElement) => {
+      if (!selectedLocation) return
+      const currentKeyword = keywordRef.current
+      if (!currentKeyword || currentKeyword.trim().length === 0) return
+      const fullAddress = getFullAddress(selectedLocation)
+      const displayedText = `${cleanOverlapKeyword(fullAddress, currentKeyword)} ${fullAddress}`
+      addressTextFieldElement.value = displayedText.trim()
+      const len = addressTextFieldElement.value.length
+      addressTextFieldElement.focus()
+      addressTextFieldElement.setSelectionRange(len, len)
+    }
 
     const pickLocation = (locationRefId: TClientLocationResult['refId']) => {
       const selectedLocation = locations.find((loc) => loc.refId === locationRefId) || null
@@ -133,10 +212,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
       if (selectedLocation) {
         const addressInput = containerRef.current?.querySelector<HTMLInputElement>('#address-input')
         if (addressInput) {
-          addressInput.value = getFullAddress(selectedLocation)
-          const len = addressInput.value.length
-          addressInput.focus()
-          addressInput.setSelectionRange(len, len)
+          setTextFieldValue(addressInput)
         }
       }
       setLocations([])
@@ -225,153 +301,6 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
             </div>
           </div>
 
-          {/* <div className="md:gap-3 gap-2 grid grid-cols-2">
-            <div className="relative">
-              <label className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1">
-                Tỉnh/Thành phố
-              </label>
-              <input
-                id="province-input"
-                name="province"
-                type="text"
-                onChange={(e) => handleProvinceChange(e.target)}
-                onFocus={onProvinceFocusInput}
-                placeholder={isLoadingProvinces ? 'Đang tải...' : 'Nhập tên tỉnh/thành phố'}
-                className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} NAME-province 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
-                disabled={isLoadingProvinces}
-                autoComplete="off"
-              />
-              {!queryFilter.isPhotoism && suggestedProvinces.length > 0 && (
-                <ul className="NAME-provinces-suggestion absolute z-50 w-full bg-white border border-gray-300 rounded-xl mt-1 max-h-60 overflow-y-auto shadow-lg">
-                  {suggestedProvinces.map((province) => {
-                    return (
-                      <li
-                        key={province.id}
-                        onClick={() => pickProvince(province)}
-                        className="px-4 py-2 hover:bg-main-cl hover:text-white cursor-pointer transition-colors text-sm"
-                      >
-                        {province.name}
-                      </li>
-                    )
-                  })}
-                </ul>
-              )}
-              {errors.province && (
-                <p className="5xl:text-[0.6em] flex items-center gap-1 text-red-600 text-sm mt-0.5 pl-1">
-                  <WarningIcon className="w-4 h-4" />
-                  {errors.province}
-                </p>
-              )}
-            </div>
-
-            <div
-              className={`relative ${selectedProvinceId ? '' : 'pointer-events-none opacity-60'}`}
-            >
-              <label className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1">
-                Quận/Huyện
-              </label>
-              <input
-                id="city-input"
-                name="city"
-                type="text"
-                onChange={(e) => handleDistrictChange(e.target)}
-                onFocus={onDistrictFocusInput}
-                placeholder={
-                  !selectedProvinceId
-                    ? 'Chọn tỉnh/thành phố trước'
-                    : isLoadingDistricts
-                    ? 'Đang tải...'
-                    : 'Nhập tên quận/huyện'
-                }
-                className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} NAME-district 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
-                disabled={!selectedProvinceId || isLoadingDistricts}
-                autoComplete="off"
-              />
-              {!queryFilter.isPhotoism && suggestedDistricts.length > 0 && (
-                <ul className="NAME-districts-suggestion absolute z-50 w-full bg-white border border-gray-300 rounded-xl mt-1 max-h-60 overflow-y-auto shadow-lg">
-                  {suggestedDistricts.map((district) => {
-                    return (
-                      <li
-                        key={district.id}
-                        onClick={() => pickDistrict(district)}
-                        className="px-4 py-2 hover:bg-main-cl hover:text-white cursor-pointer transition-colors text-sm"
-                      >
-                        {district.name}
-                      </li>
-                    )
-                  })}
-                </ul>
-              )}
-              {errors.city && (
-                <p className="5xl:text-[0.6em] flex items-center gap-1 text-red-600 text-sm mt-0.5 pl-1">
-                  <WarningIcon className="w-4 h-4" />
-                  {errors.city}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div className={`relative ${selectedDistrictId ? '' : 'pointer-events-none opacity-60'}`}>
-            <label className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1">
-              Phường/Xã
-            </label>
-            <input
-              id="ward-input"
-              name="ward"
-              type="text"
-              onChange={(e) => handleWardChange(e.target)}
-              onFocus={onWardFocusInput}
-              placeholder={
-                !selectedDistrictId
-                  ? 'Chọn quận/huyện trước'
-                  : isLoadingWards
-                  ? 'Đang tải...'
-                  : 'Nhập tên phường/xã'
-              }
-              className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} NAME-ward 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
-              disabled={!selectedDistrictId || isLoadingWards}
-              autoComplete="off"
-            />
-            {!queryFilter.isPhotoism && suggestedWards.length > 0 && (
-              <ul className="NAME-wards-suggestion absolute z-50 w-full bg-white border border-gray-300 rounded-xl mt-1 max-h-60 overflow-y-auto shadow-lg">
-                {suggestedWards.map((ward) => (
-                  <li
-                    key={ward.id}
-                    onClick={() => pickWard(ward)}
-                    className="px-4 py-2 hover:bg-main-cl hover:text-white cursor-pointer transition-colors text-sm"
-                  >
-                    {ward.name}
-                  </li>
-                ))}
-              </ul>
-            )}
-            {errors.ward && (
-              <p className="5xl:text-[0.6em] flex items-center gap-1 text-red-600 text-sm mt-0.5 pl-1">
-                <WarningIcon className="w-4 h-4" />
-                {errors.ward}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1">
-              Địa chỉ chi tiết
-            </label>
-            <input
-              id="address-input"
-              name="address"
-              type="text"
-              placeholder="Số nhà, tên đường, phường/xã..."
-              className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
-            />
-            {errors.address && (
-              <p className="5xl:text-[0.6em] flex items-center gap-1 text-red-600 text-sm mt-0.5 pl-1">
-                <WarningIcon className="w-4 h-4" />
-                {errors.address}
-              </p>
-            )}
-          </div> */}
-
           <div className="md:gap-3 gap-2 grid grid-cols-2">
             <input
               id="province-input"
@@ -396,7 +325,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
             />
             <div className="col-span-2 relative">
               <label className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1">
-                Địa chỉ của bạn
+                Địa chỉ nhận hàng của bạn
               </label>
               <input
                 id="address-input"
@@ -428,11 +357,9 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
                         onClick={() => pickLocation(location.refId)}
                         className="px-4 py-2 hover:bg-main-cl hover:text-white cursor-pointer transition-colors text-sm"
                       >
-                        <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
-                          {location.name}
-                        </div>
-                        <div style={{ fontSize: '13px', marginBottom: '4px' }}>
-                          {location.address}
+                        <div className="font-bold mb-1">{location.name}</div>
+                        <div className="text-[13px] mb-1">
+                          {location.address?.replace(/,/g, ', ')}
                         </div>
                       </li>
                     )

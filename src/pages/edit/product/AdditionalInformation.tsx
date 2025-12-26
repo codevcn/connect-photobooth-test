@@ -206,7 +206,7 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
         </div>
       </div>
 
-      {(queryFilter.funId || queryFilter.dev) && showTermsModal && (
+      {(queryFilter.funId || queryFilter.dev) && (
         <>
           <div className="5xl:hidden smd:order-4 border border-red-300 bg-red-50 block text-center text-xs text-gray-600 order-5 smd:p-3 p-2 rounded-lg space-y-2 mt-2">
             <span className="font-bold">Lưu ý: </span>

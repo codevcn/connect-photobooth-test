@@ -488,10 +488,14 @@ const PaymentPage = () => {
                 </div>
               )}
               <div
-                style={{
-                  pointerEvents: acceptedTerms ? 'auto' : 'none',
-                  cursor: acceptedTerms ? 'pointer' : 'not-allowed',
-                }}
+                style={
+                  queryFilter.funId || queryFilter.dev
+                    ? {
+                        pointerEvents: acceptedTerms ? 'auto' : 'none',
+                        cursor: acceptedTerms ? 'pointer' : 'not-allowed',
+                      }
+                    : {}
+                }
                 className="w-full mt-3"
               >
                 <button

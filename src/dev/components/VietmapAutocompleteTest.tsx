@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useDebouncedCallback } from '@/hooks/use-debounce'
 import { addressService } from '@/services/address.service'
-import { TClientAddressResult } from '@/utils/types/global'
+import { TClientLocationResult } from '@/utils/types/global'
 
 export const VietmapAutocompleteTest = () => {
   const [inputValue, setInputValue] = useState('')
-  const [suggestions, setSuggestions] = useState<TClientAddressResult[]>([])
+  const [suggestions, setSuggestions] = useState<TClientLocationResult[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 

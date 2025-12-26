@@ -1,6 +1,6 @@
 import { TAddressProvince, TAddressDistrict, TAddressWard, TAddressResult } from '@/utils/types/api'
 import {
-  TClientAddressResult,
+  TClientLocationResult,
   TClientDistrict,
   TClientProvince,
   TClientWard,
@@ -105,11 +105,11 @@ export class AddressAdapter {
     return wards.find((w) => w.code === code)
   }
 
-  static toClientLocations(locations: TAddressResult[]): TClientAddressResult[] {
+  static toClientLocations(locations: TAddressResult[]): TClientLocationResult[] {
     return locations.map((location) => this.toClientLocation(location))
   }
 
-  static toClientLocation(location: TAddressResult): TClientAddressResult {
+  static toClientLocation(location: TAddressResult): TClientLocationResult {
     return {
       refId: location.ref_id,
       distance: location.distance,

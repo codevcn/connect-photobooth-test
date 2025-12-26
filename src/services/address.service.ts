@@ -6,7 +6,7 @@ import {
 } from './api/address.api'
 import { AddressAdapter } from './adapter/address.adapter'
 import {
-  TClientAddressResult,
+  TClientLocationResult,
   TClientDistrict,
   TClientProvince,
   TClientWard,
@@ -33,7 +33,7 @@ class AddressService {
     return AddressAdapter.toClientWards(apiWards)
   }
 
-  async autocompleteAddress(text: string): Promise<TClientAddressResult[]> {
+  async autocompleteAddress(text: string): Promise<TClientLocationResult[]> {
     try {
       // Vietmap API trả về array trực tiếp, không có wrapper
       const locations = await getVietmapAutocomplete(text, 2)

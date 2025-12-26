@@ -49,11 +49,12 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems, show }: TPaym
       phone: formData.get('phone')?.toString().trim() || '',
       email: formData.get('email')?.toString().trim() || '',
       province: formData.get('province')?.toString().trim() || '',
-      city: formData.get('city')?.toString().trim() || '',
+      city: formData.get('district')?.toString().trim() || '',
       ward: formData.get('ward')?.toString().trim() || '',
       address: formData.get('address')?.toString().trim() || '',
       message: formData.get('message')?.toString().trim(),
     }
+    console.log('>>> [dress] shippingInfo:', shippingInfo)
     const { name, phone, email, province, city, ward, address } = shippingInfo
     setErrors({})
     if (!name || !phone || !province || !city || !ward || !address) {

@@ -228,9 +228,7 @@ export const AdditionalInformation = ({ productDescription }: TAdditionalInforma
             </span>
           </div>
 
-          {(queryFilter.funId || queryFilter.dev) && showTermsModal && (
-            <TermConditions closeModal={() => setShowTermsModal(false)} />
-          )}
+          {showTermsModal && <TermConditions closeModal={() => setShowTermsModal(false)} />}
         </>
       )}
     </div>

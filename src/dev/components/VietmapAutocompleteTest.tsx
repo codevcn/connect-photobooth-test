@@ -1,29 +1,11 @@
 import { useState } from 'react'
 import { useDebouncedCallback } from '@/hooks/use-debounce'
 import { addressService } from '@/services/address.service'
-
-interface Boundary {
-  type: number
-  id: number
-  name: string
-  prefix: string
-  full_name: string
-}
-
-interface AddressSuggestion {
-  ref_id: string
-  distance: number
-  address: string
-  name: string
-  display: string
-  boundaries: Boundary[]
-  categories: string[]
-  entry_points: any[]
-}
+import { TClientAddressResult } from '@/utils/types/global'
 
 export const VietmapAutocompleteTest = () => {
   const [inputValue, setInputValue] = useState('')
-  const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([])
+  const [suggestions, setSuggestions] = useState<TClientAddressResult[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -37,8 +19,8 @@ export const VietmapAutocompleteTest = () => {
     setError(null)
 
     try {
-      // const results = await addressService.autocompleteAddress(text)
-      // setSuggestions(results)
+      const results = await addressService.autocompleteAddress(text)
+      setSuggestions(results)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Có lỗi xảy ra')
       setSuggestions([])
@@ -58,7 +40,7 @@ export const VietmapAutocompleteTest = () => {
   return (
     <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
       <h2>Vietmap Autocomplete Test</h2>
-      
+
       <div style={{ marginBottom: '20px' }}>
         <input
           type="text"
@@ -75,16 +57,10 @@ export const VietmapAutocompleteTest = () => {
         />
       </div>
 
-      {isLoading && (
-        <div style={{ padding: '10px', color: '#666' }}>
-          Đang tìm kiếm...
-        </div>
-      )}
+      {isLoading && <div style={{ padding: '10px', color: '#666' }}>Đang tìm kiếm...</div>}
 
       {error && (
-        <div style={{ padding: '10px', color: 'red', backgroundColor: '#fee' }}>
-          {error}
-        </div>
+        <div style={{ padding: '10px', color: 'red', backgroundColor: '#fee' }}>{error}</div>
       )}
 
       {!isLoading && suggestions.length > 0 && (
@@ -95,7 +71,7 @@ export const VietmapAutocompleteTest = () => {
           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             {suggestions.map((suggestion, index) => (
               <li
-                key={suggestion.ref_id || index}
+                key={suggestion.refId || index}
                 style={{
                   padding: '12px',
                   borderBottom: '1px solid #eee',
@@ -113,15 +89,13 @@ export const VietmapAutocompleteTest = () => {
                   setSuggestions([])
                 }}
               >
-                <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
-                  {suggestion.name}
-                </div>
+                <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>{suggestion.name}</div>
                 <div style={{ fontSize: '13px', color: '#666', marginBottom: '4px' }}>
                   📍 {suggestion.address}
                 </div>
                 {suggestion.boundaries && suggestion.boundaries.length > 0 && (
                   <div style={{ fontSize: '12px', color: '#999' }}>
-                    {suggestion.boundaries.map(b => b.full_name).join(', ')}
+                    {suggestion.boundaries.map((b) => b.fullName).join(', ')}
                   </div>
                 )}
               </li>
@@ -131,9 +105,7 @@ export const VietmapAutocompleteTest = () => {
       )}
 
       {!isLoading && inputValue && suggestions.length === 0 && !error && (
-        <div style={{ padding: '10px', color: '#666' }}>
-          Không tìm thấy kết quả
-        </div>
+        <div style={{ padding: '10px', color: '#666' }}>Không tìm thấy kết quả</div>
       )}
     </div>
   )

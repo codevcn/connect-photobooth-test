@@ -247,9 +247,6 @@ export type TStickerVisualState = TElementVisualBaseState & {
 export type TPrintedImageVisualState = TStickerVisualState &
   Partial<{
     isInitWithLayout: boolean
-    matchOrientation: 'width' | 'height'
-    grayscale: number // 0-100 percentage
-    clippath: string
   }>
 
 export type TStoredTemplate = TPrintTemplate
@@ -549,4 +546,46 @@ export type TLogEntry = {
   }
   userAgent: string
   loggerVersion: string
+}
+
+/**
+ * Client-side address types
+ */
+export type TClientProvince = {
+  id: number
+  name: string
+  districtCount: number
+}
+
+export type TClientDistrict = {
+  id: number
+  name: string
+  provinceId: number
+  wardCount: number
+}
+
+export type TClientWard = {
+  code: string
+  name: string
+  districtId: number
+  provinceId: number
+}
+
+export type TClientLocationBoundary = {
+  type: number // 0: Tỉnh/TP, 1: Quận/Huyện/TP, 2: Phường/Xã
+  id: number
+  name: string
+  prefix: string
+  fullName: string
+}
+
+export type TClientLocationResult = {
+  refId: string
+  distance: number
+  address: string
+  name: string
+  display: string
+  boundaries: TClientLocationBoundary[]
+  categories: unknown[] // hiện tại đang là mảng rỗng
+  entryPoints: unknown[] // hiện tại đang là mảng rỗng
 }

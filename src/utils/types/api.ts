@@ -1,3 +1,5 @@
+import { ELocationBoudaryType } from '../enums'
+
 export type TApiResponseBody<T> = {
   data: T
 }
@@ -345,3 +347,22 @@ export type TCheckVoucherRes =
       value: number
       total: number
     }
+
+export type TLocationBoundary = {
+  type: ELocationBoudaryType // 0: Tỉnh/TP, 1: Quận/Huyện/TP, 2: Phường/Xã
+  id: number
+  name: string
+  prefix: string
+  full_name: string
+}
+
+export type TAddressResult = {
+  ref_id: string
+  distance: number
+  address: string
+  name: string
+  display: string
+  boundaries: TLocationBoundary[]
+  categories: unknown[] // hiện tại đang là mảng rỗng
+  entry_points: unknown[] // hiện tại đang là mảng rỗng
+}

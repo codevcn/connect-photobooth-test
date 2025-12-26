@@ -1,10 +1,16 @@
-import { getFetchProvinces, getFetchDistricts, getFetchWards, getVietmapAutocomplete } from './api/address.api'
 import {
-  AddressAdapter,
-  TClientProvince,
+  getFetchProvinces,
+  getFetchDistricts,
+  getFetchWards,
+  getVietmapAutocomplete,
+} from './api/address.api'
+import { AddressAdapter } from './adapter/address.adapter'
+import {
+  TClientAddressResult,
   TClientDistrict,
+  TClientProvince,
   TClientWard,
-} from './adapter/address.adapter'
+} from '@/utils/types/global'
 
 class AddressService {
   constructor() {}
@@ -27,11 +33,11 @@ class AddressService {
     return AddressAdapter.toClientWards(apiWards)
   }
 
-  async autocompleteAddress(text: string): Promise<any[]> {
+  async autocompleteAddress(text: string): Promise<TClientAddressResult[]> {
     try {
-      const response = await getVietmapAutocomplete(text)
       // Vietmap API trả về array trực tiếp, không có wrapper
-      return Array.isArray(response) ? response : []
+      const locations = await getVietmapAutocomplete(text, 2)
+      return AddressAdapter.toClientLocations(locations)
     } catch (error) {
       console.error('Error fetching autocomplete:', error)
       return []

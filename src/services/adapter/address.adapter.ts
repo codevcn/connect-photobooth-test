@@ -1,27 +1,10 @@
-import { TAddressProvince, TAddressDistrict, TAddressWard } from '@/utils/types/api'
-
-/**
- * Client-side address types
- */
-export type TClientProvince = {
-  id: number
-  name: string
-  districtCount: number
-}
-
-export type TClientDistrict = {
-  id: number
-  name: string
-  provinceId: number
-  wardCount: number
-}
-
-export type TClientWard = {
-  code: string
-  name: string
-  districtId: number
-  provinceId: number
-}
+import { TAddressProvince, TAddressDistrict, TAddressWard, TAddressResult } from '@/utils/types/api'
+import {
+  TClientAddressResult,
+  TClientDistrict,
+  TClientProvince,
+  TClientWard,
+} from '@/utils/types/global'
 
 /**
  * AddressAdapter - Chuyển đổi dữ liệu địa chỉ từ API sang cấu trúc Client
@@ -104,20 +87,14 @@ export class AddressAdapter {
   /**
    * Tìm province theo ID
    */
-  static findProvinceById(
-    provinces: TClientProvince[],
-    id: number
-  ): TClientProvince | undefined {
+  static findProvinceById(provinces: TClientProvince[], id: number): TClientProvince | undefined {
     return provinces.find((p) => p.id === id)
   }
 
   /**
    * Tìm district theo ID
    */
-  static findDistrictById(
-    districts: TClientDistrict[],
-    id: number
-  ): TClientDistrict | undefined {
+  static findDistrictById(districts: TClientDistrict[], id: number): TClientDistrict | undefined {
     return districts.find((d) => d.id === id)
   }
 
@@ -126,5 +103,28 @@ export class AddressAdapter {
    */
   static findWardByCode(wards: TClientWard[], code: string): TClientWard | undefined {
     return wards.find((w) => w.code === code)
+  }
+
+  static toClientLocations(locations: TAddressResult[]): TClientAddressResult[] {
+    return locations.map((location) => this.toClientLocation(location))
+  }
+
+  static toClientLocation(location: TAddressResult): TClientAddressResult {
+    return {
+      refId: location.ref_id,
+      distance: location.distance,
+      address: location.address,
+      name: location.name,
+      display: location.display,
+      boundaries: location.boundaries.map((b) => ({
+        name: b.name,
+        prefix: b.prefix,
+        fullName: b.full_name,
+        id: b.id,
+        type: b.type,
+      })),
+      categories: location.categories,
+      entryPoints: location.entry_points,
+    }
   }
 }

@@ -407,9 +407,37 @@ const PaymentPage = () => {
 
                   {/* Checkout Button - Desktop (in summary) */}
                   <div className="hidden md:block mt-3 md:mt-4">
+                    {(queryFilter.funId || queryFilter.dev) && (
+                      <div className="flex gap-2 w-full text-sm text-gray-600">
+                        <input
+                          type="checkbox"
+                          id="terms-and-conditions"
+                          checked={acceptedTerms}
+                          onChange={handleTickTerms}
+                          className="text-main-cl border border-main-cl h-5 w-5 rounded"
+                        />
+                        <div>
+                          <span>Tôi đã đọc và đồng ý với </span>
+                          <span
+                            onClick={(e) => {
+                              setShowTermsModal(true)
+                            }}
+                            className="text-blue-600 underline cursor-pointer"
+                          >
+                            Chính sách & Điều khoản dịch vụ
+                          </span>
+                          <span> của công ty.</span>
+                        </div>
+                      </div>
+                    )}
                     <button
+                      style={{
+                        pointerEvents: acceptedTerms ? 'auto' : 'none',
+                        cursor: acceptedTerms ? 'pointer' : 'not-allowed',
+                        backgroundColor: acceptedTerms ? 'var(--vcn-main-cl)' : 'lightgray',
+                      }}
                       onClick={proceedToPayment}
-                      className="5xl:text-[0.9em] 5xl:h-14 flex items-center justify-center gap-2 w-full mt-4 h-11 bg-main-cl hover:scale-95 text-white font-bold text-base rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition duration-200"
+                      className="5xl:text-[0.9em] 5xl:h-14 flex items-center justify-center gap-2 w-full mt-3 h-11 bg-main-cl hover:scale-95 text-white font-bold text-base rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition duration-200"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -461,7 +489,6 @@ const PaymentPage = () => {
               )}
               <div
                 style={{
-                  opacity: acceptedTerms ? 1 : 0.8,
                   pointerEvents: acceptedTerms ? 'auto' : 'none',
                   cursor: acceptedTerms ? 'pointer' : 'not-allowed',
                 }}

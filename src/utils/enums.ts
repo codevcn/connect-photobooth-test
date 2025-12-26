@@ -29,3 +29,9 @@ export enum EAppFeature {
   // Common features
   VIRTUAL_KEYBOARD = 'virtual-keyboard',
 }
+
+export enum ELocationBoudaryType {
+  PROVINCE = 0,
+  DISTRICT = 1,
+  WARD = 2,
+}

@@ -130,14 +130,13 @@ const SizesComponent = ({
   sizesByPrefix,
   pickSize,
 }: TSizesComponentProps) => {
+  // const isMobileScreen = checkIfMobileScreen()
   const greaterThanSingleSizes = sizesByPrefix.length > 1
+  // const scrollableContainerClientWidth = isMobileScreen
+  //   ? document.getElementById('NAME-middle-scrollable-sizes-component')?.clientWidth
+  //   : undefined
   return sizesByPrefix.map((sizesGroup) => (
-    <div
-      className={`${
-        displayVariantInfoType === 'display-in-middle-info-section' ? 'flex-nowrap' : 'flex-wrap'
-      } flex gap-2`}
-      key={sizesGroup[0].split(' ')[0]}
-    >
+    <div className={`flex-wrap w-max flex gap-2`} key={sizesGroup[0]}>
       {sizesGroup.map((size) => {
         const isSelected = selectedAttributes.size?.toUpperCase() === size.toUpperCase()
         const isScopeDisabled = !mergedAttributes.groups?.[selectedAttributes.material ?? 'null']?.[
@@ -236,8 +235,8 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
       const sizeMap = new Map(sizeOrder.map((size, index) => [size.toUpperCase(), index]))
 
       return [...arr].sort((a, b) => {
-        const A = a.toString().toUpperCase().trim()
-        const B = b.toString().toUpperCase().trim()
+        const A = a.toUpperCase().trim()
+        const B = b.toUpperCase().trim()
 
         const aIsSize = sizeMap.has(A)
         const bIsSize = sizeMap.has(B)
@@ -256,7 +255,13 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
         const parsedA = extractIntegerFromString(A)
         const parsedB = extractIntegerFromString(B)
         if (parsedA && parsedB) {
-          return parsedB - parsedA
+          const res = parsedB - parsedA
+          if (res !== 0) {
+            return res
+          } else {
+            // Nếu số bằng nhau thì so sánh chuỗi bình thường
+            return A.localeCompare(B, 'vi')
+          }
         }
 
         // Cả 2 không phải size → sort text bình thường
@@ -465,12 +470,23 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
           </div>
 
           {type === 'display-in-middle-info-section' ? (
-            <CustomScrollbar
-              classNames={{
-                container: 'flex flex-nowrap gap-2 w-full',
-                content: '5xl:text-[0.4em] smd:text-base text-sm flex flex-col pb-2 gap-2',
-              }}
-            >
+            // <CustomScrollbar
+            //   classNames={{
+            //     container: 'flex flex-nowrap gap-2 w-full',
+            //     content: '5xl:text-[0.4em] smd:text-base text-sm flex flex-col pb-2 gap-1',
+            //   }}
+            //   ids={{ content: 'NAME-middle-scrollable-sizes-component' }}
+            // >
+            //   <SizesComponent
+            //     mergedAttributes={mergedAttributes}
+            //     pickSize={pickSize}
+            //     selectedAttributes={selectedAttributes}
+            //     sortedSizes={sortedSizes}
+            //     sizesByPrefix={sizesByPrefix}
+            //     displayVariantInfoType={type}
+            //   />
+            // </CustomScrollbar>
+            <div className="STYLE-styled-scrollbar 5xl:text-[0.4em] text-base flex flex-wrap max-h-40 overflow-y-auto pr-1">
               <SizesComponent
                 mergedAttributes={mergedAttributes}
                 pickSize={pickSize}
@@ -479,7 +495,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
                 sizesByPrefix={sizesByPrefix}
                 displayVariantInfoType={type}
               />
-            </CustomScrollbar>
+            </div>
           ) : (
             <div className="STYLE-styled-scrollbar 5xl:text-[0.4em] text-base flex flex-wrap max-h-80 overflow-y-auto pr-1">
               <SizesComponent

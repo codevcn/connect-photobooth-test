@@ -1,7 +1,5 @@
 import { useCallback } from 'react'
 import { TElementsVisualState } from '@/utils/types/global'
-import { useTemplateStore } from '@/stores/ui/template.store'
-import { base64WorkerHelper } from '@/workers/base64.worker-helper'
 import { useLayoutStore } from '@/stores/ui/print-layout.store'
 
 type TUseVisualStatesCollectorReturn = {

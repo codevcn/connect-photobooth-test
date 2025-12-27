@@ -14,6 +14,9 @@ import {
   TImgMimeType,
   TMockupData,
   TPrintAreaInfo,
+  TPrintedImageVisualState,
+  TStickerVisualState,
+  TTextVisualState,
 } from '@/utils/types/global'
 import { useEffect } from 'react'
 import { toast } from 'react-toastify'
@@ -24,6 +27,31 @@ import {
 } from '../helpers'
 import { appLogger } from '@/logging/Logger'
 import { EAppFeature, EAppPage } from '@/utils/enums'
+import { restoreMockupWorkerController } from '@/workers/restore-mockup.worker-controller'
+import { useLayoutStore } from '@/stores/ui/print-layout.store'
+
+const prepareRestoreMockupData = (
+  widthRealPx: number,
+  heightRealPx: number,
+  printedImageElements: TPrintedImageVisualState[],
+  stickerElements: TStickerVisualState[],
+  textElements: TTextVisualState[]
+) => {
+  const { layoutMode } = useLayoutStore.getState()
+  const { pickedSurface } = useProductUIDataStore.getState()
+  if (!pickedSurface) return
+  restoreMockupWorkerController.sendRestoreMockupData({
+    layoutMode,
+    printArea: {
+      ...pickedSurface,
+      heightRealPx,
+      widthRealPx,
+    },
+    printedImageElements,
+    stickerElements,
+    textElements,
+  })
+}
 
 type TAddToCartHandlerProps = {
   printAreaContainerRef: React.RefObject<HTMLDivElement | null>
@@ -138,6 +166,8 @@ export const AddToCartHandler = ({
         toast.success('Đã thêm vào giỏ hàng')
         useProductUIDataStore.getState().setCartCount(LocalStorageHelper.countSavedMockupImages())
         onDoneAdd(mockupId)
+
+        // prepareRestoreMockupData()
       },
       (error) => {
         removeMockPrintArea()

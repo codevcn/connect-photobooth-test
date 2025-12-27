@@ -151,7 +151,6 @@ export const LayoutsPicker_Fun = ({ printedImages }: TLayoutsPickerProps) => {
         slot.style.height = `${newHeight}px`
         slot.style.width = `${newWidth}px`
       }
-      console.log('>>> [pick] lay typ:', displayer.getAttribute('data-layout-type'))
       displayer.style.height = 'fit-content'
       displayer.style.width = 'fit-content'
     }

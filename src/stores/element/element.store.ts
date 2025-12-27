@@ -1,6 +1,7 @@
 import { generateUniqueId } from '@/utils/helpers'
 import {
   TBaseProduct,
+  TClippedElements,
   TElementsVisualState,
   TElementType,
   TPrintedImageVisualState,
@@ -16,12 +17,6 @@ import { TLayoutMode } from '@/utils/types/print-layout'
 
 type TSavedElementVisualState = Partial<TElementsVisualState> & {
   productId: TBaseProduct['id']
-}
-
-type TClippedElements = {
-  [elementId: string]: {
-    polygon: string | null
-  }
 }
 
 type TUseElementStore = {

@@ -11,6 +11,9 @@ type TCustomScrollbarProps = {
   thumbMinWidth?: number
   showScrollbar?: boolean
   dataToRerender?: any
+  ids?: {
+    content?: string
+  }
 }
 
 export function CustomScrollbar({
@@ -20,6 +23,7 @@ export function CustomScrollbar({
   thumbMinWidth = 20,
   showScrollbar = true,
   dataToRerender,
+  ids,
 }: TCustomScrollbarProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -76,6 +80,7 @@ export function CustomScrollbar({
       {/* Scrollable Content */}
       <div
         ref={containerRef}
+        id={ids?.content}
         className={cn('w-full pb-2 overflow-x-auto no-scrollbar', classNames?.content)}
       >
         {children}

@@ -589,3 +589,9 @@ export type TClientLocationResult = {
   categories: unknown[] // hiện tại đang là mảng rỗng
   entryPoints: unknown[] // hiện tại đang là mảng rỗng
 }
+
+export type TClippedElements = {
+  [elementId: string]: {
+    polygon: string | null
+  }
+}

@@ -10,7 +10,6 @@ import { generateUniqueId } from '@/utils/helpers'
 import { toast } from 'react-toastify'
 import { useFastBoxes } from '@/hooks/use-fast-boxes'
 import { qrGetter } from '@/configs/brands/photoism/qr-getter-Dev'
-import { base64WorkerHelper } from '@/workers/base64.worker-helper'
 import { AppNavigator } from '@/utils/navigator'
 
 const LayoutDev = () => {

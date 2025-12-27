@@ -214,8 +214,8 @@ html {
 
 /* Độ rộng scrollbar */
 .STYLE-styled-scrollbar::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
 }
 
 /* Track */
@@ -226,7 +226,7 @@ html {
 
 /* Thumb */
 .STYLE-styled-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #c3c3c3; /* xám đậm hơn track */
+  background-color: #99a1af; /* xám đậm hơn track */
   border-radius: 999px;
 }
 

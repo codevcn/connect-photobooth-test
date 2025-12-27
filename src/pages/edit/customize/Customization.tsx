@@ -67,7 +67,7 @@ const InstructionsModal = ({ onClose }: TInstructionsModalProps) => {
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    className="w-4 h-4 text-main-cl 5xl:w-5 5xl:h-5"
+                    className="w-5 h-5 text-main-cl 5xl:w-5 5xl:h-5"
                   >
                     <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
                     <path
@@ -93,7 +93,7 @@ const InstructionsModal = ({ onClose }: TInstructionsModalProps) => {
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    className="w-4 h-4 text-main-cl 5xl:w-5 5xl:h-5"
+                    className="w-5 h-5 text-main-cl 5xl:w-5 5xl:h-5"
                   >
                     <path
                       fillRule="evenodd"
@@ -117,7 +117,7 @@ const InstructionsModal = ({ onClose }: TInstructionsModalProps) => {
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    className="w-4 h-4 text-main-cl 5xl:w-5 5xl:h-5"
+                    className="w-5 h-5 text-main-cl 5xl:w-5 5xl:h-5"
                   >
                     <path
                       fillRule="evenodd"
@@ -142,7 +142,7 @@ const InstructionsModal = ({ onClose }: TInstructionsModalProps) => {
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    className="w-4 h-4 text-main-cl 5xl:w-5 5xl:h-5"
+                    className="w-5 h-5 text-main-cl 5xl:w-5 5xl:h-5"
                   >
                     <path
                       fillRule="evenodd"
@@ -167,7 +167,7 @@ const InstructionsModal = ({ onClose }: TInstructionsModalProps) => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="w-4 h-4 text-amber-600 shrink-0 mt-0.5 5xl:w-6 5xl:h-6"
+                className="w-5 h-5 text-amber-600 shrink-0 mt-0.5 5xl:w-6 5xl:h-6"
               >
                 <path
                   fillRule="evenodd"
@@ -175,11 +175,9 @@ const InstructionsModal = ({ onClose }: TInstructionsModalProps) => {
                   clipRule="evenodd"
                 />
               </svg>
-              <div className="flex-1 min-w-0">
-                <p className="font-bold text-amber-900 text-xs 5xl:text-base mb-0.5">
-                  Lưu ý quan trọng
-                </p>
-                <p className="text-xs 5xl:text-sm text-amber-800 leading-snug">
+              <div className="5xl:text-base flex-1 min-w-0 text-sm">
+                <p className="font-bold text-amber-900 5xl:text-base mb-0.5">Lưu ý quan trọng</p>
+                <p className="text-amber-800 leading-snug">
                   Màu in có thể lệch 10% so với ảnh digital.
                 </p>
               </div>

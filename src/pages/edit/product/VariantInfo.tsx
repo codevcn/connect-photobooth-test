@@ -1,11 +1,18 @@
-import { extractIntegerFromString, getContrastColor, sortSizes } from '@/utils/helpers'
+import {
+  checkIfMobileScreen,
+  extractIntegerFromString,
+  getContrastColor,
+  sortSizes,
+} from '@/utils/helpers'
 import { TBaseProduct, TClientProductVariant } from '@/utils/types/global'
 import { PrintSurface } from '../print-surface/PrintSurface'
 import { Modal } from '@/components/custom/common/Modal'
-import { useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { useProductUIDataStore } from '@/stores/ui/product-ui-data.store'
 import { CustomScrollbar } from '@/components/custom/CustomScrollbar'
 import { ProductColors } from './ProductColors'
+
+type TDisplayVariantInfoType = 'display-in-product-details' | 'display-in-middle-info-section'
 
 type TProductImagePreviewProps = {
   imageURL: string
@@ -110,6 +117,8 @@ type TSizesComponentProps = {
   sortedSizes: string[]
   selectedAttributes: Record<string, string>
   mergedAttributes: TBaseProduct['mergedAttributes']
+  sizesByPrefix: string[][]
+  displayVariantInfoType: TDisplayVariantInfoType
   pickSize: (isDisabled: boolean, size: string) => void
 }
 
@@ -117,31 +126,46 @@ const SizesComponent = ({
   sortedSizes,
   selectedAttributes,
   mergedAttributes,
+  displayVariantInfoType,
+  sizesByPrefix,
   pickSize,
 }: TSizesComponentProps) => {
-  return sortedSizes.map((size) => {
-    const isSelected = selectedAttributes.size?.toUpperCase() === size.toUpperCase()
-    const isScopeDisabled = !mergedAttributes.groups?.[selectedAttributes.material ?? 'null']?.[
-      selectedAttributes.scent ?? 'null'
-    ]?.[selectedAttributes.color ?? 'null']?.sizes?.some((s) => s === size)
-    const isDisabled = isScopeDisabled
-    return (
-      <button
-        key={size}
-        onClick={() => pickSize(isDisabled, size)}
-        disabled={isDisabled}
-        className={`5xl:py-2 5xl:px-4 px-3 min-w-max py-1 font-bold rounded-lg mobile-touch ${
-          isDisabled
-            ? `bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed`
-            : isSelected
-            ? 'bg-main-cl border-2 border-main-cl text-white shadow-md'
-            : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
-        }`}
-      >
-        {size}
-      </button>
-    )
-  })
+  const greaterThanSingleSizes = sizesByPrefix.length > 1
+  return sizesByPrefix.map((sizesGroup) => (
+    <div
+      className={`${
+        displayVariantInfoType === 'display-in-middle-info-section' ? 'flex-nowrap' : 'flex-wrap'
+      } flex gap-2`}
+      key={sizesGroup[0].split(' ')[0]}
+    >
+      {sizesGroup.map((size) => {
+        const isSelected = selectedAttributes.size?.toUpperCase() === size.toUpperCase()
+        const isScopeDisabled = !mergedAttributes.groups?.[selectedAttributes.material ?? 'null']?.[
+          selectedAttributes.scent ?? 'null'
+        ]?.[selectedAttributes.color ?? 'null']?.sizes?.some((s) => s === size)
+        const isDisabled = isScopeDisabled
+        return (
+          <Fragment key={size}>
+            <button
+              key={size}
+              onClick={() => pickSize(isDisabled, size)}
+              disabled={isDisabled}
+              className={`5xl:py-2 5xl:px-4 px-3 min-w-max py-1 font-bold rounded-lg mobile-touch ${
+                isDisabled
+                  ? `bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed`
+                  : isSelected
+                  ? 'bg-main-cl border-2 border-main-cl text-white shadow-md'
+                  : 'bg-white border-2 border-gray-300 text-slate-700 hover:border-secondary-cl hover:text-secondary-cl'
+              }`}
+            >
+              {size}
+            </button>
+          </Fragment>
+        )
+      })}
+      {greaterThanSingleSizes && <div className="w-full"></div>}
+    </div>
+  ))
 }
 
 type Item = {
@@ -152,7 +176,7 @@ type Item = {
 type TVariantInfoProps = {
   pickedProduct: TBaseProduct
   pickedVariant: TBaseProduct['variants'][0]
-  type: 'display-in-product-details' | 'display-in-middle-info-section'
+  type: TDisplayVariantInfoType
 }
 
 export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfoProps) => {
@@ -180,7 +204,17 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
   const mergedAttributes = pickedProduct.mergedAttributes
   const hintForSizeChart: string = 'none'
 
-  const sortedSizes = useMemo<string[]>(() => {
+  const [sortedSizes, sizesByPrefix] = useMemo<[string[], string[][]]>(() => {
+    let isClothSize = true
+    function groupByPrefixToArray(arr: string[], separator: string) {
+      const map: Record<string, string[]> = {}
+      for (const item of arr) {
+        const prefix = item.split(separator)[0]
+        ;(map[prefix] ||= []).push(item)
+      }
+      return Object.values(map)
+    }
+
     function smartSort(arr: string[]) {
       // Thứ tự size quần áo
       const sizeOrder = [
@@ -218,6 +252,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
         if (bIsSize) return 1
 
         // Cả 2 không phải size → thử extract số và so sánh
+        isClothSize = false
         const parsedA = extractIntegerFromString(A)
         const parsedB = extractIntegerFromString(B)
         if (parsedA && parsedB) {
@@ -228,7 +263,14 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
         return A.localeCompare(B, 'vi')
       })
     }
-    return smartSort(mergedAttributes.uniqueSizes)
+    const sorted = smartSort(mergedAttributes.uniqueSizes)
+    let sizesByPrefix: string[][] = [sorted]
+    if (!isClothSize) {
+      if (pickedProduct.id === 21) {
+        sizesByPrefix = groupByPrefixToArray(sorted, ' ')
+      }
+    }
+    return [sorted, sizesByPrefix]
   }, [mergedAttributes])
 
   const pickMaterial = (material: string) => {
@@ -426,7 +468,7 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
             <CustomScrollbar
               classNames={{
                 container: 'flex flex-nowrap gap-2 w-full',
-                content: '5xl:text-[0.4em] smd:text-base text-sm flex flex-nowrap pb-3 gap-2',
+                content: '5xl:text-[0.4em] smd:text-base text-sm flex flex-col pb-2 gap-2',
               }}
             >
               <SizesComponent
@@ -434,15 +476,19 @@ export const VariantInfo = ({ pickedProduct, pickedVariant, type }: TVariantInfo
                 pickSize={pickSize}
                 selectedAttributes={selectedAttributes}
                 sortedSizes={sortedSizes}
+                sizesByPrefix={sizesByPrefix}
+                displayVariantInfoType={type}
               />
             </CustomScrollbar>
           ) : (
-            <div className="5xl:text-[0.4em] text-base flex flex-wrap gap-2">
+            <div className="STYLE-styled-scrollbar 5xl:text-[0.4em] text-base flex flex-wrap max-h-80 overflow-y-auto pr-1">
               <SizesComponent
                 mergedAttributes={mergedAttributes}
                 pickSize={pickSize}
                 selectedAttributes={selectedAttributes}
                 sortedSizes={sortedSizes}
+                sizesByPrefix={sizesByPrefix}
+                displayVariantInfoType={type}
               />
             </div>
           )}

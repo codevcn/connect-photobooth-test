@@ -1,7 +1,7 @@
 import { TAddressProvince, TAddressDistrict, TAddressWard, TAddressResult } from '@/utils/types/api'
 import {
-  TClientLocationResult,
   TClientDistrict,
+  TClientLocationResult,
   TClientProvince,
   TClientWard,
 } from '@/utils/types/global'

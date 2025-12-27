@@ -10,6 +10,8 @@ import { useDebouncedCallback } from '@/hooks/use-debounce'
 import { ELocationBoudaryType } from '@/utils/enums'
 import { toast } from 'react-toastify'
 import { AutoSizeTextField } from '@/components/custom/AutoSizeTextField'
+import { normalizeSpaces } from '@/utils/helpers'
+import { TAutoSizeTextFieldController } from '@/utils/types/component'
 
 type TFormErrors = {
   fullName?: string
@@ -133,7 +135,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
     const containerRef = useRef<HTMLDivElement>(null)
     const setTypingSuggestions = useKeyboardStore((s) => s.setSuggestions)
     const queryFilter = useQueryFilter()
-    const keywordRef = useRef<string>('')
+    const textFieldController = useRef<TAutoSizeTextFieldController>({ setValue: () => {} })
 
     const selectedLocationData = useMemo<TSelectedLocationData>(() => {
       if (selectedLocation) {
@@ -153,20 +155,21 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
     }, [selectedLocation])
 
     const searchAddress = useDebouncedCallback(async (keyword: string) => {
-      console.log('>>> [dress] search:', keyword)
       if (keyword.trim().length === 0) {
         setLocations([])
         setTypingSuggestions([])
+        setSelectedLocation(null)
         return
       }
-      keywordRef.current = keyword
       let locations: TClientLocationResult[] = []
+      useKeyboardStore.getState().setSuggestionsLoading('loading')
       try {
         locations = await addressService.autocompleteAddress(keyword)
       } catch (error) {
         console.error('>>> Error searching address:', error)
         toast.error('Đã có lỗi xảy ra khi tìm kiếm địa chỉ')
       }
+      useKeyboardStore.getState().setSuggestionsLoading('fetched')
       if (locations.length === 0) {
         setTypingSuggestions([])
         setLocations([])
@@ -182,60 +185,27 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
       )
     }, 300)
 
-    const cleanOverlapKeyword = (fullAddress: string, keyword: string) => {
-      const words = keyword.trim().toLowerCase().split(/\s+/)
-      const lowerFullAddress = fullAddress.toLowerCase()
-      let index = 0
-      for (const word of words) {
-        if (word.trim().length === 0) continue
-        if (lowerFullAddress.includes(word)) {
-          words[index] = ''
-        }
-        index++
-      }
-      return words.join(' ').trim()
-    }
-
     const setTextFieldValue = (
       addressTextFieldElement: HTMLTextAreaElement,
       pickedLocation: TClientLocationResult
     ) => {
       if (!pickedLocation) return
-      const currentKeyword = keywordRef.current
-      console.log('>>> [dress] currentKeyword:', currentKeyword)
-      if (!currentKeyword || currentKeyword.trim().length === 0) return
-      const fullAddress = getFullAddress(pickedLocation)
-      const displayedText = `${cleanOverlapKeyword(
-        fullAddress,
-        currentKeyword
-      )} ${fullAddress}`.trim()
-      console.log('>>> [dress] displayedText:', displayedText)
-      // addressTextFieldElement.value = displayedText
-      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-        addressTextFieldElement.constructor.prototype,
-        'value'
-      )?.set
-      if (nativeInputValueSetter) {
-        nativeInputValueSetter.call(addressTextFieldElement, displayedText)
-        // Trigger input event để React nhận biết thay đổi
-        addressTextFieldElement.dispatchEvent(new Event('input', { bubbles: true }))
-      }
-      const len = displayedText.length
+      const fullAddress = getFullAddress(pickedLocation).trim()
+      textFieldController.current.setValue(fullAddress)
+      const len = fullAddress.length
       addressTextFieldElement.focus()
       addressTextFieldElement.setSelectionRange(len, len)
     }
 
     const pickLocation = (locationRefId: TClientLocationResult['refId']) => {
       const pickedLocation = locations.find((loc) => loc.refId === locationRefId) || null
+      if (!pickedLocation) return
       setSelectedLocation(pickedLocation)
-      if (pickedLocation) {
-        const addressInput = containerRef.current?.querySelector<HTMLTextAreaElement>(
-          '.NAME-address-autosize-textfield'
-        )
-        console.log('>>> [dress] dress:', addressInput)
-        if (addressInput) {
-          setTextFieldValue(addressInput, pickedLocation)
-        }
+      const addressInput = containerRef.current?.querySelector<HTMLTextAreaElement>(
+        '.NAME-address-autosize-textfield'
+      )
+      if (addressInput) {
+        setTextFieldValue(addressInput, pickedLocation)
       }
       setLocations([])
       setTypingSuggestions([])
@@ -243,6 +213,14 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
 
     const listenKeyboardSuggestionPicked = (suggestion: TKeyboardSuggestion, _type: string) => {
       pickLocation(suggestion.id)
+    }
+
+    const handleBlurAddressTextField = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+      if (e.currentTarget.value.trim().length === 0) {
+        setSelectedLocation(null)
+        setLocations([])
+        setTypingSuggestions([])
+      }
     }
 
     useEffect(() => {
@@ -258,12 +236,23 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
       }
     }, [locations])
 
+    useEffect(() => {
+      const listenClickOnPage = () => {
+        setLocations([])
+        setTypingSuggestions([])
+      }
+      document.body.addEventListener('click', listenClickOnPage)
+      return () => {
+        document.body.removeEventListener('click', listenClickOnPage)
+      }
+    }, [])
+
     return (
       <form className="5xl:text-3xl md:text-base text-sm space-y-2" ref={ref}>
         <h3 className="5xl:text-[0.8em] 5xl:pt-8 font-semibold text-gray-900 text-lg">
           Thông tin giao hàng
         </h3>
-        <div ref={containerRef} className="space-y-3">
+        <div ref={containerRef} className="NAME-shipping-info-container space-y-3">
           <div>
             <label className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1">
               Họ và tên
@@ -323,7 +312,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
             </div>
           </div>
 
-          <div className="md:gap-3 gap-2 grid grid-cols-2">
+          <div className="md:gap-0 gap-2 grid grid-cols-2 mb-2">
             <input
               id="province-input"
               name="province"
@@ -347,31 +336,25 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
             />
             <div className="col-span-2 relative">
               <label className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1">
-                Địa chỉ nhận hàng của bạn
+                Tỉnh / Thành phố, Quận / Huyện, Phường / Xã
               </label>
               <AutoSizeTextField
-                id="address-input"
-                name="address"
+                controllerRef={textFieldController}
                 onChange={(e) => searchAddress(e.target.value)}
-                placeholder={
-                  queryFilter.isPhotoism
-                    ? '766 Sư Vạn Hạnh, phường 12, quận 10, thành phố Hồ Chí Minh'
-                    : queryFilter.funId
-                    ? '70 Hoàng Diệu 2, Linh Chiểu, Thủ Đức, thành phố Hồ Chí Minh'
-                    : '125 Nguyễn Văn Tiên, Tân Phong, thành phố Biên Hòa, tỉnh Đồng Nai'
-                }
-                className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} NAME-address-autosize-textfield 5xl:text-[0.7em] md:h-11 no-scrollbar h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
-                minHeight={24}
+                onBlur={handleBlurAddressTextField}
+                placeholder={'Nhập địa chỉ nhận hàng của bạn'}
+                className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} NAME-address-autosize-textfield 5xl:text-[0.7em] md:h-11 no-scrollbar h-9 w-full py-2 px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
+                minHeight={40}
               />
-              {errors.address && (
-                <p className="5xl:text-[0.6em] flex items-center gap-1 text-red-600 text-sm mt-0.5 pl-1">
+              {(errors.province || errors.city || errors.ward) && (
+                <p className="5xl:text-[0.6em] flex items-center gap-1 text-red-600 text-sm mt-0.5 pl-1 -translate-y-1">
                   <WarningIcon className="w-4 h-4" />
-                  {errors.address}
+                  <span className="flex gap-1.5">Vui lòng chọn 1 mục từ danh sách gợi ý.</span>
                 </p>
               )}
 
               {!queryFilter.isPhotoism && locations.length > 0 && (
-                <ul className="NAME-provinces-suggestion top-[calc(100%+0.25rem)] left-0 absolute z-50 w-full bg-white border border-gray-300 rounded-xl mt-1 max-h-60 overflow-y-auto shadow-lg">
+                <ul className="top-full no-scrollbar left-0 absolute z-50 w-full bg-white border border-gray-300 rounded-xl max-h-60 overflow-y-auto shadow-lg">
                   {locations.map((location) => {
                     return (
                       <li
@@ -389,6 +372,25 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
                 </ul>
               )}
             </div>
+          </div>
+
+          <div>
+            <label className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1">
+              Địa chỉ cụ thể
+            </label>
+            <input
+              id="address-input"
+              name="address"
+              type="text"
+              placeholder="Nhập địa chỉ nhận hàng của bạn"
+              className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
+            />
+            {errors.address && (
+              <p className="5xl:text-[0.6em] flex items-center gap-1 text-red-600 text-sm mt-0.5 pl-1">
+                <WarningIcon className="w-4 h-4" />
+                {errors.address}
+              </p>
+            )}
           </div>
 
           <div>

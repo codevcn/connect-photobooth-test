@@ -195,7 +195,7 @@ export const VoucherSection = ({ cartItems, onVoucherApplied }: VoucherSectionPr
       </div>
       {discountMessage && !appliedVoucher && (
         <p
-          className={`mt-2 text-[0.8em] flex items-center gap-1 ${
+          className={`mt-2 text-[1em] flex items-center gap-1 ${
             discountMessage.status === 'success' ? 'text-green-600' : 'text-red-500'
           }`}
         >

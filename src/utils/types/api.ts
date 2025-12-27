@@ -366,3 +366,27 @@ export type TAddressResult = {
   categories: unknown[] // hiện tại đang là mảng rỗng
   entry_points: unknown[] // hiện tại đang là mảng rỗng
 }
+
+export type TLatLongLocation = {
+  lat: number
+  lng: number
+}
+
+export type TGoongPrediction = {
+  description: string
+  place_id: string
+  structured_formatting: {
+    main_text: string
+    secondary_text: string
+  }
+  compound: {
+    commune?: string
+    district?: string
+    province?: string
+  }
+}
+
+export type TGoongAutocompleteResponse = {
+  predictions: TGoongPrediction[]
+  status: string
+}

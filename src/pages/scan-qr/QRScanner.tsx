@@ -78,15 +78,6 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
         }
       },
       {
-        onDecodeError: (error) => {
-          console.error('>>> [qr] decode qr error:', error)
-          appLogger.logError(
-            error instanceof Error ? error : new Error(error),
-            'QR decode error',
-            EAppPage.SCAN_QR,
-            EAppFeature.QR_EXTRACT_DATA
-          )
-        },
         returnDetailedScanResult: true,
         highlightScanRegion: true,
         highlightCodeOutline: true,
@@ -229,6 +220,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
   // }, [isReady])
 
   useEffect(() => {
+    if (!isReady) return
     eventEmitter.on(EInternalEvents.DO_TEST_PASS_SCAN_QR, doTest)
     return () => {
       eventEmitter.off(EInternalEvents.DO_TEST_PASS_SCAN_QR, doTest)

@@ -414,7 +414,7 @@ const PaymentPage = () => {
                           id="terms-and-conditions"
                           checked={acceptedTerms}
                           onChange={handleTickTerms}
-                          className="text-main-cl border border-main-cl h-5 w-5 rounded"
+                          className="text-main-cl border border-main-cl h-6 w-6 rounded"
                         />
                         <div>
                           <span>Tôi đã đọc và đồng ý với </span>
@@ -422,7 +422,7 @@ const PaymentPage = () => {
                             onClick={(e) => {
                               setShowTermsModal(true)
                             }}
-                            className="text-blue-600 underline cursor-pointer"
+                            className="NAME-terms-clickable text-blue-600 underline cursor-pointer"
                           >
                             Chính sách & Điều khoản dịch vụ
                           </span>
@@ -475,7 +475,7 @@ const PaymentPage = () => {
                     id="terms-and-conditions"
                     checked={acceptedTerms}
                     onChange={handleTickTerms}
-                    className="text-main-cl border border-main-cl h-5 w-5 rounded"
+                    className="text-main-cl border border-main-cl h-6 w-6 rounded"
                   />
                   <div>
                     <span>Tôi đã đọc và đồng ý với </span>
@@ -483,7 +483,7 @@ const PaymentPage = () => {
                       onClick={(e) => {
                         setShowTermsModal(true)
                       }}
-                      className="text-blue-600 underline cursor-pointer"
+                      className="NAME-terms-clickable text-blue-600 underline cursor-pointer"
                     >
                       Chính sách & Điều khoản dịch vụ
                     </span>

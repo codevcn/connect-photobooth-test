@@ -4,7 +4,7 @@ type TTermConditionsProps = {
   closeModal: () => void
 }
 
-type TTabType = 'terms' | 'privacy'
+type TTabType = 'terms' | 'faq'
 
 export const TermConditions = ({ closeModal }: TTermConditionsProps) => {
   const [activeTab, setActiveTab] = useState<TTabType>('terms')
@@ -71,21 +71,21 @@ export const TermConditions = ({ closeModal }: TTermConditionsProps) => {
                 Điều khoản dịch vụ
               </button>
               <button
-                onClick={() => setActiveTab('privacy')}
+                onClick={() => setActiveTab('faq')}
                 className={`px-4 py-3 font-semibold text-sm transition-all ${
-                  activeTab === 'privacy'
+                  activeTab === 'faq'
                     ? 'text-main-cl border-b-2 border-main-cl'
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
-                Chính sách bảo mật
+                Câu hỏi thường gặp (FAQ)
               </button>
             </div>
           </div>
 
           {/* BODY */}
           <div className="px-4 py-4 overflow-y-auto custom-scrollbar grow bg-gray-50 text-gray-700 leading-relaxed">
-            {activeTab === 'terms' ? <TermsOfServiceContent /> : <PrivacyPolicyContent />}
+            {activeTab === 'terms' ? <TermsOfServiceContent /> : <FAQContent />}
           </div>
         </div>
       </div>
@@ -319,19 +319,18 @@ const TermsOfServiceContent = () => {
             hiện các yêu cầu dịch vụ, tiện ích trên Ứng dụng có nghĩa là đã chấp nhận các sửa đổi
             đó.
           </p>
-        </div>
-      </section>
 
-      {/* Thông tin liên hệ */}
-      <section className="mb-6 bg-blue-50 p-5 rounded-lg shadow-sm border border-blue-200">
-        <p className="text-sm font-semibold text-gray-800 mb-3">
-          Nếu Người dùng có thắc mắc về Chính sách này, hãy liên hệ với chúng tôi theo thông tin
-          sau:
-        </p>
-        <p className="text-sm text-gray-700 mb-2">
-          📍 436/38 Cách Mạng Tháng Tám, Phường Nhiêu Lộc, Thành phố Hồ Chí Minh, Việt Nam
-        </p>
-        <p className="text-sm text-gray-700">📞 Hotline: 0901366095</p>
+          <div className="pt-3 border-t border-gray-200 mt-4">
+            <p className="font-semibold mb-2">
+              Nếu Người dùng có thắc mắc về Chính sách này, hãy liên hệ với chúng tôi theo thông tin
+              sau:
+            </p>
+            <p className="mb-1">
+              📍 436/38 Cách Mạng Tháng Tám, Phường Nhiêu Lộc, Thành phố Hồ Chí Minh, Việt Nam
+            </p>
+            <p>📞 Hotline: 0901366095</p>
+          </div>
+        </div>
       </section>
 
       {/* Footer */}
@@ -343,74 +342,127 @@ const TermsOfServiceContent = () => {
 }
 
 // ============================================
-// PHẦN 2: CHÍNH SÁCH BẢO MẬT
+// PHẦN 2: FAQ (CÂU HỎI THƯỜNG GẶP)
 // ============================================
-const PrivacyPolicyContent = () => {
+const FAQContent = () => {
   return (
     <>
-      {/* Giới thiệu */}
-      <section className="mb-6 bg-white p-5 rounded-lg shadow-sm border border-gray-100">
-        <p className="text-sm text-gray-700 mb-4">
-          Chính sách bảo mật được xây dựng nhằm cho Người dùng biết được Ứng dụng có thể thu thập,
-          sử dụng, chia sẻ và xử lý thông tin cá nhân mà Người dùng đã cung cấp cho chúng tôi như
-          thế nào. Chính sách này được xây dựng dựa trên quy định pháp luật Việt Nam liên quan đến
-          bảo mật Dữ liệu cá nhân.
-        </p>
-        <p className="text-sm text-gray-700 mb-4">
-          Bằng việc trao cho chúng tôi thông tin cá nhân, sử dụng các dịch vụ trên Ứng dụng nghĩa là
-          Người dùng đồng ý thông tin cá nhân của Người dùng sẽ được thu thập, sử dụng như được nêu
-          trong Chính sách này. Trường hợp Người dùng không đồng ý với Chính sách này, Người dùng
-          không được sử dụng Ứng dụng.
-        </p>
-        <p className="text-sm text-gray-700 font-semibold">
-          Chúng tôi có quyền được sửa đổi, bổ sung bất kỳ và toàn bộ nội dung của Chính sách này tại
-          bất kỳ thời điểm nào mà không cần báo trước hay cần có sự đồng ý trước của Người dùng.
-        </p>
+      {/* CHỦ ĐỀ 1: SẢN PHẨM & CHẤT LƯỢNG */}
+      <section className="mb-8">
+        <h3 className="text-xl font-bold text-main-cl mb-4 pb-2 border-b-2 border-main-cl">
+          CHỦ ĐỀ 1: SẢN PHẨM & CHẤT LƯỢNG
+        </h3>
+
+        {/* FAQ 1 */}
+        <div className="mb-6 bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+          <h5 className="font-bold text-gray-900 mb-2 flex items-start">
+            <span className="text-main-cl mr-2">Q1.</span>
+            In hình lên áo/cốc có bị phai màu khi giặt không?
+          </h5>
+          <p className="text-sm text-gray-700 pl-6">
+            <span className="font-semibold text-main-cl">Trả lời:</span> Công nghệ in của chúng tôi
+            đảm bảo độ bền màu cao. Với áo thun, bạn có thể giặt máy bình thường (lộn trái áo). Với
+            cốc, hình in bền vĩnh viễn trong điều kiện sử dụng thông thường.
+          </p>
+        </div>
+
+        {/* FAQ 2 */}
+        <div className="mb-6 bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+          <h5 className="font-bold text-gray-900 mb-2 flex items-start">
+            <span className="text-main-cl mr-2">Q2.</span>
+            Tại sao hình in ra nhìn không nét căng hoặc sáng như trên điện thoại tôi hay xem?
+          </h5>
+          <p className="text-sm text-gray-700 pl-6">
+            <span className="font-semibold text-main-cl">Trả lời:</span> Do màn hình phát sáng (hệ
+            màu RGB) còn mực in là phản quang (hệ màu CMYK) và in lên chất liệu thấm hút mực
+            (vải/gốm) nên màu sắc sẽ có độ chênh lệch nhẹ (trầm hơn một chút) nhưng vẫn đảm bảo tinh
+            thần thẩm mỹ.
+          </p>
+        </div>
+
+        {/* FAQ 3 */}
+        <div className="mb-6 bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+          <h5 className="font-bold text-gray-900 mb-2 flex items-start">
+            <span className="text-main-cl mr-2">Q3.</span>
+            Tôi có được xem mẫu trước (Preview) không?
+          </h5>
+          <p className="text-sm text-gray-700 pl-6">
+            <span className="font-semibold text-main-cl">Trả lời:</span> Bạn có thể xem bản mô phỏng
+            (Mockup) trực tiếp trên website ngay khi thiết kế. Sản phẩm thật sẽ giống khoảng 90-95%
+            so với bản mockup này.
+          </p>
+        </div>
       </section>
 
-      {/* Quyền riêng tư */}
-      <section className="mb-6 bg-white p-5 rounded-lg shadow-sm border border-gray-100">
-        <h4 className="text-lg font-bold text-gray-800 mb-3">QUYỀN RIÊNG TƯ</h4>
-        <ul className="space-y-3 text-sm text-gray-700">
-          <li className="flex items-start">
-            <span className="font-bold text-main-cl mr-2 shrink-0">•</span>
-            <span>
-              Bằng việc tải ảnh lên và đặt hàng, Quý khách xác nhận mình có quyền sử dụng hình ảnh
-              đó.
-            </span>
-          </li>
-          <li className="flex items-start">
-            <span className="font-bold text-main-cl mr-2 shrink-0">•</span>
-            <span>
-              Chúng tôi cam kết chỉ sử dụng hình ảnh để in ấn đơn hàng và sẽ xóa file gốc sau 30
-              ngày.
-            </span>
-          </li>
-          <li className="flex items-start">
-            <span className="font-bold text-main-cl mr-2 shrink-0">•</span>
-            <span>
-              Dữ liệu cá nhân sẽ không được chia sẻ, bán hoặc trao đổi cho bên thứ ba mà không có sự
-              đồng ý của người dùng, trừ trường hợp tuân thủ pháp luật.
-            </span>
-          </li>
-        </ul>
+      {/* CHỦ ĐỀ 2: GIAO NHẬN & THỜI GIAN */}
+      <section className="mb-8">
+        <h3 className="text-xl font-bold text-main-cl mb-4 pb-2 border-b-2 border-main-cl">
+          CHỦ ĐỀ 2: GIAO NHẬN & THỜI GIAN
+        </h3>
+
+        {/* FAQ 4 */}
+        <div className="mb-6 bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+          <h5 className="font-bold text-gray-900 mb-2 flex items-start">
+            <span className="text-main-cl mr-2">Q4.</span>
+            Bao lâu tôi nhận được hàng?
+          </h5>
+          <p className="text-sm text-gray-700 pl-6">
+            <span className="font-semibold text-main-cl">Trả lời:</span> Vì là hàng đặt làm riêng,
+            tổng thời gian = Sản xuất (2-4 ngày) + Vận chuyển (3-4 ngày). Trung bình bạn sẽ nhận
+            được sau <span className="font-bold">5-8 ngày</span> tùy khu vực.
+          </p>
+        </div>
+
+        {/* FAQ 5 */}
+        <div className="mb-6 bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+          <h5 className="font-bold text-gray-900 mb-2 flex items-start">
+            <span className="text-main-cl mr-2">Q5.</span>
+            Tôi có thể đến Photobooth lấy hàng trực tiếp để đỡ tiền ship không?
+          </h5>
+          <p className="text-sm text-gray-700 pl-6">
+            <span className="font-semibold text-main-cl">Trả lời:</span> Hiện tại sản phẩm được vận
+            chuyển trực tiếp từ xưởng in đến địa chỉ nhà bạn để đảm bảo tốc độ nhanh nhất, nên chưa
+            hỗ trợ nhận tại quầy Photobooth.
+          </p>
+        </div>
       </section>
 
-      {/* Thông tin liên hệ */}
-      <section className="mb-6 bg-blue-50 p-5 rounded-lg shadow-sm border border-blue-200">
-        <p className="text-sm font-semibold text-gray-800 mb-3">
-          Nếu Người dùng có thắc mắc về Chính sách này, hãy liên hệ với chúng tôi theo thông tin
-          sau:
-        </p>
-        <p className="text-sm text-gray-700 mb-2">
-          📍 436/38 Cách Mạng Tháng Tám, Phường Nhiêu Lộc, Thành phố Hồ Chí Minh, Việt Nam
-        </p>
-        <p className="text-sm text-gray-700">📞 Hotline: 0901366095</p>
+      {/* CHỦ ĐỀ 3: ĐỔI TRẢ & SỰ CỐ */}
+      <section className="mb-8">
+        <h3 className="text-xl font-bold text-main-cl mb-4 pb-2 border-b-2 border-main-cl">
+          CHỦ ĐỀ 3: ĐỔI TRẢ & SỰ CỐ
+        </h3>
+
+        {/* FAQ 6 */}
+        <div className="mb-6 bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+          <h5 className="font-bold text-gray-900 mb-2 flex items-start">
+            <span className="text-main-cl mr-2">Q6.</span>
+            Tôi đặt nhầm size áo/dòng điện thoại, có đổi được không?
+          </h5>
+          <p className="text-sm text-gray-700 pl-6">
+            <span className="font-semibold text-main-cl">Trả lời:</span> Rất tiếc, vì sản phẩm đã in
+            hình riêng của bạn nên chúng tôi không thể bán lại cho người khác. Vui lòng kiểm tra kỹ
+            bảng size trước khi đặt.
+          </p>
+        </div>
+
+        {/* FAQ 7 */}
+        <div className="mb-6 bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+          <h5 className="font-bold text-gray-900 mb-2 flex items-start">
+            <span className="text-main-cl mr-2">Q7.</span>
+            Hàng bị vỡ/hỏng khi nhận thì làm sao?
+          </h5>
+          <p className="text-sm text-gray-700 pl-6">
+            <span className="font-semibold text-main-cl">Trả lời:</span> Bạn vui lòng quay video khi
+            mở hàng. Nếu hàng bị vỡ/hỏng, hãy gửi video qua Zalo CSKH, chúng tôi sẽ gửi lại sản phẩm
+            mới hoàn toàn miễn phí ngay lập tức (không cần gửi trả hàng cũ).
+          </p>
+        </div>
       </section>
 
       {/* Footer */}
       <div className="mt-8 text-center text-xs text-gray-600 border-t pt-4">
-        Cập nhật lần cuối: Tháng 12/2025 | Bản quyền © ENCYCOM
+        Bạn còn thắc mắc? Liên hệ CSKH qua Zalo hoặc Hotline để được hỗ trợ nhanh nhất!
       </div>
     </>
   )

@@ -8,6 +8,7 @@ import { CustomScrollbar } from '../CustomScrollbar'
 import { useKeyboardStore } from '@/stores/keyboard/keyboard.store'
 import { TKeyboardSuggestion } from '@/utils/types/global'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
+import { TAutoSizeTextFieldController } from '@/utils/types/component'
 
 type TKeyboardSuggestionsProps = {
   currentInputRef: React.RefObject<HTMLInputElement | HTMLTextAreaElement | null>
@@ -16,6 +17,7 @@ type TKeyboardSuggestionsProps = {
 
 const TypingSuggestions = ({ currentInputRef, onPickSuggestion }: TKeyboardSuggestionsProps) => {
   const suggestions = useKeyboardStore((s) => s.suggestions)
+  const loadingStatus = useKeyboardStore((s) => s.suggestionsLoadingStatus)
 
   const pickSuggestion = (suggestion: TKeyboardSuggestion) => {
     let type = 'province'
@@ -30,28 +32,64 @@ const TypingSuggestions = ({ currentInputRef, onPickSuggestion }: TKeyboardSugge
     onPickSuggestion?.(suggestion, type)
   }
 
-  return (
-    suggestions &&
-    suggestions.length > 0 && (
+  return loadingStatus === 'fetched' ? (
+    suggestions && suggestions.length > 0 && (
       <CustomScrollbar
         showScrollbar={false}
         classNames={{
           container: 'mx-3',
-          content: 'flex flex-nowrap gap-2 w-full py-2 max-h-28 bg-white border-b border-gray-200',
+          content: 'flex flex-nowrap gap-4 w-full py-2 max-h-28 bg-white border-b border-gray-200',
         }}
       >
         {suggestions.map((suggestion) => (
           <button
             onClick={() => pickSuggestion(suggestion)}
             key={suggestion.id}
-            className="px-2 py-1 bg-gray-100 mobile-touch rounded hover:bg-gray-300 w-max whitespace-nowrap"
+            className="flex items-center gap-2 px-2 py-1 bg-gray-100 mobile-touch rounded hover:bg-gray-300 w-max whitespace-nowrap"
           >
-            {suggestion.text}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-map-pin-icon lucide-map-pin w-6 h-6 5xl:w-8 5xl:h-8 text-main-cl"
+            >
+              <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            <span>{suggestion.text}</span>
           </button>
         ))}
       </CustomScrollbar>
     )
-  )
+  ) : loadingStatus === 'loading' ? (
+    <div className="flex justify-center w-full py-2 px-4 border-b border-gray-200 bg-white">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="lucide lucide-loader-icon lucide-loader animate-spin"
+      >
+        <path d="M12 2v4" />
+        <path d="m16.2 7.8 2.9-2.9" />
+        <path d="M18 12h4" />
+        <path d="m16.2 16.2 2.9 2.9" />
+        <path d="M12 18v4" />
+        <path d="m4.9 19.1 2.9-2.9" />
+        <path d="M2 12h4" />
+        <path d="m4.9 4.9 2.9 2.9" />
+      </svg>
+    </div>
+  ) : null
 }
 
 type TLayoutName = 'default' | 'shift' | 'specialCharacters' | 'numberic'
@@ -289,6 +327,7 @@ export const VietnameseKeyboard = ({
   // Track enter key press state
   const enterKeyPressedRef = useRef<boolean>(false)
   const doneKeyPressedRef = useRef<boolean>(false)
+  const textFieldControllerRef = useRef<TAutoSizeTextFieldController>({ setValue: () => {} })
 
   const { inputMethod, toggleInputMethod, processVietnameseInput, resetBuffer } =
     useVietnameseKeyboard()
@@ -491,6 +530,11 @@ export const VietnameseKeyboard = ({
     catchEnterKey(e)
   }
 
+  const handlePickSuggestion = (suggestion: TKeyboardSuggestion) => {
+    textFieldControllerRef.current.setValue(suggestion.text)
+    onClose?.()
+  }
+
   useEffect(() => {
     if (isOpen) {
       const inputType = currentInputRef.current?.type
@@ -516,6 +560,7 @@ export const VietnameseKeyboard = ({
             if (currentInputRef.current?.tagName === 'TEXTAREA') return true
             return false
           }}
+          controllerRef={textFieldControllerRef}
           onEnter={catchEnterKey}
           onKeyDown={handleTextAreaKeyDown}
           onSelect={handleTextAreaSelect}
@@ -523,11 +568,14 @@ export const VietnameseKeyboard = ({
           textfieldRef={textDisplayerRef}
           maxHeight={150}
           minHeight={40}
-          className="w-full outline-transparent focus:outline-main-cl overflow-y-auto px-2 leading-normal py-1.5 text-[1em] border border-gray-200 rounded-lg bg-gray-50 whitespace-pre-wrap wrap-break-word"
+          className="w-full no-scrollbar outline-transparent focus:outline-main-cl overflow-y-auto px-2 leading-normal py-1.5 text-[1em] border border-gray-200 rounded-lg bg-gray-50 whitespace-pre-wrap wrap-break-word"
         />
       </div>
 
-      <TypingSuggestions currentInputRef={currentInputRef} onPickSuggestion={onClose} />
+      <TypingSuggestions
+        currentInputRef={currentInputRef}
+        onPickSuggestion={handlePickSuggestion}
+      />
 
       {/* Keyboard */}
       <div className="px-2 py-2 bg-white">

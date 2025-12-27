@@ -1,13 +1,17 @@
-import { useEffect, useState, ChangeEvent, KeyboardEvent, useRef } from 'react'
+import { TAutoSizeTextFieldController } from '@/utils/types/component'
+import { useEffect, useState, ChangeEvent, KeyboardEvent, useRef, useImperativeHandle } from 'react'
 
 type AutosizeTextareaProps = {} & Partial<{
+  controllerRef: React.RefObject<TAutoSizeTextFieldController>
   id: string
   name: string
   value: string
   onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void
   onEnter: (e: KeyboardEvent<HTMLTextAreaElement>) => void
   onKeyDown: (e: KeyboardEvent<HTMLTextAreaElement>) => void
+  onKeyUp: (e: KeyboardEvent<HTMLTextAreaElement>) => void
   onSelect: () => void
+  onBlur: (e: React.FocusEvent<HTMLTextAreaElement>) => void
   onClick: () => void
   placeholder: string
   minHeight: number
@@ -18,12 +22,15 @@ type AutosizeTextareaProps = {} & Partial<{
 }>
 
 export const AutoSizeTextField = ({
+  controllerRef,
   id,
   name,
   value = '',
   onChange,
   onEnter,
+  onBlur,
   onKeyDown,
+  onKeyUp,
   onSelect,
   onClick,
   placeholder = 'Nhập văn bản...',
@@ -36,6 +43,12 @@ export const AutoSizeTextField = ({
   const [text, setText] = useState(value)
   const textFieldInternalRef = useRef<HTMLTextAreaElement | null>(null)
   const finalTextFieldRef = textfieldRef || textFieldInternalRef
+
+  useImperativeHandle(controllerRef, () => ({
+    setValue: (newValue: string) => {
+      setText(newValue)
+    },
+  }))
 
   const doResizeTextArea = () => {
     const textarea = finalTextFieldRef.current
@@ -100,6 +113,8 @@ export const AutoSizeTextField = ({
       value={text}
       onChange={handleChange}
       onKeyDown={handleKeyDown}
+      onKeyUp={onKeyUp}
+      onBlur={onBlur}
       onSelect={onSelect}
       onClick={onClick}
       placeholder={placeholder}

@@ -377,7 +377,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
 
           <div>
             <label className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1">
-              Địa chỉ chi tiết
+              Địa chỉ cụ thể (Số nhà, tên đường, thôn, xóm...)
             </label>
             <input
               id="address-input"

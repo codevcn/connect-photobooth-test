@@ -340,6 +340,7 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
               </label>
               <AutoSizeTextField
                 controllerRef={textFieldController}
+                name="detailed-address-autocomplete"
                 onChange={(e) => searchAddress(e.target.value)}
                 onBlur={handleBlurAddressTextField}
                 placeholder={'Nhập địa chỉ nhận hàng của bạn'}

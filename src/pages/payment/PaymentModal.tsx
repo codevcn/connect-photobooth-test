@@ -21,6 +21,7 @@ type TShippingInfo = {
   ward: string
   address: string
   message?: string
+  detailedAddressAutocomplete: string
 }
 
 type TPaymentModalProps = {
@@ -52,7 +53,9 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems, show }: TPaym
       city: formData.get('district')?.toString().trim() || '',
       ward: formData.get('ward')?.toString().trim() || '',
       address: formData.get('address')?.toString().trim() || '',
-      message: formData.get('message')?.toString().trim(),
+      message: formData.get('message')?.toString().trim() || '',
+      detailedAddressAutocomplete:
+        formData.get('detailed-address-autocomplete')?.toString().trim() || '',
     }
     console.log('>>> [dress] shippingInfo:', shippingInfo)
     const { name, phone, email, province, city, ward, address } = shippingInfo

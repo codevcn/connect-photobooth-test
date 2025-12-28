@@ -354,6 +354,7 @@ export type TShippingInfo = {
   ward: string
   address: string
   message?: string
+  detailedAddressAutocomplete: string
 }
 
 export type TImageSizeInfo = TSizeInfo

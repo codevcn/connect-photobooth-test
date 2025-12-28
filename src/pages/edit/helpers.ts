@@ -244,6 +244,7 @@ export const initTheBestTemplateForPrintedImages = (
 
 type TCleanPrintAreaResult = {
   printAreaContainer: HTMLDivElement | null
+  allowedPrintArea: HTMLDivElement | null
   transparentPrintAreaContainer: HTMLDivElement | null
   removeMockPrintArea: () => void
 }
@@ -284,6 +285,7 @@ export const cleanPrintAreaOnExtractMockupImage = (
   transparentPrintAreaContainer.querySelector<HTMLElement>('.NAME-product-image')?.remove()
   return {
     printAreaContainer: clonedPrintAreaContainer,
+    allowedPrintArea: clonedAllowedPrintArea,
     transparentPrintAreaContainer,
     removeMockPrintArea: () => {
       clonedPrintAreaContainer?.remove()

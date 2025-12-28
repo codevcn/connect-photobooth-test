@@ -1,4 +1,9 @@
-import { TPrintedImageVisualState, TStickerVisualState, TTextVisualState } from './global'
+import {
+  TClippedElements,
+  TPrintedImageVisualState,
+  TStickerVisualState,
+  TTextVisualState,
+} from './global'
 import { TPrintLayout } from './print-layout'
 
 export type TMockupRequest = {
@@ -22,22 +27,11 @@ export type TMockupConfig = {
 // PRINT AREA
 // ============================================
 
-type TPrintAreaConfig = {
-  // Kích thước thực tế (pixels) - dùng để tạo canvas
-  widthRealPx: number
-  heightRealPx: number
-
-  // Vị trí & kích thước tương đối trên product image (optional)
-  printX?: number
-  printY?: number
-  printW?: number
-  printH?: number
-
-  // Scale factor của print area
-  scale?: number
-
-  // Background image (product mockup) - optional
-  backgroundImageUrl?: string
+type TAllowedPrintArea = {
+  width: number // in pixels
+  height: number // in pixels
+  offsetX: number // in pixels
+  offsetY: number // in pixels
 }
 
 // ============================================
@@ -49,6 +43,15 @@ type TProductInfo = {
   name?: string
   variantId?: number | string
   surfaceId?: number | string
+  mockup: {
+    id: number | string
+    imageURL: string
+  }
+}
+
+type TPrintAreaContainerWrapper = {
+  width: number // in pixels
+  height: number // in pixels
 }
 
 // ============================================
@@ -56,6 +59,8 @@ type TProductInfo = {
 // ============================================
 
 export type TRestoreMockupBodySchema = {
+  printAreaContainerWrapper: TPrintAreaContainerWrapper
+
   /**
    * Thông tin sản phẩm (optional - để reference/logging)
    */
@@ -65,7 +70,7 @@ export type TRestoreMockupBodySchema = {
    * Cấu hình print area - REQUIRED
    * Xác định kích thước canvas và vùng in
    */
-  printArea: TPrintAreaConfig
+  allowedPrintArea: TAllowedPrintArea
 
   /**
    * Layout mode và config
@@ -82,27 +87,14 @@ export type TRestoreMockupBodySchema = {
    * Bao gồm printed-image, sticker, text
    * Nên được sort theo zindex trước khi gửi
    */
-  printedImageElements: TPrintedImageVisualState[]
-  stickerElements: TStickerVisualState[]
-  textElements: TTextVisualState[]
-
-  /**
-   * Các elements đã bị clip (polygon data)
-   * Key = element id, value = polygon string
-   */
-  clippedElements?: {
-    [elementId: string]: {
-      polygon: string | null
-    }
-  }
+  printedImageElements?: TPrintedImageVisualState[]
+  stickerElements?: TStickerVisualState[]
+  textElements?: TTextVisualState[]
 
   /**
    * Metadata (optional - for tracking/debugging)
    */
   metadata?: {
-    clientTimestamp?: number
     sessionId?: string
-    userId?: string
-    [key: string]: unknown
   }
 }

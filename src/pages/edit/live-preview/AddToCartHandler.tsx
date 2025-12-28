@@ -31,25 +31,47 @@ import { restoreMockupWorkerController } from '@/workers/restore-mockup.worker-c
 import { useLayoutStore } from '@/stores/ui/print-layout.store'
 
 const prepareRestoreMockupData = (
-  widthRealPx: number,
-  heightRealPx: number,
-  printedImageElements: TPrintedImageVisualState[],
-  stickerElements: TStickerVisualState[],
-  textElements: TTextVisualState[]
+  sessionId: string,
+  transparentPrintAreaContainer: HTMLElement,
+  clonedAllowedPrintArea: HTMLElement,
+  printedImageElements?: TPrintedImageVisualState[],
+  stickerElements?: TStickerVisualState[],
+  textElements?: TTextVisualState[]
 ) => {
-  const { layoutMode } = useLayoutStore.getState()
-  const { pickedSurface } = useProductUIDataStore.getState()
-  if (!pickedSurface) return
+  const { pickedSurface, pickedProduct } = useProductUIDataStore.getState()
+  if (!pickedSurface || !pickedProduct) return
+  const { layoutMode, pickedLayout } = useLayoutStore.getState()
+  const printAreaContainerWrapperRect = transparentPrintAreaContainer.getBoundingClientRect()
+  const clonedAllowedPrintAreaRect = clonedAllowedPrintArea.getBoundingClientRect()
   restoreMockupWorkerController.sendRestoreMockupData({
     layoutMode,
-    printArea: {
-      ...pickedSurface,
-      heightRealPx,
-      widthRealPx,
+    allowedPrintArea: {
+      width: clonedAllowedPrintAreaRect.width,
+      height: clonedAllowedPrintAreaRect.height,
+      offsetX: clonedAllowedPrintAreaRect.left - printAreaContainerWrapperRect.left,
+      offsetY: clonedAllowedPrintAreaRect.top - printAreaContainerWrapperRect.top,
+    },
+    printAreaContainerWrapper: {
+      width: printAreaContainerWrapperRect.width,
+      height: printAreaContainerWrapperRect.height,
     },
     printedImageElements,
     stickerElements,
     textElements,
+    layout: pickedLayout,
+    metadata: {
+      sessionId,
+    },
+    product: {
+      id: pickedProduct.id,
+      name: pickedProduct.name,
+      variantId: pickedSurface.variantId,
+      surfaceId: pickedSurface.id,
+      mockup: {
+        id: pickedSurface.id,
+        imageURL: pickedSurface.imageUrl,
+      },
+    },
   })
 }
 
@@ -99,8 +121,12 @@ export const AddToCartHandler = ({
       return onError(new Error(message))
     }
     if (!pickedVariant || !pickedProduct || !pickedSurface || !printAreaContainerRef.current) return
-    const { printAreaContainer, removeMockPrintArea, transparentPrintAreaContainer } =
-      cleanPrintAreaOnExtractMockupImage(printAreaContainerRef.current)
+    const {
+      printAreaContainer,
+      removeMockPrintArea,
+      transparentPrintAreaContainer,
+      allowedPrintArea,
+    } = cleanPrintAreaOnExtractMockupImage(printAreaContainerRef.current)
     if (!printAreaContainer || !transparentPrintAreaContainer) {
       return onError(new Error('Không tìm thấy khu vực in trên sản phẩm'))
     }
@@ -167,7 +193,15 @@ export const AddToCartHandler = ({
         useProductUIDataStore.getState().setCartCount(LocalStorageHelper.countSavedMockupImages())
         onDoneAdd(mockupId)
 
-        // prepareRestoreMockupData()
+        // if (!allowedPrintArea) return
+        // prepareRestoreMockupData(
+        //   sessionId,
+        //   transparentPrintAreaContainer,
+        //   allowedPrintArea,
+        //   elementsVisualState.printedImages,
+        //   elementsVisualState.stickers,
+        //   elementsVisualState.texts
+        // )
       },
       (error) => {
         removeMockPrintArea()

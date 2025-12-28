@@ -336,14 +336,14 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
             />
             <div className="col-span-2 relative">
               <label className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1">
-                Tỉnh / Thành phố, Quận / Huyện, Phường / Xã
+                Phường/Xã, Quận/Huyện, Tỉnh/Thành
               </label>
               <AutoSizeTextField
                 controllerRef={textFieldController}
                 name="detailed-address-autocomplete"
                 onChange={(e) => searchAddress(e.target.value)}
                 onBlur={handleBlurAddressTextField}
-                placeholder={'Nhập địa chỉ nhận hàng của bạn'}
+                placeholder={'Nhập Phường/Xã, Quận/Huyện, Tỉnh/Thành'}
                 className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} NAME-address-autosize-textfield 5xl:text-[0.7em] md:h-11 no-scrollbar h-9 w-full py-2 px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
                 minHeight={40}
               />
@@ -377,13 +377,13 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
 
           <div>
             <label className="5xl:text-[0.7em] block text-sm font-medium text-gray-700 mb-1">
-              Địa chỉ cụ thể
+              Địa chỉ chi tiết
             </label>
             <input
               id="address-input"
               name="address"
               type="text"
-              placeholder="Nhập địa chỉ nhận hàng của bạn"
+              placeholder="Số nhà, tên đường, tòa nhà, xóm/ấp ..."
               className={`${ETextFieldNameForKeyBoard.VIRLTUAL_KEYBOARD_TEXTFIELD} 5xl:text-[0.7em] md:h-11 h-9 w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-main-cl focus:border-transparent transition-all`}
             />
             {errors.address && (

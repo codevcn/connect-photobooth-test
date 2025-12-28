@@ -73,7 +73,6 @@ export class OrderAdapter {
         address1: shippingInfo.address + ', ' + shippingInfo.detailedAddressAutocomplete,
         city: shippingInfo.city,
         province: shippingInfo.province,
-        ward: shippingInfo.ward,
         postcode: '000000',
         country: 'VN',
       },

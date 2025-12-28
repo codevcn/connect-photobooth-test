@@ -18,7 +18,7 @@ type TShippingInfo = {
   email?: string
   province: string
   city: string
-  ward: string
+  ward?: string
   address: string
   message?: string
   detailedAddressAutocomplete: string
@@ -51,7 +51,6 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems, show }: TPaym
       email: formData.get('email')?.toString().trim() || '',
       province: formData.get('province')?.toString().trim() || '',
       city: formData.get('district')?.toString().trim() || '',
-      ward: formData.get('ward')?.toString().trim() || '',
       address: formData.get('address')?.toString().trim() || '',
       message: formData.get('message')?.toString().trim() || '',
       detailedAddressAutocomplete:
@@ -60,13 +59,12 @@ export const PaymentModal = ({ onHideShow, voucherCode, cartItems, show }: TPaym
     console.log('>>> [dress] shippingInfo:', shippingInfo)
     const { name, phone, email, province, city, ward, address } = shippingInfo
     setErrors({})
-    if (!name || !phone || !province || !city || !ward || !address) {
+    if (!name || !phone || !province || !city || !address) {
       setErrors({
         fullName: name ? undefined : 'Họ và tên là bắt buộc',
         phone: phone ? undefined : 'Số điện thoại là bắt buộc',
         province: province ? undefined : 'Thiếu tỉnh / thành phố',
         city: city ? undefined : 'Thiếu quận / huyện',
-        ward: ward ? undefined : 'Thiếu phường / xã',
         address: address ? undefined : 'Thiếu địa chỉ chi tiết',
       })
       isValid = false

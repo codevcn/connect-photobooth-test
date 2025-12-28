@@ -239,7 +239,6 @@ export type TCreateOrderReq = {
     address1: string
     city: string
     province: string
-    ward: string
     postcode: string
     country: string
   }

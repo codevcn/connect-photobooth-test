@@ -351,7 +351,7 @@ export type TShippingInfo = {
   email?: string
   province: string
   city: string
-  ward: string
+  ward?: string
   address: string
   message?: string
   detailedAddressAutocomplete: string

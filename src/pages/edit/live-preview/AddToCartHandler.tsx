@@ -41,47 +41,74 @@ const prepareRestoreMockupData = (
   stickerElements?: TStickerVisualState[],
   textElements?: TTextVisualState[]
 ) => {
-  const { pickedSurface, pickedProduct, pickedVariant } = useProductUIDataStore.getState()
-  if (!pickedSurface || !pickedProduct || !pickedVariant) return
-  const { layoutMode, pickedLayout } = useLayoutStore.getState()
-  const printAreaContainerWrapperRect = transparentPrintAreaContainer.getBoundingClientRect()
-  const clonedAllowedPrintAreaRect = clonedAllowedPrintArea.getBoundingClientRect()
-  restoreMockupWorkerController.sendRestoreMockupData({
-    mockupId,
-    layoutMode,
-    allowedPrintArea: {
-      width: clonedAllowedPrintAreaRect.width,
-      height: clonedAllowedPrintAreaRect.height,
-      x: clonedAllowedPrintAreaRect.left,
-      y: clonedAllowedPrintAreaRect.top,
-    },
-    printAreaContainerWrapper: {
-      width: printAreaContainerWrapperRect.width,
-      height: printAreaContainerWrapperRect.height,
-      x: printAreaContainerWrapperRect.left,
-      y: printAreaContainerWrapperRect.top,
-    },
-    printedImageElements,
-    stickerElements,
-    textElements,
-    layout: pickedLayout,
-    metadata: {
-      sessionId,
-    },
-    product: {
-      id: pickedProduct.id,
-      name: pickedProduct.name,
-      variantId: pickedSurface.variantId,
-      surfaceId: pickedSurface.id,
-      mockup: {
-        id: pickedSurface.id,
-        imageURL:
-          getMockupByVariantAndSurface(pickedProduct, pickedVariant.id, pickedSurface.id)
-            ?.imageUrl || '',
+  try {
+    const { pickedSurface, pickedProduct, pickedVariant } = useProductUIDataStore.getState()
+    if (!pickedSurface || !pickedProduct || !pickedVariant) return
+    const { layoutMode, pickedLayout } = useLayoutStore.getState()
+    const printAreaContainerWrapperRect = transparentPrintAreaContainer.getBoundingClientRect()
+    const clonedAllowedPrintAreaRect = clonedAllowedPrintArea.getBoundingClientRect()
+    const layoutSlotElements = Array.from(
+      transparentPrintAreaContainer.querySelectorAll<HTMLElement>(
+        '.NAME-print-area-allowed .NAME-slots-displayer .NAME-layout-slot'
+      ) || []
+    )
+    console.log('>>> [resm] layoutSlotElements:', layoutSlotElements)
+    restoreMockupWorkerController.sendRestoreMockupData({
+      mockupId,
+      layoutMode,
+      allowedPrintArea: {
+        width: clonedAllowedPrintAreaRect.width,
+        height: clonedAllowedPrintAreaRect.height,
+        x: clonedAllowedPrintAreaRect.left,
+        y: clonedAllowedPrintAreaRect.top,
       },
-    },
-    localBlobURLsCache: useCommonDataStore.getState().localBlobURLsCache,
-  })
+      printAreaContainerWrapper: {
+        width: printAreaContainerWrapperRect.width,
+        height: printAreaContainerWrapperRect.height,
+        x: printAreaContainerWrapperRect.left,
+        y: printAreaContainerWrapperRect.top,
+      },
+      printedImageElements,
+      stickerElements,
+      textElements,
+      layout: pickedLayout,
+      layoutSlotsForCanvas: layoutSlotElements.map((ele) => {
+        const slotId = ele.getAttribute('data-layout-slot-id') || ''
+        const slotConfig = useLayoutStore.getState().getLayoutSlotConfigsById(slotId)
+        if (!slotConfig) throw new Error('Slot config not found for id: ' + slotId)
+        const rect = ele.getBoundingClientRect()
+        return {
+          slotId: slotConfig.id,
+          x: rect.left,
+          y: rect.top,
+          width: rect.width,
+          height: rect.height,
+          placedImage: {
+            imageURL: slotConfig.placedImage?.url || '',
+            isOriginalFrameImage: slotConfig.placedImage?.isOriginalFrameImage || false,
+          },
+        }
+      }),
+      metadata: {
+        sessionId,
+      },
+      product: {
+        id: pickedProduct.id,
+        name: pickedProduct.name,
+        variantId: pickedSurface.variantId,
+        surfaceId: pickedSurface.id,
+        mockup: {
+          id: pickedSurface.id,
+          imageURL:
+            getMockupByVariantAndSurface(pickedProduct, pickedVariant.id, pickedSurface.id)
+              ?.imageUrl || '',
+        },
+      },
+      localBlobURLsCache: useCommonDataStore.getState().localBlobURLsCache,
+    })
+  } catch (error) {
+    console.error('>>> prepare Restore Mockup Data error:', error)
+  }
 }
 
 type TAddToCartHandlerProps = {

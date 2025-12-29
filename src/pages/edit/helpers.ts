@@ -255,6 +255,9 @@ type TCleanPrintAreaResult = {
 export const cleanPrintAreaOnExtractMockupImage = (
   printAreaContainer: HTMLDivElement
 ): TCleanPrintAreaResult => {
+  const appTempContainer = printAreaContainer
+    .closest<HTMLElement>('body')
+    ?.querySelector<HTMLElement>('.NAME-app-temp-container')
   const wrapper = printAreaContainer.closest<HTMLElement>('.NAME-print-area-container-wrapper')!
   const clonedPrintAreaContainer = printAreaContainer.cloneNode(true) as HTMLDivElement
   clonedPrintAreaContainer.style.transform = 'none'
@@ -264,9 +267,7 @@ export const cleanPrintAreaOnExtractMockupImage = (
   clonedPrintAreaContainer.style.boxSizing = 'border-box'
   clonedPrintAreaContainer.style.width = `${wrapper.getBoundingClientRect().width}px`
   clonedPrintAreaContainer.style.height = `${wrapper.getBoundingClientRect().height}px`
-  document.body
-    .querySelector<HTMLElement>('.NAME-app-temp-container')
-    ?.appendChild(clonedPrintAreaContainer)
+  appTempContainer?.appendChild(clonedPrintAreaContainer)
   for (const slot of clonedPrintAreaContainer.querySelectorAll<HTMLElement>(
     '.NAME-slots-displayer .NAME-layout-slot'
   )) {
@@ -282,9 +283,7 @@ export const cleanPrintAreaOnExtractMockupImage = (
   clonedAllowedPrintArea?.style.setProperty('background-color', 'transparent')
   const transparentPrintAreaContainer = clonedPrintAreaContainer.cloneNode(true) as HTMLDivElement
   transparentPrintAreaContainer.style.backgroundColor = 'transparent'
-  document.body
-    .querySelector<HTMLElement>('.NAME-app-temp-container')
-    ?.appendChild(transparentPrintAreaContainer)
+  appTempContainer?.appendChild(transparentPrintAreaContainer)
   transparentPrintAreaContainer.querySelector<HTMLElement>('.NAME-product-image')?.remove()
   return {
     printAreaContainer: clonedPrintAreaContainer,

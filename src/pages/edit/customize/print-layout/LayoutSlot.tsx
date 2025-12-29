@@ -85,6 +85,7 @@ export const LayoutSlot = ({
         scrollable ? '' : 'touch-none'
       )}
       onClick={onClickFrame ? (e) => onClickFrame(e, layoutSlot.id, layoutId) : undefined}
+      data-layout-slot-id={layoutSlot.id}
     >
       {layoutSlot.placedImage ? (
         <PlacedImage

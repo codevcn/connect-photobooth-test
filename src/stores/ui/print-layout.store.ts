@@ -4,6 +4,8 @@ import { TPrintedImage, TPrintedImageVisualState } from '@/utils/types/global'
 import { TLayoutMode, TLayoutType, TPrintLayout } from '@/utils/types/print-layout'
 import { create } from 'zustand'
 
+type TLayoutSlotConfig = TPrintLayout['slotConfigs'][number]
+
 type TLayoutStore = {
   pickedLayout: TPrintLayout | null
   allLayouts: TPrintLayout[]
@@ -27,6 +29,7 @@ type TLayoutStore = {
   setLayoutForDefault: (layout: TPrintLayout | null) => void
   restoreLayout: (layout: TPrintLayout) => void
   setLayoutMode: (mode: TLayoutMode) => void
+  getLayoutSlotConfigsById: (slotId: TLayoutSlotConfig['id']) => TLayoutSlotConfig | null
 }
 
 export const useLayoutStore = create<TLayoutStore>((set, get) => ({
@@ -35,6 +38,11 @@ export const useLayoutStore = create<TLayoutStore>((set, get) => ({
   layoutMode: 'with-layout',
   layoutForDefault: null,
 
+  getLayoutSlotConfigsById: (slotId) => {
+    const pickedLayout = get().pickedLayout
+    if (!pickedLayout) return null
+    return pickedLayout.slotConfigs.find((slot) => slot.id === slotId) || null
+  },
   restoreLayout: (layout: TPrintLayout) => {
     set({ pickedLayout: layout })
   },

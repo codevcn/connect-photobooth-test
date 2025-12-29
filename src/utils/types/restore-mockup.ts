@@ -1,6 +1,7 @@
 import {
   TMockupData,
   TPrintedImageVisualState,
+  TRect,
   TStickerVisualState,
   TTextVisualState,
 } from './global'
@@ -39,6 +40,14 @@ type TPrintAreaContainerWrapper = {
   height: number // in pixels
   x: number // in pixels
   y: number // in pixels
+}
+
+type TLayoutSlotForCanvas = TRect & {
+  slotId: string
+  placedImage: {
+    imageURL: string
+    isOriginalFrameImage?: boolean
+  }
 }
 
 // ============================================
@@ -84,6 +93,8 @@ export type TRestoreMockupBodySchema = {
    * Layout config (required nếu layoutMode !== 'no-layout')
    */
   layout?: TPrintLayout | null
+
+  layoutSlotsForCanvas: TLayoutSlotForCanvas[]
 
   /**
    * Danh sách elements - REQUIRED

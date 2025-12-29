@@ -498,7 +498,9 @@ const PaymentPage = () => {
                         pointerEvents: acceptedTerms ? 'auto' : 'none',
                         cursor: acceptedTerms ? 'pointer' : 'not-allowed',
                       }
-                    : {}
+                    : {
+                        marginTop: 0,
+                      }
                 }
                 className="w-full mt-3"
               >
@@ -509,7 +511,9 @@ const PaymentPage = () => {
                       ? {
                           backgroundColor: acceptedTerms ? 'var(--vcn-main-cl)' : 'lightgray',
                         }
-                      : {}
+                      : {
+                          backgroundColor: 'var(--vcn-main-cl)',
+                        }
                   }
                   className="sm:h-[45px] h-[38px] flex items-center justify-center gap-2 w-full text-white font-bold text-lg rounded-xl shadow-lg active:scale-95 transition duration-200"
                 >

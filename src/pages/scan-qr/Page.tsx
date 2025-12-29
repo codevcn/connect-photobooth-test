@@ -333,7 +333,7 @@ const ScanQRPage = () => {
           >
             QUÉT MÃ QR PHOTOBOOTH
           </h1>
-          <div className="w-full font-bold py-1 rounded-md bg-white/80 px-2 text-sm">
+          <div className="5xl:text-[16px] w-full font-bold px-1 py-1 rounded-md bg-white/80 text-sm">
             Đưa mã QR photobooth của bạn vào camera, căn chỉnh để quét QR thật rõ nét nhé!
           </div>
           <QRScanner onScanSuccess={handleData} />

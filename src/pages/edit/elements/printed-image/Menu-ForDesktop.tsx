@@ -4,6 +4,7 @@ import { TElementType, TPrintedImageVisualState } from '@/utils/types/global'
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { CropImageElement } from '../CropImageElement'
+import { useQueryFilter } from '@/hooks/extensions'
 
 type TGrayscaleControlProps = {
   grayscale: number
@@ -129,6 +130,7 @@ export const PrintedImageElementMenuForDesktop = ({
   elementId,
   onClose,
 }: TPrintedImageElementMenu) => {
+  const queryFilter = useQueryFilter()
   const menuRef = useRef<HTMLDivElement | null>(null)
   const popoverRef = useRef<HTMLDivElement | null>(null)
   const [grayscale, setGrayscale] = useState<number>(0)
@@ -396,7 +398,7 @@ export const PrintedImageElementMenuForDesktop = ({
               <span>Xuống 1 lớp</span>
             </button>
 
-            <CropImageElement />
+            {queryFilter.isPhotoism && <CropImageElement />}
           </div>
         </div>
       </div>

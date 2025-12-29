@@ -8,7 +8,7 @@ import { SectionLoading } from '@/components/custom/Loading'
 import { useImageCrop } from '@/hooks/use-image-crop'
 import { useEditedElementStore } from '@/stores/element/element.store'
 import { createPortal } from 'react-dom'
-import { getEditedElementByElementId } from '@/utils/helpers'
+import { checkIfMobileScreen, getEditedElementByElementId } from '@/utils/helpers'
 import { CropImageElementModal } from './CropImageElementModal'
 import { useCommonDataStore } from '@/stores/ui/common-data.store'
 
@@ -74,7 +74,11 @@ export const CropImageElement = ({}: TCropImageElementProps) => {
     <>
       <button
         onClick={() => setShowCropModal(true)}
-        className="grow text-black rounded flex gap-1 items-center mobile-touch pl-0.5 py-2 justify-start hover:bg-gray-100 w-full"
+        className={
+          checkIfMobileScreen()
+            ? '5xl:h-14 smd:col-span-1 xl:hidden 2xl:h-8 2xl:col-span-3 h-8 col-span-2 text-white bg-main-cl rounded flex gap-1 items-center mobile-touch justify-center'
+            : 'grow text-black rounded flex gap-1 items-center mobile-touch pl-0.5 py-2 justify-start hover:bg-gray-100 w-full'
+        }
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

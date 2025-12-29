@@ -12,6 +12,7 @@ import { useKeyboardStore } from '@/stores/keyboard/keyboard.store'
 import { WarningIcon } from '@/components/custom/icons/WarningIcon'
 import { useQueryFilter } from '@/hooks/extensions'
 import { useDebouncedCallback } from '@/hooks/use-debounce'
+import { checkIfMobileScreen } from '@/utils/helpers'
 
 type TFormErrors = {
   fullName?: string
@@ -421,21 +422,22 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
                 disabled={isLoadingProvinces}
                 autoComplete="off"
               />
-              {!queryFilter.isPhotoism && suggestedProvinces.length > 0 && (
-                <ul className="NAME-provinces-suggestion STYLE-styled-scrollbar absolute z-50 w-full bg-white border border-gray-300 rounded-xl mt-1 max-h-60 overflow-y-auto shadow-lg">
-                  {suggestedProvinces.map((province) => {
-                    return (
-                      <li
-                        key={province.id}
-                        onClick={() => pickProvince(province)}
-                        className="px-4 py-2 hover:bg-main-cl hover:text-white cursor-pointer transition-colors text-sm"
-                      >
-                        {province.name}
-                      </li>
-                    )
-                  })}
-                </ul>
-              )}
+              {(queryFilter.isPhotoism ? checkIfMobileScreen() : true) &&
+                suggestedProvinces.length > 0 && (
+                  <ul className="NAME-provinces-suggestion STYLE-styled-scrollbar absolute z-50 w-full bg-white border border-gray-300 rounded-xl mt-1 max-h-60 overflow-y-auto shadow-lg">
+                    {suggestedProvinces.map((province) => {
+                      return (
+                        <li
+                          key={province.id}
+                          onClick={() => pickProvince(province)}
+                          className="px-4 py-2 hover:bg-main-cl hover:text-white cursor-pointer transition-colors text-sm"
+                        >
+                          {province.name}
+                        </li>
+                      )
+                    })}
+                  </ul>
+                )}
               {errors.province && (
                 <p className="5xl:text-[0.6em] flex items-center gap-1 text-red-600 text-sm mt-0.5 pl-1">
                   <WarningIcon className="w-4 h-4" />
@@ -473,21 +475,22 @@ export const ShippingInfoForm = forwardRef<HTMLFormElement, TShippingInfoFormPro
                 disabled={!selectedProvinceId || isLoadingDistricts}
                 autoComplete="off"
               />
-              {!queryFilter.isPhotoism && suggestedDistricts.length > 0 && (
-                <ul className="NAME-districts-suggestion STYLE-styled-scrollbar absolute z-50 w-full bg-white border border-gray-300 rounded-xl mt-1 max-h-60 overflow-y-auto shadow-lg">
-                  {suggestedDistricts.map((district) => {
-                    return (
-                      <li
-                        key={district.id}
-                        onClick={() => pickDistrict(district)}
-                        className="px-4 py-2 hover:bg-main-cl hover:text-white cursor-pointer transition-colors text-sm"
-                      >
-                        {district.name}
-                      </li>
-                    )
-                  })}
-                </ul>
-              )}
+              {(queryFilter.isPhotoism ? checkIfMobileScreen() : true) &&
+                suggestedDistricts.length > 0 && (
+                  <ul className="NAME-districts-suggestion STYLE-styled-scrollbar absolute z-50 w-full bg-white border border-gray-300 rounded-xl mt-1 max-h-60 overflow-y-auto shadow-lg">
+                    {suggestedDistricts.map((district) => {
+                      return (
+                        <li
+                          key={district.id}
+                          onClick={() => pickDistrict(district)}
+                          className="px-4 py-2 hover:bg-main-cl hover:text-white cursor-pointer transition-colors text-sm"
+                        >
+                          {district.name}
+                        </li>
+                      )
+                    })}
+                  </ul>
+                )}
               {errors.city && (
                 <p className="5xl:text-[0.6em] flex items-center gap-1 text-red-600 text-sm mt-0.5 pl-1">
                   <WarningIcon className="w-4 h-4" />

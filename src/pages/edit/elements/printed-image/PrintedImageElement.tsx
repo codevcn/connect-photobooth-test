@@ -79,6 +79,7 @@ export const PrintedImageElement = ({
     const heightAfterScale = root.offsetHeight * scale * scaleFactor
     const interactions = interactionsRef.current
     if (!interactions) return
+    interactions.style.display = isSelected ? 'block' : 'none'
     interactions.style.top = `${top + height / 2 - heightAfterScale / 2}px`
     interactions.style.left = `${left + width / 2 - widthAfterScale / 2}px`
     interactions.style.width = `${widthAfterScale}px`
@@ -127,7 +128,11 @@ export const PrintedImageElement = ({
   }, [isSelected, id, scaleFactor, scale])
 
   useEffect(() => {
-    updateInteractiveButtonsVisual()
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        updateInteractiveButtonsVisual()
+      })
+    })
     eventEmitter.on(EInternalEvents.SUBMIT_PRINTED_IMAGE_ELE_PROPS, listenSubmitEleProps)
     return () => {
       eventEmitter.off(EInternalEvents.SUBMIT_PRINTED_IMAGE_ELE_PROPS, listenSubmitEleProps)

@@ -2,6 +2,8 @@ import { createInitialConstants } from '@/utils/contants'
 import { EInternalEvents, eventEmitter } from '@/utils/events'
 import { TElementType, TPrintedImageVisualState } from '@/utils/types/global'
 import { useEffect, useRef, useState } from 'react'
+import { CropImageElement } from '../CropImageElement'
+import { useQueryFilter } from '@/hooks/extensions'
 
 type TGrayscaleControlProps = {
   grayscale: number
@@ -154,6 +156,7 @@ type TPrintedImageElementMenu = {
 }
 
 export const PrintedImageElementMenu = ({ elementId, onClose }: TPrintedImageElementMenu) => {
+  const queryFilter = useQueryFilter()
   const menuRef = useRef<HTMLDivElement | null>(null)
   const [grayscale, setGrayscale] = useState<number>(0)
 
@@ -412,7 +415,14 @@ export const PrintedImageElementMenu = ({ elementId, onClose }: TPrintedImageEle
             </button>
           </div>
         </div>
-        <div className="5xl:h-14 smd:col-span-1 smd:h-full 2xl:h-8 2xl:col-span-3 col-span-3 h-8 flex items-center">
+
+        {queryFilter.isPhotoism && <CropImageElement />}
+
+        <div
+          className={`${
+            queryFilter.isPhotoism ? 'col-span-1' : 'col-span-3'
+          } 5xl:h-14 smd:col-span-1 smd:h-full 2xl:h-8 2xl:col-span-3 h-8 flex items-center`}
+        >
           <button
             onClick={handleClickCheck}
             className="smd:h-full smd:px-1 2xl:h-full group h-full px-3 w-full cursor-pointer flex flex-nowrap items-center justify-center font-bold bg-main-cl gap-1 text-white mobile-touch rounded"

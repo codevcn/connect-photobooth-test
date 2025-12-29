@@ -90,6 +90,7 @@ export const StickerElement = ({
     const heightAfterScale = root.offsetHeight * scale * scaleFactor
     const interactions = interactionsRef.current
     if (!interactions) return
+    interactions.style.display = isSelected ? 'block' : 'none'
     interactions.style.top = `${top + height / 2 - heightAfterScale / 2}px`
     interactions.style.left = `${left + width / 2 - widthAfterScale / 2}px`
     interactions.style.width = `${widthAfterScale}px`

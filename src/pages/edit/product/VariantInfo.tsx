@@ -49,7 +49,7 @@ const SizeChartPreview = ({ setShowSizeChart, sizeChartImageURL }: TSizeChartPre
       title="Bảng kích thước"
       classNames={{
         contentContainer: 'p-0 overflow-y-auto',
-        titleContainer: '5xl:text-4xl text-xl bg-secondary-cl text-white py-2',
+        titleContainer: '5xl:text-4xl text-xl bg-main-cl text-white py-2',
         board: 'max-h-[85vh]',
       }}
     >

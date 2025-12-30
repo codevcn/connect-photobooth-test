@@ -77,6 +77,7 @@ const prepareRestoreMockupData = (
         const slotConfig = useLayoutStore.getState().getLayoutSlotConfigsById(slotId)
         if (!slotConfig) throw new Error('Slot config not found for id: ' + slotId)
         const rect = ele.getBoundingClientRect()
+        console.log('>>> [resm] rect:', rect)
         return {
           slotId: slotConfig.id,
           x: rect.left,
@@ -240,7 +241,7 @@ export const AddToCartHandler = ({
           )
         }
 
-        removeMockPrintArea()
+        // removeMockPrintArea()
       },
       (error) => {
         removeMockPrintArea()

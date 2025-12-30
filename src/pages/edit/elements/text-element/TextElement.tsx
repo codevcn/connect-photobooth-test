@@ -36,7 +36,7 @@ export const TextElement = ({
   printAreaContainerRef,
   elementControlRef,
 }: TTextElementProps) => {
-  const { id, mountType, height, width, fontSize } = element
+  const { id, mountType, height, width, fontSize } = element // width của text ko có ý nghĩa lắm vì nó là auto theo content (field width này chỉ là dimension ban đầu)
   const rootRef = useRef<HTMLElement | null>(null)
   const scaleFactor = useEditAreaStore((state) => state.editAreaScaleValue)
   const clipPolygon = useEditedElementStore((state) => state.clippedElements[id]?.polygon || null)
@@ -142,6 +142,10 @@ export const TextElement = ({
     if (!isSelected) return
     eventEmitter.emit(EInternalEvents.SYNC_ELEMENT_PROPS, id, 'text')
   }, [angle, position, isSelected, id])
+
+  useEffect(() => {
+    updateInteractiveButtonsVisual()
+  }, [content])
 
   useEffect(() => {
     window.addEventListener('resize', updateInteractiveButtonsVisual)

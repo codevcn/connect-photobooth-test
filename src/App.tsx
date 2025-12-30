@@ -52,8 +52,8 @@ const IdleCountdown = () => {
     return 10
   }
 
-  return <UserIdleTracker idleTimeout={30} modalTimeout={getIdleTimeout()} />
-  // return <></>
+  // return <UserIdleTracker idleTimeout={30} modalTimeout={getIdleTimeout()} />
+  return <></>
 }
 
 // Component để quản lý routes dựa trên query string

@@ -1,5 +1,10 @@
 import { useCallback } from 'react'
-import { TElementsVisualState } from '@/utils/types/global'
+import {
+  TElementsVisualState,
+  TPrintedImageVisualState,
+  TStickerVisualState,
+  TTextVisualState,
+} from '@/utils/types/global'
 import { useLayoutStore } from '@/stores/ui/print-layout.store'
 
 type TUseVisualStatesCollectorReturn = {
@@ -23,7 +28,6 @@ export const useVisualStatesCollector = (): TUseVisualStatesCollectorReturn => {
       }
 
       const pickedLayout = useLayoutStore.getState().pickedLayout
-      console.log('>>> [reto] picked Layout:', pickedLayout)
       if (pickedLayout) {
         elementsVisualState.storedLayouts = [pickedLayout]
       }
@@ -33,7 +37,7 @@ export const useVisualStatesCollector = (): TUseVisualStatesCollectorReturn => {
       )) {
         const visualState = element.getAttribute('data-visual-state')
         if (!visualState) continue
-        const visualStateObj = JSON.parse(visualState)
+        const visualStateObj = JSON.parse(visualState) as TPrintedImageVisualState
         elementsVisualState.printedImages?.push({
           ...visualStateObj,
           height: element.offsetHeight,
@@ -46,7 +50,7 @@ export const useVisualStatesCollector = (): TUseVisualStatesCollectorReturn => {
       )) {
         const visualState = element.getAttribute('data-visual-state')
         if (!visualState) continue
-        const visualStateObj = JSON.parse(visualState)
+        const visualStateObj = JSON.parse(visualState) as TStickerVisualState
         elementsVisualState.stickers?.push({
           ...visualStateObj,
           height: element.offsetHeight,
@@ -59,7 +63,15 @@ export const useVisualStatesCollector = (): TUseVisualStatesCollectorReturn => {
       )) {
         const visualState = element.getAttribute('data-visual-state')
         if (!visualState) continue
-        elementsVisualState.texts?.push(JSON.parse(visualState))
+        const visualStateObj = JSON.parse(visualState) as TTextVisualState
+        const elementRect = element.getBoundingClientRect()
+        visualStateObj.dimensionOnCollect = {
+          height: elementRect.height,
+          width: elementRect.width,
+          offsetHeight: element.offsetHeight,
+          offsetWidth: element.offsetWidth,
+        }
+        elementsVisualState.texts?.push(visualStateObj)
       }
 
       // const pickedTemplate = useTemplateStore.getState().pickedTemplate

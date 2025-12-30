@@ -271,7 +271,7 @@ export const cleanPrintAreaOnExtractMockupImage = (
   for (const slot of clonedPrintAreaContainer.querySelectorAll<HTMLElement>(
     '.NAME-slots-displayer .NAME-layout-slot'
   )) {
-    slot.style.border = 'none'
+    slot.style.borderColor = 'transparent'
   }
   clonedPrintAreaContainer
     .querySelector<HTMLElement>('.NAME-out-of-bounds-overlay-warning')
@@ -279,12 +279,13 @@ export const cleanPrintAreaOnExtractMockupImage = (
   const clonedAllowedPrintArea = clonedPrintAreaContainer.querySelector<HTMLDivElement>(
     '.NAME-print-area-allowed'
   )
-  clonedAllowedPrintArea?.style.setProperty('border', 'none')
+  clonedAllowedPrintArea?.style.setProperty('border-color', 'transparent')
   clonedAllowedPrintArea?.style.setProperty('background-color', 'transparent')
   const transparentPrintAreaContainer = clonedPrintAreaContainer.cloneNode(true) as HTMLDivElement
   transparentPrintAreaContainer.style.backgroundColor = 'transparent'
   appTempContainer?.appendChild(transparentPrintAreaContainer)
   transparentPrintAreaContainer.querySelector<HTMLElement>('.NAME-product-image')?.remove()
+  transparentPrintAreaContainer.classList.remove('NAME-print-area-container')
   return {
     printAreaContainer: clonedPrintAreaContainer,
     allowedPrintArea: clonedAllowedPrintArea,

@@ -224,13 +224,13 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
   //   doTest()
   // }, [isReady])
 
-  // useEffect(() => {
-  //   if (!isReady) return
-  //   eventEmitter.on(EInternalEvents.DO_TEST_PASS_SCAN_QR, doTest)
-  //   return () => {
-  //     eventEmitter.off(EInternalEvents.DO_TEST_PASS_SCAN_QR, doTest)
-  //   }
-  // }, [isReady])
+  useEffect(() => {
+    if (!isReady) return
+    eventEmitter.on(EInternalEvents.DO_TEST_PASS_SCAN_QR, doTest)
+    return () => {
+      eventEmitter.off(EInternalEvents.DO_TEST_PASS_SCAN_QR, doTest)
+    }
+  }, [isReady])
 
   return (
     <div className="smd:px-0 smd:w-fit 5xl:px-4 px-0 h-[calc(100vh-250px)] w-full pointer-events-none">
@@ -259,7 +259,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
                 <div className="w-4/5">
                   <div className="bg-white rounded-full h-4 overflow-hidden mb-4 shadow-lg">
                     <div
-                      className="bg-pink-400 h-full transition-all duration-100"
+                      className="bg-main-cl h-full transition-all duration-100"
                       style={{ width: `${progress}%` }}
                     />
                   </div>

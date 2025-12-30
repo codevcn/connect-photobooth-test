@@ -203,6 +203,8 @@ export type VoucherValidationResult = {
   discount?: number // Total discount amount calculated by API
 }
 
+export type TMatchOrientation = 'width' | 'height'
+
 export type TElementVisualBaseState = {
   position: {
     x: number
@@ -225,13 +227,13 @@ export type TTextVisualState = TElementVisualBaseState & {
   content: string
   fontFamily: string
   fontWeight: number
-  mountType?: TElementMountType
-  clippath?: string
 } & Partial<{
     fontSize: number
+    dimensionOnCollect: TSizeInfo & {
+      offsetHeight: number
+      offsetWidth: number
+    }
   }>
-
-export type TMatchOrientation = 'width' | 'height'
 
 export type TStickerVisualState = TElementVisualBaseState & {
   id: string

@@ -18,7 +18,7 @@ export const MiddleInfoSection = ({ pickedProduct, pickedVariant }: TProductDeta
 
       <div className="flex flex-col items-center relative">
         <span className="absolute top-1/2 -translate-y-1/2 right-[calc(100%+5px)] h-0.5 w-5 bg-main-cl"></span>
-        <span className="text-base text-orange-600">
+        <span className="text-base text-main-cl">
           <span className="font-bold">
             {formatNumberWithCommas(pickedVariant.priceAmountOneSide)}
           </span>
